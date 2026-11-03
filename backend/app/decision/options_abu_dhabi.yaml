@@ -1,0 +1,7 @@
+# FILE: backend/app/decision/options_abu_dhabi.yaml
+# STATUS: STUB. Documentation only; no code until explicitly requested.
+# ORIGIN: [NEW] Not in the original file list; added by docs/04 review.
+# PURPOSE: Options available in Abu Dhabi.
+# PLANNED LOGIC: Each option has a source and reviewer. Donor removed and adoption replaced by fostering (kafala), pending counsellor confirmation.
+# PHASE: 4.4 | REQ: R2 | SPEC: docs/04 S5
+# CLOSE THESE ISSUES (docs/04): S5

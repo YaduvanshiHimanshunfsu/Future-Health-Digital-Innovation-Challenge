@@ -1,0 +1,6 @@
+# FILE: backend/app/explain/prompts/system_ar.txt
+# STATUS: STUB. Documentation only; no code until explicitly requested.
+# PURPOSE: Arabic system prompt.
+# PLANNED LOGIC: Same rules as English. Written by an Arabic speaker, not machine translated.
+# PHASE: 4.3 | REQ: R1 | SPEC: backend.md 10.1
+# CLOSE THESE ISSUES (docs/04): C5, H13

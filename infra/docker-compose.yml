@@ -1,0 +1,6 @@
+# FILE: infra/docker-compose.yml
+# STATUS: STUB. Documentation only; no code until explicitly requested.
+# PURPOSE: Local stack.
+# PLANNED LOGIC: Postgres, Redis, Keycloak, OpenFGA, API, worker, beat. Ports on localhost. Service hostnames inside containers.
+# PHASE: 1.3 | SPEC: backend.md 11.33
+# CLOSE THESE ISSUES (docs/04): H15

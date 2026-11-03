@@ -1,0 +1,6 @@
+# FILE: infra/openfga/model.fga
+# STATUS: STUB. Documentation only; no code until explicitly requested.
+# PURPOSE: Authorisation model.
+# PLANNED LOGIC: Person, report, couple and case relations. Time-based conditions for consent expiry.
+# PHASE: 3.1 | REQ: R4 | SPEC: backend.md 11.34
+# CLOSE THESE ISSUES (docs/04): H8

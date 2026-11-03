@@ -1,0 +1,7 @@
+# FILE: backend/app/explain/lexicon/number_words.yaml
+# STATUS: STUB. Documentation only; no code until explicitly requested.
+# ORIGIN: [NEW] Not in the original file list; added by docs/04 review.
+# PURPOSE: Number words.
+# PLANNED LOGIC: Arabic and English words for numbers and fractions, for the numeric validator.
+# PHASE: 4.2 | REQ: R1 | SPEC: C5
+# CLOSE THESE ISSUES (docs/04): C5

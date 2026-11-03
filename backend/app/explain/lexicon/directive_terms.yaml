@@ -1,0 +1,7 @@
+# FILE: backend/app/explain/lexicon/directive_terms.yaml
+# STATUS: STUB. Documentation only; no code until explicitly requested.
+# ORIGIN: [NEW] Not in the original file list; added by docs/04 review.
+# PURPOSE: Directive phrases.
+# PLANNED LOGIC: MSA and Gulf-dialect patterns (لازم, المفروض) and soft English phrasing.
+# PHASE: 4.2 | REQ: R2 | SPEC: H12
+# CLOSE THESE ISSUES (docs/04): H12

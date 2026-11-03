@@ -1,0 +1,7 @@
+# FILE: backend/synthetic/personas.yaml
+# STATUS: STUB. Documentation only; no code until explicitly requested.
+# ORIGIN: [NEW] Not in the original file list; added by docs/04 review.
+# PURPOSE: Named demo personas.
+# PLANNED LOGIC: At-risk couple, X-linked carrier, VUS, hemizygous male, compound finding, cousins with one carrier, no findings.
+# PHASE: 2.2 | SPEC: docs/phases 2.2
+# CLOSE THESE ISSUES (docs/04): C3, C4

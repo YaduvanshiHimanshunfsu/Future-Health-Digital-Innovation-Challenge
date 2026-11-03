@@ -1,0 +1,39 @@
+# Secrets: never commit these
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Real data must never enter this repo. Synthetic output is generated.
+backend/synthetic/out/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.hypothesis/
+
+# Node and Next.js
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# Models and caches
+.cache/
+models/
+
+# OS and editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
