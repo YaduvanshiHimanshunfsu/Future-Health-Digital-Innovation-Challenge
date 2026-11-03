@@ -1,6 +1,5 @@
 <div align="center">
 
-# Silah · صلة
 
 ### Understand inherited disease risk: privately, kindly, in your own language
 
