@@ -1,0 +1,83 @@
+{
+  "realm": "samvid",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "bruteForceProtected": true,
+  "failureFactor": 5,
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 900,
+  "passwordPolicy": "length(12) and notUsername",
+  "roles": {
+    "realm": [
+      {"name": "individual", "description": "A person using the app for their own results"},
+      {"name": "counsellor", "description": "Accredited genetic counsellor"},
+      {"name": "physician", "description": "Treating physician"},
+      {"name": "program_admin", "description": "Programme manager, aggregate data only"},
+      {"name": "auditor", "description": "Reads the audit trail"},
+      {"name": "lab_service", "description": "Screening lab feed"}
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "samvid-web",
+      "name": "Samvid web app",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "redirectUris": ["http://localhost:3000/*"],
+      "webOrigins": ["http://localhost:3000"],
+      "attributes": {"pkce.code.challenge.method": "S256"},
+      "protocolMappers": [
+        {
+          "name": "samvid-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "samvid-api",
+            "access.token.claim": "true",
+            "id.token.claim": "false"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "samvid-api",
+      "name": "Samvid API (token audience)",
+      "enabled": true,
+      "bearerOnly": true
+    },
+    {
+      "clientId": "samvid-lab",
+      "name": "Screening lab feed",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "${LAB_CLIENT_SECRET}",
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "protocolMappers": [
+        {
+          "name": "samvid-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "samvid-api",
+            "access.token.claim": "true",
+            "id.token.claim": "false"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "service-account-samvid-lab",
+      "enabled": true,
+      "serviceAccountClientId": "samvid-lab",
+      "realmRoles": ["lab_service"]
+    }
+  ]
+}

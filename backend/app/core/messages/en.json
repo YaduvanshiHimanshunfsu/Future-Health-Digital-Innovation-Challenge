@@ -1,0 +1,13 @@
+{
+  "error.bad_request": "The request could not be read.",
+  "error.unauthenticated": "Please sign in again.",
+  "error.forbidden": "You don't have access to this.",
+  "error.not_found": "We couldn't find that.",
+  "error.method_not_allowed": "This action isn't available here.",
+  "error.conflict": "This was changed by someone else. Please reload and try again.",
+  "error.too_large": "That request is too large.",
+  "error.validation": "Some of the information sent isn't valid.",
+  "error.rate_limited": "Too many requests. Please wait a moment and try again.",
+  "error.internal": "Something went wrong on our side. Your data is safe.",
+  "error.unavailable": "This service is briefly unavailable. Please try again soon."
+}

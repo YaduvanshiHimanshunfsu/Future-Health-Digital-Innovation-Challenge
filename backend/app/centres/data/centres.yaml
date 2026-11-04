@@ -1,7 +1,0 @@
-# FILE: backend/app/centres/data/centres.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Not in the original file list; added by docs/04 review.
-# PURPOSE: Centre directory.
-# PLANNED LOGIC: Filled from a public source. Don't invent entries.
-# PHASE: 5.2 | REQ: R2 | SPEC: docs/02 R2
-# CLOSE THESE ISSUES (docs/04): H14

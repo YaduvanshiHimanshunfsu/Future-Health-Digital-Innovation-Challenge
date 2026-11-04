@@ -11,5 +11,4 @@ Option cards and values reflection. Requirement R2.
 | File | Purpose | Phase | Issues |
 |---|---|---|---|
 | `options.py` | Option cards. | 4.4 | S5 |
-| `options_abu_dhabi.yaml` | Options available in Abu Dhabi. | 4.4 | S5 |
 | `values.py` | Values reflection. | 4.4 | H14 |

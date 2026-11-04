@@ -23,6 +23,11 @@ _To be written._
 
 _To be written._
 
-## What we need from DoH
+## What we need from the first pilot partner
 
 _To be written._
+
+
+## How new countries are added
+
+_To be written. See docs/07._

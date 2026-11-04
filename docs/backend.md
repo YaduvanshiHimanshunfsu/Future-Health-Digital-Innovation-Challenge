@@ -1,4 +1,6 @@
-# backend.md — Silah Backend: Complete Engineering Guide
+# backend.md — Samvid Backend: Complete Engineering Guide
+
+> **Scope update (5 Nov 2026):** Samvid is global by design. UAE and Abu Dhabi details in this document describe the first reference pack, not the limit of the product. Supported languages are English, Arabic and Hindi. See [docs/07](07_Global_Design_and_Country_Packs.md).
 
 > **Scope:** everything the backend does (what), how it is built (how) and the reasons behind each choice (why).
 > **Companion docs:** [01_Problem_Understanding.md](01_Problem_Understanding.md) · [02_Solution_Architecture_and_Plan.md](02_Solution_Architecture_and_Plan.md) · [03_Features_Limitations_Roadmap.md](03_Features_Limitations_Roadmap.md)
@@ -67,7 +69,7 @@ flowchart LR
     A["DoH programme admin<br/>(Dashboard)"] -->|HTTPS + OIDC| API
     LAB["Screening lab / M42<br/>(FHIR Genomics feed)"] -->|mTLS + client-credentials| API
 
-    subgraph SILAH["Silah Backend (UAE region)"]
+    subgraph SAMVID["Samvid Backend (UAE region)"]
         API["FastAPI gateway"]
     end
 
@@ -250,8 +252,8 @@ erDiagram
 ```mermaid
 flowchart LR
     subgraph AZ["Azure UAE North / Core42 (data stays in UAE)"]
-        WAF["Front Door / WAF"] --> ACA["Container Apps: silah-api (N replicas)"]
-        ACA --> WRK["Container Apps: silah-worker (Celery)"]
+        WAF["Front Door / WAF"] --> ACA["Container Apps: samvid-api (N replicas)"]
+        ACA --> WRK["Container Apps: samvid-worker (Celery)"]
         ACA --> PGF[("Azure Postgres Flexible<br/>private endpoint, CMK")]
         ACA --> RDS[("Azure Cache for Redis")]
         ACA --> AKV["Key Vault (HSM-backed KEK)"]
@@ -413,7 +415,7 @@ sequenceDiagram
     autonumber
     participant A as Partner A
     participant B as Partner B
-    participant API as Silah API
+    participant API as Samvid API
     participant FGA as OpenFGA
     participant M as Matching service
     A->>API: POST /couples (invite code for B)
@@ -436,7 +438,7 @@ sequenceDiagram
 sequenceDiagram
     autonumber
     participant U as User
-    participant API as Silah API
+    participant API as Samvid API
     participant R as Redis (rate limit)
     participant DB as Postgres
     participant N as Notifier
@@ -519,7 +521,7 @@ The highest matching priority wins, and every case stores its `reasons[]` so it 
 
 ### 8.1 Threat model (STRIDE summary)
 
-| Threat | Example in Silah | Control |
+| Threat | Example in Samvid | Control |
 |---|---|---|
 | **S**poofing | Forged JWT; fake lab posting results | RS256 JWKS verification with `iss`/`aud`/`exp` required; lab via mTLS + client-credentials + JWS-signed bundle |
 | **T**ampering | Edit an audit row; swap ciphertexts between rows | HMAC hash chain plus INSERT-only DB grants and a trigger; AES-GCM with **AAD = row id** |
@@ -608,7 +610,7 @@ The highest matching priority wins, and every case stores its `reasons[]` so it 
 ## 10. Project structure and file table
 
 ```
-silah/
+samvid/
 ├── backend/
 │   ├── pyproject.toml
 │   ├── uv.lock
@@ -650,7 +652,7 @@ silah/
 ├── infra/
 │   ├── docker-compose.yml
 │   ├── openfga/model.fga
-│   ├── keycloak/realm-silah.json
+│   ├── keycloak/realm-samvid.json
 │   └── postgres/init.sql
 ├── .github/workflows/ci.yml
 └── .pre-commit-config.yaml
@@ -754,7 +756,7 @@ silah/
 | `synthetic/generate.py` | Synthetic data | Seeded RNG; FHIR bundles; couples with kinship | ✅ 11.32 |
 | `infra/docker-compose.yml` | Local stack | Ports bound to 127.0.0.1; health checks | ✅ 11.33 |
 | `infra/openfga/model.fga` | Authz model | person/report/couple/case relations | ✅ 11.34 |
-| `infra/keycloak/realm-silah.json` | Realm | Clients (`silah-web` PKCE, `silah-lab` client-credentials), roles | — (export from Keycloak UI) |
+| `infra/keycloak/realm-samvid.json` | Realm | Clients (`samvid-web` PKCE, `samvid-lab` client-credentials), roles | — (export from Keycloak UI) |
 | `.github/workflows/ci.yml` | CI | Lint, type, SAST, deps, secrets, tests, image scan | ✅ 11.35 |
 | `tests/**` | Tests | Property, BOLA, crypto, audit, validators, eval | ✅ 12 |
 
@@ -769,7 +771,7 @@ Files marked "—" follow the same patterns shown and are small.
 ### 11.1 `backend/pyproject.toml`
 ```toml
 [project]
-name = "silah-backend"
+name = "samvid-backend"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
@@ -823,14 +825,14 @@ asyncio_mode = "auto"
 ```dotenv
 # NEVER commit a real .env. Production secrets come from Key Vault / Vault.
 ENV=dev
-DATABASE_URL=postgresql+asyncpg://silah_app:CHANGE_ME@127.0.0.1:5432/silah
+DATABASE_URL=postgresql+asyncpg://samvid_app:CHANGE_ME@127.0.0.1:5432/samvid
 REDIS_URL=redis://127.0.0.1:6379/0
 ALLOWED_HOSTS=["localhost","127.0.0.1"]
 CORS_ORIGINS=["http://localhost:3000"]
 
-OIDC_ISSUER=http://localhost:8080/realms/silah
-OIDC_AUDIENCE=silah-api
-OIDC_JWKS_URL=http://localhost:8080/realms/silah/protocol/openid-connect/certs
+OIDC_ISSUER=http://localhost:8080/realms/samvid
+OIDC_AUDIENCE=samvid-api
+OIDC_JWKS_URL=http://localhost:8080/realms/samvid/protocol/openid-connect/certs
 
 OPENFGA_API_URL=http://127.0.0.1:8081
 OPENFGA_STORE_ID=
@@ -839,7 +841,7 @@ OPENFGA_MODEL_ID=
 KMS_PROVIDER=local                 # local | vault
 LOCAL_KEK_B64=                     # dev only: python -c "import os,base64;print(base64.b64encode(os.urandom(32)).decode())"
 VAULT_ADDR=
-VAULT_TRANSIT_KEY=silah-kek
+VAULT_TRANSIT_KEY=samvid-kek
 
 AUDIT_HMAC_KEY=                    # 32+ random bytes, base64
 INVITE_HMAC_KEY=
@@ -868,7 +870,7 @@ COPY alembic ./alembic
 COPY alembic.ini ./
 
 FROM python:3.12-slim
-RUN useradd --uid 10001 --create-home --shell /usr/sbin/nologin silah
+RUN useradd --uid 10001 --create-home --shell /usr/sbin/nologin samvid
 WORKDIR /app
 COPY --from=build /src/.venv /app/.venv
 COPY --from=build /src/app ./app
@@ -909,9 +911,9 @@ def upgrade() -> None:
     #     invitation, case, pathway_step, kb_chunk with Vector(1024), events) ...
 
     # Defence in depth: the app role can only INSERT/SELECT audit rows.
-    op.execute("REVOKE UPDATE, DELETE, TRUNCATE ON audit_log FROM silah_app")
-    op.execute("GRANT INSERT, SELECT ON audit_log TO silah_app")
-    op.execute("GRANT USAGE ON SEQUENCE audit_log_seq_seq TO silah_app")
+    op.execute("REVOKE UPDATE, DELETE, TRUNCATE ON audit_log FROM samvid_app")
+    op.execute("GRANT INSERT, SELECT ON audit_log TO samvid_app")
+    op.execute("GRANT USAGE ON SEQUENCE audit_log_seq_seq TO samvid_app")
     op.execute("""
         CREATE OR REPLACE FUNCTION audit_log_immutable() RETURNS trigger AS $$
         BEGIN RAISE EXCEPTION 'audit_log is append-only'; END; $$ LANGUAGE plpgsql;
@@ -965,7 +967,7 @@ async def lifespan(app: FastAPI):
 
 is_prod = settings.env == "prod"
 app = FastAPI(
-    title="Silah API",
+    title="Samvid API",
     version="0.1.0",
     lifespan=lifespan,
     docs_url=None if is_prod else "/docs",
@@ -1007,7 +1009,7 @@ class Settings(BaseSettings):
     max_body_bytes: int = 1_000_000
 
     oidc_issuer: AnyHttpUrl
-    oidc_audience: str = "silah-api"
+    oidc_audience: str = "samvid-api"
     oidc_jwks_url: AnyHttpUrl
 
     openfga_api_url: str
@@ -1017,7 +1019,7 @@ class Settings(BaseSettings):
     kms_provider: Literal["local", "vault"] = "local"
     local_kek_b64: SecretStr | None = None
     vault_addr: str | None = None
-    vault_transit_key: str = "silah-kek"
+    vault_transit_key: str = "samvid-kek"
 
     audit_hmac_key: SecretStr
     invite_hmac_key: SecretStr
@@ -1238,7 +1240,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-log = logging.getLogger("silah.errors")
+log = logging.getLogger("samvid.errors")
 
 
 def register_error_handlers(app: FastAPI) -> None:
@@ -1989,11 +1991,15 @@ from app.explain.state import Boundary
 
 _ORDER: dict[Boundary, int] = {"EDUCATION": 0, "DECISION_SUPPORT": 1, "CLINICAL_ADVICE": 2, "DISTRESS": 3}
 
-_DISTRESS = re.compile(r"(suicid|kill myself|end my life|hopeless|انتحار|أنهي حياتي|لا أريد العيش)", re.I)
+# Arabic patterns are not listed in this document. A native Arabic reviewer supplies them through
+# the lexicon files. Meanings to cover: suicide, "end my life", "I don't want to live".
+_DISTRESS = re.compile(r"(suicid|kill myself|end my life|hopeless)", re.I)
 _CLINICAL = re.compile(
     r"(should i|should we|which option|is my (baby|pregnancy)|am i (sick|ill)|termination|abortion|"
-    r"what do you recommend|هل يجب|ماذا تنصح|حامل|إجهاض|هل طفلي|هل أنا مريض)", re.I)
-_DECISION = re.compile(r"(options?|ivf|pgt|choices?|خيارات|أطفال الأنابيب|الفحص الجيني للأجنة)", re.I)
+    r"what do you recommend)", re.I)
+# Arabic patterns come from the reviewed lexicon. Cover: "should I", "what do you advise", "abortion",
+# "is my child", "am I ill". Match pregnancy in context only: hamil means both pregnant and carrier (C6).
+_DECISION = re.compile(r"(options?|ivf|pgt|choices?)", re.I)   # Arabic: "options", "IVF", "embryo genetic testing", from the lexicon
 
 _ROUTER_PROMPT = (
     "Classify the user's message into exactly one label: EDUCATION, DECISION_SUPPORT, "
@@ -2094,7 +2100,7 @@ async def retrieve(db: AsyncSession, *, question: str, lang: str, level: str,
 ```
 ```text
 # app/explain/prompts/system_en.txt
-You are Silah, an educational assistant about inherited (genetic) carrier results.
+You are Samvid, an educational assistant about inherited (genetic) carrier results.
 Rules you must always follow:
 1. Use ONLY the numbers in FACTS. Never calculate, round differently, or invent numbers.
 2. Never tell the person what to do (no "you should", "you must", "I recommend").
@@ -2229,7 +2235,7 @@ import re
 
 from app.risk_engine.types import RiskFact
 
-_AR_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩٫", "0123456789.")
+_AR_DIGITS = str.maketrans("\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669\u066b", "0123456789.")
 _NUM = re.compile(r"\d+(?:[.,]\d+)?")
 _EN_NUMBER_WORDS = re.compile(r"\b(one|two|three|four|five|ten|half|quarter|third)\b", re.I)
 SAFE_NUMBERS = {"100", "1000", "570", "840", "24", "1"}   # icon-array sizes, panel facts, "1 in N"
@@ -2266,11 +2272,9 @@ en:
   - {term: "unfit", use: "(remove)"}
   - {term: "suffer from", use: "have"}
 ar:
-  - {term: "دم فاسد", use: "(حذف)"}
-  - {term: "معيب", use: "يحمل تغيرا"}
-  - {term: "غير متوافقين", use: "يتشاركان نتيجة جينية"}
-  - {term: "مشوه", use: "(حذف)"}
-  - {term: "عاهة", use: "(حذف)"}
+  # A native-speaker reviewer supplies the Arabic terms and neutral replacements. Meanings to cover:
+  # "bad blood" (dam fasid), "defective" (ma'ib), "incompatible" (ghayr mutawafiqayn),
+  # "deformed" (mushawwah), "disability" (ahah)
 ```
 ```python
 # app/explain/validators/lexicon.py
@@ -2280,13 +2284,13 @@ from pathlib import Path
 
 import yaml
 
-_DIACRITICS = re.compile(r"[ؗ-ًؚ-ْـ]")   # harakat + tatweel
+_DIACRITICS = re.compile("[\u0617-\u061A\u064B-\u0652\u0640]")   # harakat + tatweel
 
 
 def normalise_ar(text: str) -> str:
     text = _DIACRITICS.sub("", text)
-    return (text.replace("أ", "ا").replace("إ", "ا").replace("آ", "ا")
-                .replace("ى", "ي").replace("ة", "ه"))
+    return (text.replace("\u0623", "\u0627").replace("\u0625", "\u0627").replace("\u0622", "\u0627")
+                .replace("\u0649", "\u064a").replace("\u0629", "\u0647"))
 
 
 @lru_cache
@@ -2309,7 +2313,7 @@ import re
 _EN = re.compile(r"\b(you (should|must|need to|have to|ought to)|i (recommend|advise|suggest)|"
                  r"the best (option|choice) is|don'?t (marry|get married|have children)|"
                  r"we recommend)\b", re.I)
-_AR = re.compile(r"(يجب عليك|يجب عليكما|ننصحك|أنصحك|الأفضل أن|لا تتزوج|عليكما أن|من الأفضل)")
+_AR = re.compile(AR_DIRECTIVE_PATTERN)   # From the reviewed lexicon. Cover: "you must", "we advise you", "it is better to", "don't marry", plus Gulf forms (H12)
 
 
 def check(text: str, lang: str) -> list[str]:
@@ -2321,7 +2325,7 @@ import re
 
 _EN = re.compile(r"\b(your (child|baby) will (have|be born)|you (have|are suffering from) the disease|"
                  r"you are (sick|ill|affected))\b", re.I)
-_AR = re.compile(r"(طفلك سيصاب|سيولد طفلك|أنت مريض|أنت مصاب)")
+_AR = re.compile(AR_DIAGNOSIS_PATTERN)   # From the reviewed lexicon. Cover: "your child will get", "your child will be born", "you are ill", "you are affected"
 
 
 def check(text: str, lang: str) -> list[str]:
@@ -2341,7 +2345,7 @@ def check(text: str, lang: str, level: str) -> list[str]:
     if lang == "en":
         grade = textstat.flesch_kincaid_grade(text)
         return [f"too_complex:{grade:.1f}"] if grade > _MAX_EN_GRADE[level] else []
-    sentences = [s for s in re.split(r"[.!؟?]\s*", text) if s.strip()]
+    sentences = [s for s in re.split(r"[.!\u061f?]\s*", text) if s.strip()]
     avg = sum(len(s.split()) for s in sentences) / max(1, len(sentences))
     return ["too_complex_ar"] if avg > _MAX_AR_WORDS_PER_SENTENCE[level] else []   # V2: OSMAN metric
 ```
@@ -2444,10 +2448,10 @@ class LocalKek:
 
     def wrap(self, dek: bytes) -> bytes:
         nonce = os.urandom(12)
-        return nonce + self._aead.encrypt(nonce, dek, b"silah-dek")
+        return nonce + self._aead.encrypt(nonce, dek, b"samvid-dek")
 
     def unwrap(self, wrapped: bytes) -> bytes:
-        return self._aead.decrypt(wrapped[:12], wrapped[12:], b"silah-dek")
+        return self._aead.decrypt(wrapped[:12], wrapped[12:], b"samvid-dek")
 
 
 class VaultTransitKek:
@@ -2573,7 +2577,7 @@ from openfga_sdk.client.models import ClientCheckRequest, ClientTuple, ClientWri
 
 from app.core.config import Settings
 
-log = logging.getLogger("silah.authz")
+log = logging.getLogger("samvid.authz")
 _NOT_FOUND = HTTPException(status.HTTP_404_NOT_FOUND, "Not found")
 
 
@@ -3321,7 +3325,7 @@ async def create(body: InviteIn, person=Depends(current_person), db=Depends(get_
     token = await invitations.create(db, sender=person, relation_type=body.relation_type,
                                      disclose_identity=body.disclose_identity)
     await db.commit()
-    return InviteOut(link=f"https://silah.example/i/{token}")
+    return InviteOut(link=f"https://samvid.example/i/{token}")
 
 
 @router.get("/{token}")   # public; IP-based rate limit at WAF/gateway
@@ -3415,12 +3419,12 @@ services:
   postgres:
     image: pgvector/pgvector:pg16
     environment:
-      POSTGRES_DB: silah
-      POSTGRES_USER: silah_owner
+      POSTGRES_DB: samvid
+      POSTGRES_USER: samvid_owner
       POSTGRES_PASSWORD: ${PG_OWNER_PASSWORD:?set in .env}
     volumes: [pgdata:/var/lib/postgresql/data, ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro]
     ports: ["127.0.0.1:5432:5432"]            # never expose DB publicly
-    healthcheck: {test: ["CMD-SHELL", "pg_isready -U silah_owner"], interval: 5s, retries: 10}
+    healthcheck: {test: ["CMD-SHELL", "pg_isready -U samvid_owner"], interval: 5s, retries: 10}
 
   redis:
     image: redis:7-alpine
@@ -3440,14 +3444,14 @@ services:
     image: openfga/openfga:latest      # pin a version tag before the demo
     command: migrate
     environment: {OPENFGA_DATASTORE_ENGINE: postgres,
-                  OPENFGA_DATASTORE_URI: "postgres://silah_owner:${PG_OWNER_PASSWORD}@postgres:5432/openfga?sslmode=disable"}
+                  OPENFGA_DATASTORE_URI: "postgres://samvid_owner:${PG_OWNER_PASSWORD}@postgres:5432/openfga?sslmode=disable"}
     depends_on: {postgres: {condition: service_healthy}}
 
   openfga:
     image: openfga/openfga:latest
     command: run
     environment: {OPENFGA_DATASTORE_ENGINE: postgres,
-                  OPENFGA_DATASTORE_URI: "postgres://silah_owner:${PG_OWNER_PASSWORD}@postgres:5432/openfga?sslmode=disable",
+                  OPENFGA_DATASTORE_URI: "postgres://samvid_owner:${PG_OWNER_PASSWORD}@postgres:5432/openfga?sslmode=disable",
                   OPENFGA_PLAYGROUND_ENABLED: "false"}
     depends_on: [openfga-migrate]
     ports: ["127.0.0.1:8081:8080"]
@@ -3464,7 +3468,7 @@ services:
 
 volumes: {pgdata: {}}
 ```
-`infra/postgres/init.sql` creates the `openfga` database and a **least-privilege** `silah_app` role (CRUD on app tables only; `INSERT, SELECT` on `audit_log`).
+`infra/postgres/init.sql` creates the `openfga` database and a **least-privilege** `samvid_app` role (CRUD on app tables only; `INSERT, SELECT` on `audit_log`).
 
 ### 11.34 `infra/openfga/model.fga`
 ```
@@ -3531,9 +3535,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: docker build -t silah-api backend
+      - run: docker build -t samvid-api backend
       - uses: aquasecurity/trivy-action@0.24.0
-        with: {image-ref: silah-api, severity: "CRITICAL,HIGH", exit-code: "1"}
+        with: {image-ref: samvid-api, severity: "CRITICAL,HIGH", exit-code: "1"}
 ```
 
 ---
@@ -3604,13 +3608,13 @@ import pytest
 from app.explain.validators import directive, lexicon
 
 
-@pytest.mark.parametrize("text,lang", [("You should do IVF.", "en"), ("يجب عليك إجراء الفحص", "ar")])
+@pytest.mark.parametrize("text,lang", [("You should do IVF.", "en"), (AR_DIRECTIVE_SAMPLE, "ar")])   # sample written by an Arabic reviewer
 def test_directive_blocked(text, lang):
     assert directive.check(text, lang)
 
 
 def test_stigma_blocked_ar_with_diacritics():
-    assert lexicon.check("هذا دمٌ فاسد", "ar")
+    assert lexicon.check(AR_STIGMA_SAMPLE_WITH_DIACRITICS, "ar")   # sample written by an Arabic reviewer
 ```
 
 ---
@@ -3623,7 +3627,7 @@ cd infra && cp ../backend/.env.example ../backend/.env   # fill secrets
 docker compose up -d postgres redis keycloak openfga-migrate openfga
 
 # 2. OpenFGA store + model (prints store_id / model_id → put into .env)
-fga store create --name silah && fga model write --file openfga/model.fga
+fga store create --name samvid && fga model write --file openfga/model.fga
 
 # 3. Backend
 cd ../backend

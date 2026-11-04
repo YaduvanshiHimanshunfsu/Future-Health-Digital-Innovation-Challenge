@@ -4,7 +4,7 @@
 
 **Rules:** Tests in the phase checks must exist before a sub-phase is called done.
 
-**Status:** stubs only. No code until requested.
+**Status:** foundation tests are real, and other files are stubs until their phase.
 
 ## Sub-folders
 

@@ -2,7 +2,7 @@
 
 Golden and red-team sets. `.jsonl` stubs are empty because JSON Lines can't hold comments. Each line will be one case: question, language, expected label, key facts.
 
-**Rules:** Arabic items are written by Arabic speakers. Report per language.
+**Rules:** Arabic and Hindi items are written by native speakers. Report per language.
 
 **Status:** stubs only. No code until requested.
 

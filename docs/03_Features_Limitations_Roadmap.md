@@ -1,12 +1,14 @@
 # 03 — Features, Limitations & Future Advancements
 
+> **Scope update (5 Nov 2026):** Samvid is global by design. UAE and Abu Dhabi details in this document describe the first reference pack, not the limit of the product. Supported languages are English, Arabic and Hindi. See [docs/07](07_Global_Design_and_Country_Packs.md).
+
 > Companion to [01_Problem_Understanding.md](01_Problem_Understanding.md) and [02_Solution_Architecture_and_Plan.md](02_Solution_Architecture_and_Plan.md).
 
 ---
 
 ## 1. Feature list (mapped to challenge requirements)
 
-Legend: **MVP** = built for the 15 Nov submission · **V2** = after selection / pilot · **R1–R6** = the challenge requirements.
+Legend: **MVP** = built for the 20 Nov submission · **V2** = after selection / pilot · **R1–R6** = the challenge requirements.
 
 ### 1.1 For individuals and couples
 | # | Feature | Req | Stage | Description |
@@ -14,7 +16,7 @@ Legend: **MVP** = built for the 15 Nov submission · **V2** = after selection / 
 | F1 | **Plain-language result card** | R1 | MVP | "What your result means" in Arabic or English at 3 literacy levels, opening with *"Being a carrier is not an illness."* |
 | F2 | **Couple risk explainer** | R1 | MVP | Per-pregnancy risk with a 100-person icon array, a Punnett square, and a "chance has no memory" explanation |
 | F3 | **Uncertainty panel** | R1 | MVP | Residual risk, what the panel does *not* test, the meaning of a VUS, and *risk ≠ diagnosis* |
-| F4 | **Ask Silah (AI companion)** | R1/R3 | MVP | 24/7 chat grounded in curated content. Numbers come only from the risk engine, and every answer shows its **boundary label** (education / decision support / "this needs a counsellor") |
+| F4 | **Ask Samvid (AI companion)** | R1/R3 | MVP | 24/7 chat grounded in curated content. Numbers come only from the risk engine, and every answer shows its **boundary label** (education / decision support / "this needs a counsellor") |
 | F5 | **Voice mode** | R1/R6 | MVP (basic) / V2 | Listen to explanations in a Gulf-Arabic voice and ask questions by voice, for low-literacy users |
 | F6 | **Options explorer** | R2 | MVP | All clinically appropriate paths shown with equal weight: natural conception (± prenatal diagnosis), IVF + PGT-M (Al Amal funding info), donor options, adoption, more testing, time to think |
 | F7 | **Values reflection tool** | R2 | MVP | Private sliders and prompts. The results are reflected back to the user and **never** turned into a recommendation |
@@ -101,7 +103,7 @@ Legend: **MVP** = built for the 15 Nov submission · **V2** = after selection / 
 | Trust and uptake among Emiratis | Co-design with Emirati users, endorsement by DoH and counsellors, culturally grounded branding |
 | Counsellor workload rises because escalations increase | Triage priorities, co-pilot summaries, and AI handling of the basic education that currently takes counsellor time |
 
-### 3.4 Honest scope boundaries (what Silah does **not** do)
+### 3.4 Honest scope boundaries (what Samvid does **not** do)
 - It does not diagnose disease or interpret raw genomes.
 - It does not recommend whether to marry, conceive or use any reproductive option.
 - It does not contact relatives without the individual's explicit action.
@@ -114,7 +116,7 @@ Legend: **MVP** = built for the 15 Nov submission · **V2** = after selection / 
 ### Near term (pilot, 3–6 months)
 - **Real integration**: M42 / Emirati Genome Programme report feed, Malaffi FHIR, booking systems, **UAE PASS** login.
 - **Co-designed content** with Emirati focus groups (men, women, elders, low-literacy groups) and DoH counsellors.
-- **Clinical validation study**: a randomised comparison of Silah plus usual care against usual care, measuring MMIC, SURE, GCOS-24, uptake and time to referral (IRB-approved).
+- **Clinical validation study**: a randomised comparison of Samvid plus usual care against usual care, measuring MMIC, SURE, GCOS-24, uptake and time to referral (IRB-approved).
 - **More languages** for resident communities (Urdu, Hindi, Malayalam, Tagalog, Bengali), useful for wider pre-conception screening.
 - **WhatsApp channel** (the dominant messaging app in the UAE) with the same guardrails.
 
@@ -131,7 +133,7 @@ Legend: **MVP** = built for the 15 Nov submission · **V2** = after selection / 
 - **National cascade screening network**: privacy-preserving, consent-driven invitations at population scale, with a measurable rise in screening among relatives.
 - **Newborn and prenatal continuity**: link premarital findings to newborn screening and prenatal care, with consent.
 - **Population-health intelligence for DoH**: de-identified, differentially private maps of where comprehension or uptake lag, to target outreach (not to target families).
-- **Open standard**: publish the Silah safety framework (boundary labels, validators, metrics) as an open guideline for AI genetic education in Arabic.
+- **Open standard**: publish the Samvid safety framework (boundary labels, validators, metrics) as an open guideline for AI genetic education in Arabic.
 - **Regional expansion**: adapt to KSA, Qatar, Oman, Bahrain and Kuwait premarital programmes with local panels and dialects.
 
 ---
@@ -143,10 +145,10 @@ Legend: **MVP** = built for the 15 Nov submission · **V2** = after selection / 
 | Numeric accuracy of risk statements | 100% | 100% |
 | Stigmatising or directive outputs | 0 | < 0.1%, all reviewed |
 | Correct escalation of clinical-advice questions | ≥ 95% | ≥ 98% |
-| Teach-back comprehension improvement (pre → post) | +30 pp (simulated) | +25 pp vs usual care |
+| Teach-back comprehension improvement (pre → post) | Measured in a small real test, with no simulated figures | +25 pp vs usual care |
 | Counselling uptake among at-risk couples | n/a | ≥ 90% |
 | Median time from result to counselling (at-risk) | Tracked | ≤ 7 days |
-| AR vs EN comprehension gap | < 5 pp | < 5 pp |
+| Comprehension gap between languages | < 5 pp | < 5 pp |
 | Low vs high literacy gap | < 10 pp | < 10 pp |
 | PII sent to the LLM | 0 (automated test) | 0 |
 | Consent revocation latency | < 1 s | < 1 s |

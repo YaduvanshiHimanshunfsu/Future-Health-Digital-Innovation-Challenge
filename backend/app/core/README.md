@@ -4,7 +4,7 @@ Config, authentication, middleware, logging, errors, rate limits, i18n.
 
 **Rules:** Secure by default. No PHI in logs or errors.
 
-**Status:** stubs only. No code until requested.
+**Status:** built and tested.
 
 ## Files
 

@@ -1,0 +1,7 @@
+# FILE: backend/packs/ae-abu-dhabi/services.yaml
+# STATUS: STUB. Documentation only; no code until explicitly requested.
+# ORIGIN: [NEW] Added for the global design, docs/07.
+# PURPOSE: Local care services. Abu Dhabi reference pack. Pending clinical and legal review.
+# PLANNED LOGIC: Centres, qualified human service type, tele-genetics, funding notes. Public data, dated. Don't invent entries.
+# PHASE: 2.6 | SPEC: docs/07
+# CLOSE THESE ISSUES (docs/04): G3, G7

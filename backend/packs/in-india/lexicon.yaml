@@ -1,0 +1,7 @@
+# FILE: backend/packs/in-india/lexicon.yaml
+# STATUS: STUB. Documentation only; no code until explicitly requested.
+# ORIGIN: [NEW] Added for the India pack and Hindi, docs/07.
+# PURPOSE: Word list selection. India pack, labelled illustrative. Not reviewed.
+# PLANNED LOGIC: Hindi and English lists, written with native speakers. Consider words for clan and caste.
+# PHASE: 2.6 | SPEC: docs/07
+# CLOSE THESE ISSUES (docs/04): G1, G9

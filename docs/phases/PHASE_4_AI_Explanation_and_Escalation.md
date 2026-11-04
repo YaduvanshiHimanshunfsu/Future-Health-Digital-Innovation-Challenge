@@ -2,7 +2,7 @@
 
 **Dates:** 12–14 Nov 2026 · **Build steps:** `backend.md` §9 steps 17–21 · **Requirements:** R1, R2, R3
 
-**Phase goal:** people get safe, non-directive answers in Arabic and English, and anything complex reaches a real counsellor.
+**Phase goal:** people get safe, non-directive answers in English, Arabic and Hindi, and anything complex reaches a real counsellor.
 
 **Build order matters:** validators come before LLM output, and templates come before the LLM, so the safety net exists first.
 
@@ -13,7 +13,7 @@
 **Goal:** a small body of accurate, licensed, versioned content.
 
 **Objectives**
-- O4.1.1 T1 conditions covered in Arabic and English at the agreed levels.
+- O4.1.1 T1 conditions covered in English, Arabic and Hindi at the agreed levels.
 - O4.1.2 Every document shows source, version and review status.
 - O4.1.3 Reuse rights checked.
 
@@ -23,16 +23,19 @@
 - Embed and search; keep the embedding model out of the event loop and available offline.
 
 **Files:** `backend/app/kb/content/**`, `backend/app/kb/embedder.py`, `backend/app/kb/ingest.py`, `docs/clinical/content_review_log.md`
-**Issues to close:** M7, M11, H13, S8 (labels), part of H15
+**Issues to close:** M7, M11, H13, G9, S8 (labels), part of H15
 
 **Cross-verification**
 | ID | Check | Evidence |
 |---|---|---|
 | V4.1.1 | Each file has source, reviewer status and version | Lint run on front matter |
 | V4.1.2 | Retrieval never returns another language or level | Test |
-| V4.1.3 | Arabic content is checked by a native speaker | Name in the review log |
+| V4.1.3 | Arabic and Hindi content is checked by native speakers | Name in the review log |
 | V4.1.4 | Clinician reviewed T1 content, or it's labelled as a draft | Review log |
 | V4.1.5 | Licence noted for each source | Table in the review log |
+| V4.1.6 | A coverage table shows T1 conditions complete in each language at the Simple level | Review log |
+| V4.1.7 | Risk wording is set per condition, allowing for reduced penetrance | Review log |
+| V4.1.8 | Faith and culture content is per pack and on request only, and is reviewed or left out | Review log |
 
 ---
 
@@ -42,26 +45,27 @@
 
 **Objectives**
 - O4.2.1 Numbers are tied to meaning, not merely present.
-- O4.2.2 Validators work as well in Arabic and Gulf dialect as in English.
+- O4.2.2 Validators work as well in each pack's languages and dialects as in English, including Arabic, Gulf dialect and Hindi.
 - O4.2.3 Normal text isn't over-blocked.
 - O4.2.4 Failure falls back safely.
 
 **Work** (step 18)
-- Fact-ID placeholder approach, approved general-facts set, Arabic number words.
+- Fact-ID placeholder approach, approved general-facts set, Arabic and Hindi number words.
 - Lexicon and directive patterns from 1.2, plus an LLM judge.
 - Add "you are healthy" style certainty to the diagnosis checks.
 
 **Files:** `backend/app/explain/validators/*`, `backend/app/explain/lexicon/terms.yaml`
-**Issues to close:** **C5**, H12, H13
+**Issues to close:** **C5**, H12, H13, M4, G1
 
 **Cross-verification**
 | ID | Check | Evidence |
 |---|---|---|
 | V4.2.1 | Swapped 25/50 text is blocked | `tests/unit/test_validators.py` (passes wrongly in the original spec) |
-| V4.2.2 | نصف أطفالكما سيصابون is blocked | Same |
+| V4.2.2 | *nisf atfalikuma sayusabun* ("half of your children will be affected") is blocked | Same |
 | V4.2.3 | "You carry one changed copy" passes | Same |
-| V4.2.4 | `لازم تسوون` and "It would be best to" are flagged | Same |
+| V4.2.4 | `lazim tsawwun` and "It would be best to" are flagged | Same |
 | V4.2.5 | "You are healthy" is flagged | Same |
+| V4.2.8 | Hindi stigma, directive and number-word samples, written by a Hindi speaker, are handled correctly | Same |
 | V4.2.6 | Over-blocking on approved content is under an agreed limit | Rate reported from a clean sample |
 | V4.2.7 | Fallback templates themselves pass all validators | Test over every template |
 
@@ -72,14 +76,14 @@
 **Goal:** each question is correctly classified, and the pipeline can't skip safety steps.
 
 **Objectives**
-- O4.3.1 `حامل` is handled correctly.
+- O4.3.1 `hamil` is handled correctly.
 - O4.3.2 Clinical questions are refused kindly with a booking offer.
 - O4.3.3 Distress is handled immediately.
 - O4.3.4 The LLM has no tools, sees no PII, and holds no DB transaction.
 - O4.3.5 Template mode works with no LLM.
 
 **Work** (step 19)
-- Router with reviewed Arabic patterns and a conservative merge.
+- Router with reviewed Arabic and Hindi patterns and a conservative merge.
 - Graph: redact, route, retrieve, generate, validate, fallback.
 - Close DB work before LLM calls; set one overall deadline.
 - Respond once validated (no token streaming).
@@ -91,8 +95,8 @@
 **Cross-verification**
 | ID | Check | Evidence |
 |---|---|---|
-| V4.3.1 | ماذا يعني أنني حامل للجين؟ routes to Education | Eval set (fails in the original spec) |
-| V4.3.2 | أنا حامل في الشهر الثالث routes to Clinical | Eval set |
+| V4.3.1 | *madha ya'ni annani hamil lil-jin?* ("What does it mean that I'm a carrier?") routes to Education | Eval set (fails in the original spec) |
+| V4.3.2 | *ana hamil fi al-shahr al-thalith* ("I'm three months pregnant") routes to Clinical | Eval set |
 | V4.3.3 | Clinical routing recall is at least 95% in **each** language | Eval report |
 | V4.3.4 | Distress shows verified contacts in one response and alerts a human | Test |
 | V4.3.5 | A 30 s LLM stall returns a template, with no DB error | Test using a slow stub |
@@ -100,6 +104,10 @@
 | V4.3.7 | Works with LLM provider set to `template` | Test |
 | V4.3.8 | VUS and X-linked users never get the general carrier template | Test |
 | V4.3.9 | Answers render as plain text | Frontend test |
+| V4.3.10 | A Hindi question about carrier status gets an education answer, and a Hindi pregnancy question goes to a human | Eval set |
+| V4.3.11 | The LLM client has no tools, and no database transaction is open during a call | Test |
+| V4.3.12 | A coercion message reaches a human, in each language | Eval set |
+| V4.3.13 | No answer text reaches the client before validation finishes | Test |
 
 ---
 
@@ -123,6 +131,7 @@
 | ID | Check | Evidence |
 |---|---|---|
 | V4.4.1 | Output equals the signed-off table for each scenario | Test |
+| V4.4.5 | Switching pack changes the options, using each pack's signed-off table | Test |
 | V4.4.2 | All cards have the same fields, with no rank or recommended badge | Test, screenshot |
 | V4.4.3 | Changing values doesn't change option content or order | Property test |
 | V4.4.4 | A counsellor sees values only after the user shares | API test |
@@ -146,7 +155,7 @@
 - Console screens.
 
 **Files:** `backend/app/triage/*`, `backend/app/api/v1/cases.py`, `frontend/app/[locale]/(counsellor)/`
-**Issues to close:** **C8, C9**, part of H14
+**Issues to close:** **C8, C9**, G7, part of H14
 
 **Cross-verification**
 | ID | Check | Evidence |
@@ -156,13 +165,15 @@
 | V4.5.3 | Other counsellors get 404 on a claimed case | `test_bola.py` |
 | V4.5.4 | Priority only moves up automatically | Test |
 | V4.5.5 | A counsellor rates the summary useful and the rules sensible | Note, or a stated limitation |
+| V4.5.6 | Triage runs from results, from the match and from chat | Test for each trigger |
+| V4.5.7 | The summary is marked "verify before use" and holds only structured facts | Test |
 
 ---
 
 ## Phase 4 exit gate
 
 - [ ] Arabic "carrier" question gets an education answer on screen
-- [ ] Clinical question gets a refusal and booking offer, in both languages
+- [ ] Clinical question gets a refusal and booking offer, in all three languages
 - [ ] Chat works with the LLM switched off
 - [ ] P2 case reaches a counsellor's screen
 - [ ] Early eval run done, with failures logged

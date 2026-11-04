@@ -4,7 +4,7 @@ ORM base and sessions.
 
 **Rules:** Never keep a transaction open across an LLM call (H9).
 
-**Status:** stubs only. No code until requested.
+**Status:** built and tested.
 
 ## Files
 

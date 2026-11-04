@@ -6,10 +6,6 @@ Screening and counselling finder for R2. Added by review item H14.
 
 **Status:** stubs only. No code until requested.
 
-## Sub-folders
-
-- `data/`
-
 ## Files
 
 | File | Purpose | Phase | Issues |

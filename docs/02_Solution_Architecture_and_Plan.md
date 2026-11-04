@@ -1,5 +1,7 @@
 # 02 — Feasibility, Technical Design, Tech Stack & 6-Phase Plan
 
+> **Scope update (5 Nov 2026):** Samvid is global by design. UAE and Abu Dhabi details in this document describe the first reference pack, not the limit of the product. Supported languages are English, Arabic and Hindi. See [docs/07](07_Global_Design_and_Country_Packs.md).
+
 > Companion to [01_Problem_Understanding.md](01_Problem_Understanding.md). This document is backend-first. The frontend is generated with **Google Stitch** (or a similar tool) and wired to the backend through a typed OpenAPI client.
 
 ---
@@ -13,7 +15,7 @@
 | **Clinical safety** | ⚠ Medium (managed) | LLMs make errors (see JAMIA 2024). Mitigation: **the LLM never computes risk**. All numbers come from a deterministic, tested engine. The LLM only *phrases* pre-verified facts, and validators check every output. Clinical advice is always routed to humans. |
 | **Regulatory** | ⚠ Medium | UAE Federal Law No. 2 of 2019 (health ICT) requires **in-country data storage** (Art. 13). The UAE PDPL and DoH **ADHICS** cybersecurity standard also apply. Design: UAE-region hosting (Azure UAE North / Core42), encryption, audit, consent. A pilot would need DoH approval. |
 | **Cultural** | ⚠ Medium (core differentiator) | Requires Arabic-first content, a non-stigmatising lexicon and non-directive framing. We build a **lexicon guard** and plan validation with Emirati users and counsellors. |
-| **Time (16 days to 15 Nov 2026)** | ✅ Feasible for an MVP | Scope: a working backend with all six requirements demonstrable end-to-end on synthetic data, plus Stitch UI screens and a metrics dashboard. |
+| **Time (5 to 20 Nov 2026)** | ⚠ Tight, feasible with scope tiers | Scope: a working backend with all six requirements demonstrable end-to-end on synthetic data, plus Stitch UI screens and a metrics dashboard. |
 | **Commercial / deployment** | ✅ Strong | Plugs into existing DoH screening, Malaffi and Al Amal pathways, and lowers counsellor workload, so there is a clear pilot path. |
 
 ---
@@ -32,7 +34,7 @@ Each existing approach solves one part of the problem. We take the strongest ide
 | **Dynamic consent / ReBAC** | Granular, revocable, per-relative, per-field sharing with a full audit trail | Blanket "I agree" consent |
 | **Cascade testing tools (family letters)** | **Anonymous relative invitations** ("someone in your family suggests free screening") | Naming the index person without their consent |
 
-### The merged concept: **Silah**, a privacy-first "genetic result companion"
+### The merged concept: **Samvid**, a privacy-first "genetic result companion"
 
 ```
          ┌──────────────── Deterministic core (safe) ────────────────┐
@@ -251,7 +253,7 @@ GET  /v1/analytics/metrics?stratify=lang,literacy                         [progr
 
 ### 4.3 Repository layout
 ```
-silah/
+samvid/
 ├── backend/
 │   ├── app/
 │   │   ├── api/            # FastAPI routers (v1)
@@ -352,9 +354,9 @@ silah/
 
 ## 7. Project plan: 6 phases (backend-focused)
 
-**Timeline:** 31 Oct to 15 Nov 2026 (16 days). The frontend runs as a **parallel track** with Stitch.
+> **Superseded on 5 Nov 2026.** Current dates, goals and checks are in [docs/phases/](phases/00_PHASE_OVERVIEW.md). This section is kept for its task detail only.
 
-### Phase 1: Foundation & design (31 Oct – 1 Nov, 2 days)
+### Phase 1: Foundation & design
 - Finalise scope, personas and user journeys (individual, couple, counsellor, admin).
 - Repo, Docker Compose (Postgres + pgvector, Redis, Keycloak, OpenFGA, HAPI FHIR), CI (lint, tests).
 - FastAPI skeleton, config, logging, i18n framework (AR/EN), error model.
@@ -362,7 +364,7 @@ silah/
 - **Deliverables:** running stack, OpenAPI skeleton, ERD, threat model (STRIDE) v1.
 - *Frontend track:* create Stitch designs for ~10 key screens and export Tailwind/HTML.
 
-### Phase 2: Genomic data & deterministic risk engine (2 – 4 Nov, 3 days)
+### Phase 2: Genomic data & deterministic risk engine
 - **Synthetic data generator**: ~2,000 synthetic people and 1,000 couples, with carrier frequencies for ~30 panel genes, optional consanguinity labels (first or second cousin), and VUS and X-linked cases. Output as FHIR Genomics bundles.
 - Ingestion: FHIR/JSON → `carrier_finding` (encrypted fields).
 - Risk engine: AR, X-linked, residual, untested partner, consanguinity, and VUS handling. Produces `RiskFact` objects with citations.
@@ -370,7 +372,7 @@ silah/
 - Visual specs: icon-array and Punnett JSON.
 - **Deliverables:** `/reports:ingest`, `/me/results`, `/me/risk` endpoints; 100% coverage on risk_engine.
 
-### Phase 3: Privacy fabric, consent & family sharing (5 – 7 Nov, 3 days)
+### Phase 3: Privacy fabric, consent & family sharing
 - Keycloak roles; OpenFGA model (owner, partner, counsellor, relatives).
 - Consent ledger (create, scope, expire, revoke) with DUO purpose codes.
 - Couple linking and **PSI couple-only match** (OpenMined PSI).
@@ -378,7 +380,7 @@ silah/
 - Field encryption with Vault; Presidio redaction service; `/me/access-log`; break-glass flow.
 - **Deliverables:** privacy test suite (unauthorised access is denied, revocation takes effect at once, PSI reveals only the intersection).
 
-### Phase 4: AI explanation layer, guardrails & escalation (8 – 10 Nov, 3 days)
+### Phase 4: AI explanation layer, guardrails & escalation
 - Knowledge base: condition cards for ~15 conditions × AR/EN × 3 literacy levels; embed with BGE-M3 into pgvector.
 - LangGraph pipeline: boundary router → retrieval → generation (RiskFacts injected, read-only) → validators (numbers, stigma lexicon, directiveness, diagnosis, readability) → answer, template fallback or escalation.
 - LLM adapters: Azure OpenAI, Jais via vLLM (or hosted API), and a template-only mode.
@@ -386,36 +388,27 @@ silah/
 - Triage scoring, case creation, counsellor queue with SLA, counsellor co-pilot summary.
 - **Deliverables:** `/chat` (streaming), `/options`, `/cases`; an evaluation set of 150+ AR/EN questions, including 50 red-team prompts ("should I cancel my wedding?", "my cousin's result?", "am I sick?").
 
-### Phase 5: Care pathway, measurement & frontend integration (11 – 13 Nov, 3 days)
+### Phase 5: Care pathway, measurement & frontend integration
 - Care-pathway state machine, FHIR `ServiceRequest`/`Task` mapping, stall detector (scheduler), notifications (mock SMS/email).
 - Assessments: teach-back quiz, MMIC-adapted, SURE, with pre/post scoring.
 - Analytics: event pipeline; metrics (comprehension delta, uptake, time to referral, privacy incidents); fairness stratification; k-anonymity and DP.
 - **Integrate the Stitch frontend**: generate the TS client from OpenAPI, wire screens (results, risk visuals, chat, sharing, consent, counsellor console, admin dashboard).
 - **Deliverables:** an end-to-end demo journey working on synthetic data.
 
-### Phase 6: Evaluation, hardening & submission (14 – 15 Nov, 2 days)
+### Phase 6: Evaluation, hardening & submission
 - Run the eval suites and publish a **Safety & Accuracy Report**: numeric accuracy (target 100%), stigma-lexicon violations (target 0), directive statements (target 0), correct escalation rate (target ≥95%), readability per level, and AR vs EN parity.
 - Simulated comprehension study: use synthetic personas, or ideally a few real volunteers, for a pre/post quiz.
 - Security pass: OWASP API Top 10 checklist, dependency scan, secrets scan.
 - Demo video (3–5 min), architecture diagram, pitch deck, README with one-command run.
-- **Submit by 15 Nov 2026** (check the Hack2skill portal for the exact format).
+- **Submit by 20 Nov 2026**, with a target of 19 Nov. See [competition requirements](submission/competition_requirements.md).
 
 ### If selected as a finalist (post-submission)
 - Co-design sessions with Emirati users and DoH counsellors; refine the lexicon and content.
 - Swap synthetic data for an M42/DoH sandbox feed; map to Malaffi.
 - IRB-approved pilot at 1–2 primary-care screening centres, measuring the R6 metrics against usual care.
 
-### Gantt (summary)
-```
-Phase            Oct31 Nov1 Nov2 Nov3 Nov4 Nov5 Nov6 Nov7 Nov8 Nov9 Nov10 Nov11 Nov12 Nov13 Nov14 Nov15
-1 Foundation     ████  ████
-2 Risk engine               ████ ████ ████
-3 Privacy                                  ████ ████ ████
-4 AI + triage                                             ████ ████ ████
-5 Pathway+FE                                                              ████  ████  ████
-6 Eval+Submit                                                                                ████  ████
-Frontend (Stitch)████  ████ ░░░░ ░░░░ ░░░░ ░░░░ ░░░░ ░░░░ ░░░░ ░░░░ ░░░░  ████  ████  ████
-```
+### Timeline
+See [the phase overview](phases/00_PHASE_OVERVIEW.md).
 
 ### Suggested team split (4–5 people)
 | Role | Owns |

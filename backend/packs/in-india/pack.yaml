@@ -1,0 +1,7 @@
+# FILE: backend/packs/in-india/pack.yaml
+# STATUS: STUB. Documentation only; no code until explicitly requested.
+# ORIGIN: [NEW] Added for the India pack and Hindi, docs/07.
+# PURPOSE: Pack identity. India pack, labelled illustrative. Not reviewed.
+# PLANNED LOGIC: Status illustrative. Languages hi and en. Default language hi.
+# PHASE: 2.6 | SPEC: docs/07
+# CLOSE THESE ISSUES (docs/04): G1, S9, G10

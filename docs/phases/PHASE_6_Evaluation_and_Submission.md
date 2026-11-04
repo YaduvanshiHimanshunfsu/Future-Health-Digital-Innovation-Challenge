@@ -6,7 +6,7 @@
 
 **Feature freeze:** end of 17 Nov. After that, only fixes.
 
-**Deliverables named by the portal:** working prototype, technical documentation, assumptions, limitations. Add anything else the rules or FAQ require (see 1.1).
+**Deliverables named by the FAQ:** working prototype, technical documentation, and a clear statement of assumptions, dependencies and limitations, with every data source declared and the solution's maturity stated. The full requirements shared on registration may add more (see 1.1).
 
 ---
 
@@ -15,13 +15,13 @@
 **Goal:** measured results, including failures, from tests that aren't marking their own work.
 
 **Objectives**
-- O6.1.1 150+ golden and 50+ red-team items, balanced between Arabic and English.
+- O6.1.1 150+ golden and 50+ red-team items, balanced across English, Arabic and Hindi.
 - O6.1.2 Results reported per language.
 - O6.1.3 Independent humans score a sample.
 - O6.1.4 Targets from `docs/03` §5 are reported as met or missed.
 
 **Work** (step 25)
-- Finish the eval sets; Arabic speakers write the Arabic items rather than translating them.
+- Finish the eval sets; native speakers write the Arabic and Hindi items rather than translating them.
 - Run, fix, and re-run. Record both rounds.
 - Two people independently score a random sample for directiveness and stigma; report agreement.
 
@@ -34,8 +34,10 @@
 | V6.1.1 | Numeric accuracy 100% on the test set, or failures listed | Report |
 | V6.1.2 | Clinical escalation at least 95% in each language | Report |
 | V6.1.3 | Human-scored sample results are included, not only validator scores | Scoring sheet |
-| V6.1.4 | Arabic and English results are shown side by side | Report |
+| V6.1.4 | Results in all three languages are shown side by side | Report |
 | V6.1.5 | Any failure stays in the report | Reviewer compares raw output with the report |
+| V6.1.6 | Golden and red-team set sizes are met, per language | Count in the report |
+| V6.1.7 | Stigmatising and directive outputs are zero in the human-scored sample, or are listed | Scoring sheet |
 
 ---
 
@@ -44,7 +46,7 @@
 **Goal:** the first real evidence that people understand better, honestly labelled.
 
 **Objectives**
-- O6.2.1 15–30 adult volunteers, in Arabic and English where possible.
+- O6.2.1 15–30 adult volunteers, in Hindi and English, and in Arabic where possible.
 - O6.2.2 Voluntary, anonymous, with fake results only.
 - O6.2.3 Pre and post teach-back.
 - O6.2.4 Limits stated.
@@ -66,6 +68,7 @@
 | V6.2.2 | Sample size and how volunteers were found are stated | Results file |
 | V6.2.3 | Reported as a small convenience sample, not as clinical validation | Reviewer |
 | V6.2.4 | If the test couldn't run, the submission says so, and uses no simulated figures | Reviewer |
+| V6.2.5 | Pre and post scores are paired per volunteer | Analysis sheet |
 
 ---
 
@@ -106,15 +109,16 @@
 - O6.4.1 Someone new can run and understand the project.
 - O6.4.2 Assumptions and limitations are candid.
 - O6.4.3 Commercial viability and path to pilot are credibly covered.
+- O6.4.4 Data sources, dependencies and maturity are stated as the FAQ requires.
 
 **Work**
 - Technical doc: architecture, data flows, safety model, deployment.
-- Assumptions and limitations, covering synthetic data, placeholder frequencies, review status, T3 mocks, S6 outcome.
-- Commercial and pilot plan: buyer, costs, counsellor-time model, licensed partner under Art. 28, phased pilot, what's needed from DoH.
+- Assumptions, dependencies and limitations, covering synthetic data, placeholder frequencies, review status, T3 mocks, S6 outcome.
+- Commercial and pilot plan: buyer, costs, counsellor-time model, first pilot in Abu Dhabi with a licensed partner under Art. 28, then how new countries are added.
 - Check every claim against the code.
 
-**Files:** `docs/submission/technical_documentation.md`, `docs/submission/assumptions_and_limitations.md`, `docs/submission/commercial_and_pilot_plan.md`, `README.md`
-**Issues to close:** **S2, S4, S8**
+**Files:** `docs/submission/technical_documentation.md`, `docs/submission/assumptions_and_limitations.md`, `docs/submission/data_sources.md`, `docs/submission/maturity_statement.md`, `docs/submission/commercial_and_pilot_plan.md`, `README.md`
+**Issues to close:** **S2, S4, S8**, G10, S9, S10, S11, H14
 
 **Cross-verification**
 | ID | Check | Evidence |
@@ -124,6 +128,11 @@
 | V6.4.3 | Each T3 mock is listed as a limitation | Compare with the scope tiers |
 | V6.4.4 | Cost figures show assumptions and are labelled as estimates | Reviewer |
 | V6.4.5 | All six criteria addressed | Mapping table |
+| V6.4.6 | Global claims name only reviewed packs, and everything else is called a design goal | Reviewer |
+| V6.4.7 | Every data source used is declared, and nothing declared is unused | Compare with the code |
+| V6.4.8 | Assumptions, dependencies and limitations are each stated clearly | Reviewer |
+| V6.4.9 | The maturity statement separates what existed from what was built during the challenge | Compare with `brain.md` |
+| V6.4.10 | The Hindi coverage limit (G10) is stated | Reviewer |
 
 ---
 
@@ -138,7 +147,7 @@
 
 **Work**
 - Record in template mode, or with a verified LLM run.
-- Include a live red-team moment in Arabic.
+- Include a live red-team moment in Arabic or Hindi.
 - Show "Synthetic data, not real patients" on screen.
 - Update the judge Q&A from `docs/03` §6, adding the options, law and PSI questions.
 
@@ -153,6 +162,7 @@
 | V6.5.3 | No DoH or M42 logos implying endorsement | Reviewer |
 | V6.5.4 | Each demo number is labelled synthetic | Reviewer |
 | V6.5.5 | Team answers the Q&A list without notes | Rehearsal |
+| V6.5.6 | The deck covers all six judging criteria | Mapping table |
 
 ---
 
@@ -173,6 +183,8 @@
 
 **Files:** `docs/submission/submission_checklist.md`, `brain.md`
 
+**Issues to close:** S11
+
 **Cross-verification**
 | ID | Check | Evidence |
 |---|---|---|
@@ -180,6 +192,8 @@
 | V6.6.2 | The tagged commit builds from a clean clone | Run log |
 | V6.6.3 | Confirmation saved | Screenshot or email |
 | V6.6.4 | Links work when logged out, if links are submitted | Incognito test |
+| V6.6.5 | The code can be shared on request: it builds, and holds no secrets | gitleaks result, clean clone |
+| V6.6.6 | If placed in the top three, the team knows who presents in person at GITEX, 7–11 Dec | `brain.md` note |
 
 ---
 

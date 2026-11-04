@@ -114,3 +114,192 @@ What was run or checked, and the actual result. State what was not verified.
 **Why:** The user asked for a detailed, good-looking, diagrammatic README. Mermaid renders natively on GitHub and stays editable as text, unlike exported images. The diagrams show the corrected design from `docs/04`, not the spec's known bugs: three match outcomes, decline at any step, and no donor or adoption options. The README states clearly that no code exists yet, so it doesn't overclaim. DoH and M42 aren't named, to avoid implying endorsement (S8).
 
 **Verified:** All 12 diagrams render. No broken relative links or section anchors, by script. **Not verified:** the page as displayed on GitHub itself, since nothing was pushed, so the callouts and badges haven't been seen in place. mermaid-cli and GitHub may lay diagrams out slightly differently.
+
+## #003 · 2026-11-05 · Project name options suggested
+**What:** Suggested replacements for the placeholder name Silah, recommending Baseera. No files were renamed, and the decision is with the user. **How:** Compared candidates on meaning, fit with the team name Vigyan_Viveka_Vijaya, and how they read in Arabic and English, then ran quick web searches for conflicts. **Why:** The user asked. Also, "Silah" in Latin script reads as "weapon" in Turkish and is close to the Arabic word for weapon. **Verified:** Searches found no UAE genetics or health product using Baseera, Bayan or Rafeeq. This is not a trademark check, and no native speaker has reviewed the names.
+
+## #004 · 2026-11-05 · Sanskrit and Indian name options suggested
+**What:** Suggested Sanskrit and Indian names on request, recommending Samvid. No files were renamed, and the decision is with the user. **How:** Checked Samvid and Anvaya against dictionary entries on Wisdom Library, and ran quick searches for conflicts. **Why:** The user asked. Anvaya was not recommended because its senses include race and lineage, which is risky for a genetics product. **Verified:** Dictionary entries list knowledge, understanding and consent for samvid. Searches found no health or genetics product named Samvid, Anvaya, Anubodh or Sanmati. This is not a trademark check. The other names were suggested from general knowledge, not checked.
+
+## #005 · 2026-11-05 · Renamed project to Samvid, added team name, removed Arabic script
+- **Author:** AI assistant (Claude Code), directed by the user
+- **Phase:** cross-cutting · **Issues:** none closed · **Checks:** none
+
+### What we did
+- Renamed the project from Silah to Samvid in every file, including database roles, the login realm, logger names and `infra/keycloak/realm-samvid.json`.
+- Added the team name, Vigyan_Viveka_Vijaya, to `README.md`, `CLAUDE.md`, `docs/01` and the Story Mode slide in `docs/frontend.md`.
+- Removed all Arabic script from project files, and added the rule to `CLAUDE.md`.
+
+### How we did it
+- One checked script with exact line targets. It stopped if a target line did not match.
+- Prose: Arabic examples now use Roman letters with their English meaning.
+- `docs/backend.md` code: character-level rules now use Unicode escapes, which keep the same behaviour. Arabic word lists became placeholders named after their meaning, to come from a reviewed lexicon.
+- `docs/frontend.md`: the Arabic headline became a note asking for a native-speaker translation.
+
+### Why we did it
+- The user chose the name and team name, and asked that nothing be written in Urdu or Arabic.
+- Earlier log entries keep the old name, because this log is append-only. Silah is the former name of Samvid.
+- Arabic support stays in the product design, because the challenge asks for linguistically appropriate communication in Abu Dhabi. The rule covers text written in project files. The user has been asked to confirm this reading.
+
+### Verification
+Script scan: no old name and no Arabic script outside `brain.md`. Past log entries keep both, by the append-only rule. Compared with commit `65f155c`, the escaped diacritics, digit, normalising and sentence-split rules in `docs/backend.md` behave the same across the 256 Arabic-block characters. All 67 Python samples in `docs/backend.md` still compile. The commit still holds the original Arabic text. **Known effects:** four named placeholders (`AR_DIAGNOSIS_PATTERN`, `AR_DIRECTIVE_PATTERN`, `AR_DIRECTIVE_SAMPLE`, `AR_STIGMA_SAMPLE_WITH_DIACRITICS`) are not defined yet, so those samples can't run until the Arabic text exists. The spec's router sample no longer contains the bug described in C6, but the review keeps it as a warning. **Not verified:** the Roman-letter spellings have not been checked by an Arabic speaker. Nothing has been committed.
+
+### Follow-ups
+- [ ] Confirm whether the product should still support Arabic users (user)
+- [ ] Decide how Arabic interface text and test data get written at implementation time, since the no-Arabic rule blocks them (user)
+- [ ] Have a Gulf Arabic speaker confirm the Roman-letter examples and the word lists when a reviewer is available
+- [ ] Rename the GitHub repository only if wanted; it does not use the old name
+
+## #006 · 2026-11-05 · Re-scoped the project as global, using country packs
+
+- **Author:** AI assistant (Claude Code), directed by the user
+- **Phase:** cross-cutting, adds sub-phase 2.6 · **Issues:** raised S9 and G1–G9 · **Checks:** added V2.6.1–V2.6.6, V4.4.5, V6.4.6
+
+### What we did
+- Wrote `docs/07_Global_Design_and_Country_Packs.md`: a global core, with everything country-specific in a country pack.
+- Updated `README.md` (new diagram, global framing), `CLAUDE.md`, the phase plans, review, traceability matrix and file index.
+- Added a scope note to `docs/01`, `02`, `03`, `backend.md` and `frontend.md`, plus a global context section in `docs/01`.
+- Added stubs: `backend/app/country_packs/`, `backend/packs/_template/`, `backend/packs/ae-abu-dhabi/`, and a pack test.
+- Moved the options and centre-list stubs into the pack, deleting `backend/app/decision/options_abu_dhabi.yaml` and `backend/app/centres/data/centres.yaml`. Both were empty stubs.
+
+### How we did it
+- Read the challenge page, then searched for global evidence (Bittles and Black, PNAS 2010, and reviews of the counsellor shortage).
+- Applied edits with a checked script that stopped on any mismatch.
+- Rendered the changed diagrams in light and dark themes and viewed them.
+
+### Why we did it
+- The user asked that the project not be limited to Abu Dhabi, and the page asks for "solutions to global health needs".
+- **Kept Abu Dhabi as the first reference pack, not removed:** the Challenge 03 text is framed around it, and it's the likeliest first pilot. Depth in one place is more credible than a thin product claimed everywhere.
+- **Settings, not separate code:** law, options and languages differ by country, but safety rules must not. A pack can tighten a rule and can never switch one off.
+- **Sample code in `backend.md` not rewritten:** G1–G9 list what must change when it's implemented, so the spec stays reviewable.
+- Rejected: a find-and-replace removal of UAE details. It would destroy the only worked example and its evidence.
+
+### Verification
+- Scripted scan: 33 sub-phases, 184 checks, no code lines in stubs, no broken links or anchors in new and updated docs, and no Arabic script outside `brain.md`. All 13 README diagrams render.
+- All new issue IDs appear in the review and are assigned to a phase.
+- **Not verified:** the laws listed in `docs/07` section 6 are starting points that nobody has reviewed. The 10.4% figure is a 2009-era estimate. The FAQ answer to "Do we need to be in the UAE?" wouldn't load. Nothing has been committed.
+
+### Follow-ups
+- [ ] Confirm the second country pack; India is recommended (user)
+- [ ] Read the FAQ answer to "Do we need to be in the UAE?" while logged in (user)
+- [ ] Confirm whether the product should still support Arabic users (user)
+- [ ] Register by 10 Nov, if not already done (user)
+
+## #007 · 2026-11-05 · Applied user decisions: India pack, three languages, registered
+
+- **Author:** AI assistant (Claude Code), directed by the user
+- **Phase:** cross-cutting, updates 1.1, 1.2, 2.6 and Phases 3 to 6 · **Issues:** raised G10 · **Checks:** added V1.2.6, V4.2.8, V4.3.10
+
+### What we did
+- Recorded three user answers. India is the second country pack. The product supports English, Arabic and Hindi. The team is already registered.
+- Updated `README.md`, `CLAUDE.md`, `docs/07`, the review, phase plans, file index and scope notes.
+- Added stubs: `backend/packs/in-india/`, `system_hi.txt`, `frontend/messages/hi.json`, and Hindi copies of the template and knowledge-base stubs.
+- Added India starting points to the legal and options skeletons, labelled unreviewed.
+
+### How we did it
+Applied checked edits with a script that stopped on any mismatch, then rendered the changed diagrams and rescanned the project.
+
+### Why we did it
+- **User decisions.** Registration is recorded as confirmed by the user. Evidence for check V1.1.1 (an email or screenshot) is still to be added.
+- **Packs:** Abu Dhabi uses Arabic and English, India uses Hindi and English. Rejected: all languages in all packs, which adds review work with no benefit.
+- **Simple level first:** three languages raises the content load by half, so the Simple reading level is T1, and Standard and Detailed move to T2.
+- **G10 raised honestly:** national survey data puts the highest consanguinity in Tamil Nadu, Karnataka and Andhra Pradesh, where Hindi isn't the main language. Hindi stays as the user chose, and Tamil, Kannada and Telugu go on the roadmap.
+- **The no-Arabic rule stays for project files.** The user confirmed Arabic support for the product, but didn't lift the rule, so Arabic interface text and test data still need their go-ahead.
+
+### Verification
+Script scan: 33 sub-phases, 187 checks, no code lines in stubs, no broken links or anchors, and no Arabic script outside `brain.md`. All 13 README diagrams render, and the two changed ones were viewed. **Not verified:** the India legal points are unreviewed starting points, and the survey figures come from a secondary summary of NFHS-5, not the official fact sheets. No Hindi content exists yet. Nothing has been committed.
+
+### Follow-ups
+- Closed from #006: second pack chosen, Arabic support confirmed, registration done.
+- [ ] Add registration evidence for V1.1.1 (user)
+- [ ] Read the rules and FAQ while logged in, including "Do we need to be in the UAE?" and "What do we need to submit?" (user)
+- [ ] Decide who writes Arabic interface text and test data, and approve adding it (user)
+- [ ] Find Hindi and Arabic native-speaker reviewers (user)
+
+## #008 · 2026-11-05 · Added official requirements, re-baselined and cross-verified all phases
+
+- **Author:** AI assistant (Claude Code), directed by the user
+- **Phase:** cross-cutting, all phases · **Issues:** raised S10, S11 · **Checks:** evidence added for V1.1.3; V1.1.1 and V1.1.2 are partial
+
+### What we did
+- Recorded the FAQ answers word for word, with dates, criteria and awards, in `docs/submission/competition_requirements.md`, and saved three screenshots in `docs/submission/evidence/`.
+- Added `data_sources.md` and `maturity_statement.md`, a dependencies section, and filled in the submission checklist.
+- Corrected stale statements in `docs/01`, `02`, `03`, the review, `CLAUDE.md` and `README.md`.
+- Re-baselined the phases from 5 Nov: Phase 1 is 5–6 Nov, Phase 2 is 7–9 Nov, Phase 3 is 10–11 Nov. Phases 4 to 6 are unchanged.
+- Audited every phase and generated `docs/phases/CROSS_VERIFICATION.md`.
+
+### How we did it
+- Mapped each objective to its checks and each issue to its checks by hand, reading the phase files. This is what exposed the gaps.
+- A script asserted the mapping was complete and generated the document. A second script, reading only the finished files, then recounted everything.
+
+### Why we did it
+- The user supplied the official answers and asked for all phases to be made consistent and cross-verified.
+- **Findings that changed the plan:** the organisers provide no data and every source must be declared; dependencies and maturity must be stated; code may be requested; full requirements are shared on registration.
+- **Audit gaps fixed:** 19 objectives had no check or only a partial one, and several issues had no direct check.
+- **Phases 1 to 3 compressed, not Phase 6:** evaluation and honest documentation are judged directly, and feature freeze stays at the end of 17 Nov. Rejected: moving the 19 Nov submission target, which removes the buffer.
+- **Correction to my earlier statement:** the page does allow ideas and early prototypes as eligible entries, but a working prototype must still be submitted. Review S2 is updated.
+
+### Verification
+- Both scripts agree: 33 sub-phases, 135 objectives, 238 checks, 62 open issues each with a check, 13 targets each with a check. Check numbering has no gaps, dates are continuous, there are no broken links, and no Arabic script outside `brain.md`.
+- All 13 README diagrams render.
+- **This verifies the plan's consistency, not its feasibility.** No code exists, so almost no check has evidence: only V1.1.3 is done.
+- **Not verified:** the full requirements, which are still unread. Nothing has been committed.
+
+### Follow-ups
+- [ ] Find the full requirements shared on registration (user)
+- [ ] Add registration evidence for V1.1.1 (user)
+- [ ] Confirm team size, clinician access and AI model access (user)
+- [ ] Approve Arabic content, and name who writes it (user)
+- [ ] Give the go-ahead to start building Phase 1 (user)
+
+## #009 · 2026-11-05 · Agreed work split and code standard, before Phase 1
+**What:** Recorded the user's rules in `CLAUDE.md` and assistant memory. Claude writes backend, security and database code, Stitch prompts and frontend integration. The user builds screens with Stitch or similar. Phase 1 starts on the user's next explicit command, so no code was written. **How:** Added a section to `CLAUDE.md`. **Why:** The user asked for complete, secure code with no shortcuts that doesn't read as AI-written. This will be met through code quality and natural style. Authorship won't be faked or hidden, and this log keeps recording AI involvement, because the user mandated it. **Verified:** Nothing to verify; documentation only.
+
+## #010 · 2026-11-05 · Phase 1: built the secure foundation, drafted the baseline documents
+
+- **Author:** AI assistant (Claude Code), directed by the user
+- **Phase:** 1.2 to 1.6 · **Issues:** progressed H15, H16, H18, M2, M5, M12 · **Checks:** see `docs/phases/CROSS_VERIFICATION.md`
+
+### What we did
+- **1.3:** project config and lockfile, Docker image, Compose stack (Postgres, Redis, Keycloak, OpenFGA, API, worker, scheduler), secret generator, CI and pre-commit config.
+- **1.4:** app factory, settings with production guards, JWT verification with its own key cache, security headers, body limits, health-safe logging, error handling in English and Hindi, rate limiter.
+- **1.5:** all 21 tables, first migration, separate database roles, tamper-evident audit trail, data classification enforced by a test.
+- **1.2 drafts:** threat model, legal baseline with article map and retention table, options by country, risk rule table, lexicon seeds. All unreviewed.
+- **1.6:** accessible colour tokens and corrected Stitch prompts, plus new prompts P21 to P23.
+
+### How we did it
+- Generated the migration from the models against a real database, then added grants and triggers by hand. A test confirms no drift between the two.
+- Tested with real Postgres and Redis containers, using the same `init.sql` as the stack, and real RSA keys for tokens.
+- Ran the whole stack from a clean state and verified a real Keycloak token inside the API container.
+
+### Why we did it
+Decisions that differ from `backend.md`:
+- **The audit hash covers the columns, not a stored copy.** In the spec, `actor` or `resource` could be edited unnoticed, and the access log reads those columns.
+- **Audit sequence numbers come from the chain, not a database sequence,** so a rollback can't leave a gap that looks like a deletion.
+- **Own JWKS cache instead of `PyJWKClient`:** adds a refresh cooldown against random `kid` floods, and a maximum key age during outages.
+- **Everything about a finding is encrypted,** including classification (H18). Even "has a pathogenic finding" is sensitive.
+- **Own error boundary middleware:** Starlette's catch-all handler runs outside user middleware, so 500s would lose the security headers.
+- **Least privilege by table:** the API role can't delete consents, findings or persons, and can't update pathway steps.
+- **`national_id_hash` and per-language settings from the start,** so the core stays global (G1, G2).
+
+Bugs found by testing, and fixed: error handlers read global settings; FastAPI turned oversized chunked uploads into a 400; `packaging` was only present through dev tools, which stopped the worker in the real image; the migration lacked an import; an independent audit write could wait on a lock its own caller held; and cached signing keys never aged out. One of my own was caught on review before it ran: production HTTPS checks were skipped in template mode.
+
+### Verification
+- 160 tests pass, with 90% coverage. ruff, mypy strict, bandit and pip-audit are clean.
+- Clean rebuild: all services healthy in 72 s (first build 148 s).
+- `check_services`: Postgres, Redis, Keycloak and OpenFGA reachable, and a real token verified with `lab_service`.
+- A planted secret was blocked by the gitleaks hook, and the repo's history scan found no leaks.
+- Trivy scanned the image (Debian packages and Python packages): 0 fixable HIGH or CRITICAL vulnerabilities.
+- **Not verified:** CI hasn't run, since nothing is pushed. No second person has run the stack. Encryption, OpenFGA rules and all domain logic are later phases. No clinician, lawyer, security specialist or native speaker has reviewed anything, including the Hindi error messages. Nothing has been committed.
+
+### Follow-ups
+- [ ] Find the full requirements (user)
+- [ ] Confirm team size, scope tiers, phase owners and eligibility (user)
+- [ ] Find a clinician, and ask how couple results are delivered (user)
+- [ ] Generate the design system and T1 screens in Stitch from `docs/frontend.md` (user)
+- [ ] Have a Hindi speaker check `backend/app/core/messages/hi.json` (user)
+- [ ] Have a second person run the stack from a clean clone (user)
+- [ ] Commit and push when asked, which also runs CI for V1.3.4
+
+## #011 · 2026-11-05 · Wrote the complete Stitch prompt file
+**What:** Added `docs/STITCH_PROMPTS.md`: a design system prompt, a component sheet, every screen and its other states, Hindi, mobile and right-to-left variants, fix-up prompts, motion plan, hand-over steps and a screen-to-endpoint map. It replaces §3 and §5 of `docs/frontend.md`. **How:** Rewrote each prompt with the review's fixes built in, and structured them per Stitch's own guidance of one screen per prompt. A script checked for banned wording, Arabic script, colour contrast and that every prompt appears in the order table. **Why:** The user asked for one detailed prompt file, and builds the screens themselves. New states were added for results the spec missed: uncertain finding, talk to a counsellor first, no shared finding, and can't determine yet. The Arabic variant holds no Arabic text, because the rule still stands, so Stitch would translate it, which needs approval and a native reviewer. **Verified:** The script's checks passed. **Not verified:** No prompt has been run in Stitch. Stitch export options and limits come from secondary sources. The Hindi glossary hasn't been checked by a native speaker.

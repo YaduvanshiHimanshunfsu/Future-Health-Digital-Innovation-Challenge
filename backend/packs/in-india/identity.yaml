@@ -1,0 +1,7 @@
+# FILE: backend/packs/in-india/identity.yaml
+# STATUS: STUB. Documentation only; no code until explicitly requested.
+# ORIGIN: [NEW] Added for the India pack and Hindi, docs/07.
+# PURPOSE: Identity and records. India pack, labelled illustrative. Not reviewed.
+# PLANNED LOGIC: National ID and phone formats, sign-in provider, health records adapter, hosting region. Demo uses mocks.
+# PHASE: 2.6 | SPEC: docs/07
+# CLOSE THESE ISSUES (docs/04): G2, G5

@@ -1,0 +1,7 @@
+# FILE: backend/app/explain/prompts/system_hi.txt
+# STATUS: STUB. Documentation only; no code until explicitly requested.
+# ORIGIN: [NEW] Added for the India pack and Hindi, docs/07.
+# PURPOSE: Hindi system prompt.
+# PLANNED LOGIC: Same rules as English. Written by a Hindi speaker, not machine translated.
+# PHASE: 4.3 | SPEC: docs/07
+# CLOSE THESE ISSUES (docs/04): C5, H13

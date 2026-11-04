@@ -1,6 +1,0 @@
-# FILE: .github/workflows/ci.yml.stub
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# PURPOSE: CI pipeline, as a stub.
-# PLANNED LOGIC: Rename to ci.yml when implemented. A comment-only ci.yml would show as an invalid workflow on GitHub. Lint, types, SAST, deps, secrets, tests, image scan.
-# PHASE: 1.3 | SPEC: backend.md 11.35
-# CLOSE THESE ISSUES (docs/04): H16

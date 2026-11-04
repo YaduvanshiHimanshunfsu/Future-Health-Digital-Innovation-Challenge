@@ -1,8 +1,11 @@
 # 01 — Problem Understanding
 
+> **Scope update (5 Nov 2026):** Samvid is global by design. UAE and Abu Dhabi details in this document describe the first reference pack, not the limit of the product. Supported languages are English, Arabic and Hindi. See [docs/07](07_Global_Design_and_Country_Packs.md).
+
 **Hackathon:** Future Health Digital Innovation Challenge 2026 (Hack2skill)
 **Track:** Fertility · Challenge 03: *Understanding and Reducing Inherited Disease Risk*
-**Working project name:** **Silah** (صلة, "connection", as in *silat al-rahim*, family ties). This is a placeholder and can be changed.
+**Project name:** **Samvid** (Sanskrit संविद्: knowledge and understanding, and also agreement and consent).
+**Team:** Vigyan_Viveka_Vijaya
 
 ---
 
@@ -16,12 +19,12 @@
 | Co-creators (technical mentors) | **Inception42** (G42, makers of the *Jais* Arabic LLM), **MBZUAI** (AI university, *K2 Think*), **Microsoft** (Azure) |
 | Theme | **"To Sense is to Predict"**: turn health signals into earlier insight and timelier action |
 | Focus areas | Fertility · Population Health · Wellbeing |
-| Requirement | The solution must use **AI, software or connected technologies**. A new concept, an early prototype or an adapted existing solution are all accepted |
-| Deadline | Applications close **15 November 2026**. Finalists present at **GITEX 2026** |
+| Requirement | Technology-neutral: "Use the AI, software, sensing, or hardware that best fits the problem." Ideas, existing solutions and early prototypes are eligible, and **a working prototype must be submitted** |
+| Deadline | Registration closes **10 Nov 2026** (the team is registered). Working prototype due **20 Nov 2026**. Evaluation 20–30 Nov. The top three present at **GITEX 2026**, 7–11 Dec |
 | Prizes | USD 50k / 35k / 20k (USD 105k pool), plus possible **validation, incubation and piloting** in Abu Dhabi |
 | Links | [Hack2skill page](https://hack2skill.com/event/futurehealthchallenge/) · [Press release (Zawya)](https://www.zawya.com/en/press-release/companies-news/future-health-launches-global-challenge-to-move-health-innovation-towards-real-world-application-1680763) · [WAM](https://www.wam.ae/en/article/c2r7j8n-future-health-launches-global-challenge-move) · [Abu Dhabi Media Office topic page](https://www.mediaoffice.abudhabi/en/topic/future-health-challenge/) |
 
-> ⚠️ The Hack2skill page renders with JavaScript, so its exact judging criteria and submission format (deck, video, repo, demo link) could not be read automatically. **Check them on the portal after login** and adjust Phase 6 of the plan to match.
+> Official requirements, judging criteria and FAQ answers are recorded in [submission/competition_requirements.md](submission/competition_requirements.md).
 
 **What this tells us about the judges:** this is a government-led challenge with a real deployment path. They will reward solutions that (a) plug into the infrastructure Abu Dhabi already has (Emirati Genome Programme, premarital screening, the Malaffi health information exchange, DoH counselling clinics), (b) respect UAE data law, (c) are culturally intelligent, and (d) measure outcomes properly. A generic chatbot will not stand out. A **safe, auditable and privacy-first system** that a DoH pilot could actually run will.
 
@@ -78,6 +81,10 @@ The key point: **consanguinity does not cause disease.** It raises the chance th
 | 6 | **Measurable comprehension and access** | Show better understanding, counselling uptake, time to referral, privacy protection and fairness across languages and literacy levels, **without** using cancelled marriages as the success metric | Needs validated instruments and stratified analytics designed in from day one |
 
 ---
+
+## Global context
+
+Couples related as second cousins or closer, and their children, were estimated at [10.4% of the world's population](https://pmc.ncbi.nlm.nih.gov/articles/PMC2868287) (a 2009-era estimate, known to be incomplete). Rates are highest in north and sub-Saharan Africa, the Middle East, and west, central and south Asia. The rest of this section uses Abu Dhabi as the worked example, because the challenge is hosted there and its programme is well documented.
 
 ## 3. Context: why Abu Dhabi, why now
 

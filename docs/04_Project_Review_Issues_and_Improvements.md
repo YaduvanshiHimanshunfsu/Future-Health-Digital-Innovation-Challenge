@@ -15,12 +15,15 @@ Issue IDs are permanent. Stub files, phase plans and `brain.md` all refer to the
 | **C** Critical | Could harm a user, break a privacy promise, or make a headline claim false |
 | **H** High | A required feature or metric would not work or would give a wrong result |
 | **M** Medium | Worth fixing, but will not sink the entry |
+| **G** Global | Ties the product to one country, which blocks the global design |
 
 | Evidence tag | Meaning |
 |---|---|
 | **[RUN]** | The spec's code was extracted from `backend.md` and run. The result is shown |
 | **[SOURCE]** | Checked against an external source (see [Sources](#sources)) |
 | **[READ]** | Found by reading the spec's logic. Not run, because it needs a database or external service |
+
+> Arabic examples are spelled in Roman letters, with their meaning. The `[RUN]` tests used the original Arabic text, which is in commit `65f155c`.
 
 > Legal points here come from reading the law text or law-firm summaries. They are not legal advice. Have DoH or qualified counsel confirm them before any pilot.
 
@@ -30,8 +33,8 @@ Issue IDs are permanent. Stub files, phase plans and `brain.md` all refer to the
 
 | # | Action | Deadline | Issue |
 |---|---|---|---|
-| 1 | **Register on Hack2skill**, if you haven't already | **10 Nov** | S1 |
-| 2 | Log in and read the Challenge rules and the FAQ answers ("What do we need to submit?", "What data can we use?", "Can we apply with an existing product?") | Today | S2 |
+| 1 | ~~Register on Hack2skill~~ **Done**, confirmed by the team on 5 Nov | 10 Nov | S1 |
+| 2 | ~~Read the FAQ answers~~ **Done** on 5 Nov. Now find the **full requirements shared on registration** (email or portal) | Today | S2, S11 |
 | 3 | Find one genetic counsellor or clinician to review content and triage rules | This week | S5, H13 |
 | 4 | Decide team and scope tiers, because the current scope assumes 4 to 5 people | Today | S3 |
 
@@ -40,7 +43,7 @@ Issue IDs are permanent. Stub files, phase plans and `brain.md` all refer to the
 ## 2. Strategic issues
 
 ### S1. The competition dates in the docs are wrong [SOURCE]
-`docs/01` §1 and `docs/02` plan around "15 November". The Hack2skill page says:
+`docs/01` §1 and `docs/02` planned around "15 November". (Corrected in both documents on 5 Nov 2026.) The Hack2skill page says:
 
 | Milestone | Date |
 |---|---|
@@ -54,7 +57,7 @@ The 15 Nov date appears in press coverage, so it was probably superseded. The pa
 **Effect:** you have 5 more build days than planned, but a registration gate 5 days earlier. All phase plans here use the portal dates.
 
 ### S2. The docs misread what must be submitted and how it is judged [SOURCE]
-`docs/01` says the page could not be read and that "a new concept, an early prototype or an adapted existing solution are all accepted". The page now says: *"Submit your working prototype by 20 November, with technical documentation, assumptions, and limitations."* The page states no concept-only route.
+`docs/01` said the page could not be read and that "a new concept, an early prototype or an adapted existing solution are all accepted". The page now says: *"Submit your working prototype by 20 November, with technical documentation, assumptions, and limitations."* The FAQ, supplied on 5 Nov, adds that ideas, existing solutions and early prototypes are eligible, but what you submit is still "a working prototype".
 
 The six judging criteria, which the docs never mention (no weights published):
 
@@ -77,7 +80,7 @@ The plan started on 31 Oct and no code exists. The Git history shows one author.
 ### S4. The most relevant law is missing from the docs [SOURCE]
 The docs cite Federal Law 2/2019 and the PDPL but never mention **Federal Decree-Law No. 49 of 2023 Regulating the Use of the Human Genome**. I read the text on the DHA site. Key points for this project:
 
-| Article | What it says (paraphrased) | Effect on Silah |
+| Article | What it says (paraphrased) | Effect on Samvid |
 |---|---|---|
 | 9(2) | A person can state in writing that they don't want to know their results | **No "right not to know" flow exists.** Add one |
 | 9(3) | Informing the person is obligatory if results threaten their life or a foetus's life | Limits opt-outs. Needs a counsellor-defined rule |
@@ -109,12 +112,12 @@ A DoH judge would likely notice this immediately, and in a real product it could
 Al Amal funding for IVF and PGT **checks out** against published reporting, but eligibility details are not confirmed. Word that note carefully.
 
 ### S6. "Private" couple mode may not match how the programme works [SOURCE, READ]
-Article 15(2) says the couple are informed of results, and published figures count at-risk *couples*. So the premarital programme may already tell couples their shared result. In that case, Silah's "keep private" mode cannot mean "my partner never learns we share a risk".
+Article 15(2) says the couple are informed of results, and published figures count at-risk *couples*. So the premarital programme may already tell couples their shared result. In that case, Samvid's "keep private" mode cannot mean "my partner never learns we share a risk".
 
 The idea still has value, since it protects each partner's *non-shared* findings, and it matters more for preconception and family sharing. **Ask a counsellor or M42 how results are actually delivered**, then reword the feature. Until then, describe it as protecting non-shared findings.
 
 ### S7. Simulated results must not be presented as evidence [READ]
-`docs/02` Phase 6 proposes a "simulated comprehension study" using synthetic personas, and `docs/03` targets "+30 pp (simulated)". `frontend.md` P18 shows numbers such as "Uptake 92%". Synthetic personas can't show that people understand anything, and evaluators are told to look for real proof.
+`docs/02` Phase 6 proposes a "simulated comprehension study" using synthetic personas, and `docs/03` targeted "+30 pp (simulated)", since removed. `frontend.md` P18 shows numbers such as "Uptake 92%". Synthetic personas can't show that people understand anything, and evaluators are told to look for real proof.
 
 **Fix:** run a small real test with 15–30 volunteers in Arabic and English (sub-phase 6.2) and report it honestly as a small convenience sample. Label every demo dashboard "synthetic data".
 
@@ -128,6 +131,14 @@ The idea still has value, since it protects each partner's *non-shared* findings
 | DoH and M42 logos under "Built with" (P1) | Implies endorsement | Remove them |
 | "Continue with UAE PASS" (P5) | Mock | Label it as a mock |
 | "Clinician-reviewed content" | No clinician yet | Label as "draft, pending clinical review" |
+
+### S10. No data is provided, and every source must be declared [SOURCE]
+The FAQ says: "The organisers will not provide any data, including synthetic data. Use only data you have the legal right to use, declare every data source, and avoid personal data you do not need."
+**Fix:** keep generating our own synthetic data, and maintain [data_sources.md](submission/data_sources.md). Check licences for gnomAD, ClinVar and the knowledge sources.
+
+### S11. The submission needs more than the docs assumed [SOURCE]
+The FAQ adds three items: a statement of **dependencies**, a statement of **maturity** (what existed, and what was built during the challenge), and possibly **sharing the code base** for evaluation. It also says "Full requirements are shared when you register", and nobody has recorded those yet.
+**Fix:** find the full requirements, add a dependencies section and a [maturity statement](submission/maturity_statement.md), and keep the code shareable.
 
 ---
 
@@ -167,7 +178,7 @@ The spec's own VUS test misses the third case.
 | Text | Result | Problem |
 |---|---|---|
 | "50% chance the baby has the condition and 25% chance of being a carrier" (swapped) | **Passes** | It checks that a number exists, not what it describes |
-| نصف أطفالكما سيصابون ("half of your children will be affected") | **Passes** | Arabic number words aren't checked |
+| *nisf atfalikuma sayusabun* ("half of your children will be affected") | **Passes** | Arabic number words aren't checked |
 | "You carry one changed copy of the gene." | **Blocked** | "one" is flagged, so normal English falls back to templates |
 | "If both partners are carriers the chance is 25%" (user is a single carrier) | **Blocked** | The most common education answer is rejected |
 | "The background chance is 3 to 4%" | **Blocked** | Not in the allowed set |
@@ -175,17 +186,17 @@ The spec's own VUS test misses the third case.
 **Fix:** pair each number with its label by having the LLM reference fact IDs that get filled in by code, such as `{{fact:couple_shared_ar:HBB:affected}}`. Then the LLM can't write numbers at all. Add a small approved "general facts" set and check Arabic number words.
 
 ### C6. In Arabic, "carrier" is routed as a clinical question [RUN]
-The router's clinical pattern includes `حامل` to catch "pregnant", but **حامل also means "carrier"**.
+The router's clinical pattern includes `hamil` to catch "pregnant", but **hamil also means "carrier"**.
 
 | Question | Route |
 |---|---|
-| ماذا يعني أنني حامل للجين؟ ("What does it mean that I'm a carrier?") | `CLINICAL_ADVICE` |
-| هل كوني حامل للمرض يعني أنني مريضة؟ ("Does being a carrier mean I'm ill?") | `CLINICAL_ADVICE` |
+| *madha ya'ni annani hamil lil-jin?* ("What does it mean that I'm a carrier?") | `CLINICAL_ADVICE` |
+| *hal kawni hamil lil-marad ya'ni annani marida?* ("Does being a carrier mean I'm ill?") | `CLINICAL_ADVICE` |
 | What does carrier mean? | `EDUCATION` |
 
 So the most basic question gets a refusal in the default language, and each one opens a case. The merge logic means the LLM can't correct it. This would also show up as an unfair Arabic-versus-English gap in the very metric R6 asks for.
 
-**Fix:** match pregnancy through context (`أنا حامل`, `حامل في الشهر`, `حملي`), exclude `حامل لـ / حامل للـ`, and have Arabic speakers build the test set.
+**Fix:** match pregnancy through context (`ana hamil`, `hamil fi al-shahr`, `hamli`), exclude `hamil li- / hamil lil-`, and have Arabic speakers build the test set.
 
 ### C7. Blind matching leaks the partner's private findings [RUN]
 `couple_facts` loops over the **union** of both partners' genes. With a partner-only finding it returned:
@@ -240,7 +251,7 @@ Distress opens a case with a 24-hour SLA, in a queue nobody sees (C9). The templ
 | **H9** | `get_db` opens a transaction before the LLM call. `idle_in_transaction_session_timeout` is 10 s, so slow answers lose the connection. Worst case is about 135 s (15 s timeout × 3 tries × 3 calls) | [READ] | Close the transaction before calling the LLM. Cut retries and set an overall deadline |
 | **H10** | Pathway: direct `case.state =` assignments skip `PathwayStep`, so **escalated cases, the at-risk group, disappear from time-to-referral**. Users **can't decline after a test or referral is ordered**, despite "decline any step". `LOST_TO_FOLLOW_UP` and "not confirmed" don't exist. One `sla_due` per case | [READ] | Route every change through one function. Allow decline from all active states. Set SLAs per step |
 | **H11** | Analytics: the fairness code overwrites rows, reporting a **2.0 pp gap when the real spread is 30 pp**. Age and gender aren't collected. Denied access attempts aren't recorded because the audit row rolls back with the failure, so that KPI has no data. Validator flags aren't stored | [RUN] for fairness, [READ] for the rest | Aggregate per dimension, add strata, and write security events in a separate transaction |
-| **H12** | The directive validator misses Gulf dialect and soft phrasing (`لازم تسوون`, `المفروض`, "It would be best to", "Consider cancelling the wedding"). `docs/02` promises an LLM judge that the code lacks. Scoring validators with themselves is **circular** | [RUN] | Add a judge and dialect patterns, and have **independent humans** score a sample |
+| **H12** | The directive validator misses Gulf dialect and soft phrasing (`lazim tsawwun`, `al-mafrud`, "It would be best to", "Consider cancelling the wedding"). `docs/02` promises an LLM judge that the code lacks. Scoring validators with themselves is **circular** | [RUN] | Add a judge and dialect patterns, and have **independent humans** score a sample |
 
 ### Content, features and delivery
 
@@ -311,7 +322,7 @@ These go beyond fixing bugs and map to the judging criteria.
 
 So nobody spends time re-checking these:
 
-- **Arabic diacritics regex** in `lexicon.py`: it looks broken on screen because of right-to-left rendering, but the bytes form the correct ranges.
+- **Arabic diacritics regex** in `lexicon.py`: it looked broken on screen because of right-to-left rendering, but the bytes formed the correct ranges. `backend.md` now writes it with Unicode escapes.
 - **Residual-risk formula**: `q(1−d)/(1−q·d)` is correct Bayes. Only the prior needs fixing (H1).
 - **Kinship coefficients**: 1/4, 1/8, 1/16 and 1/32 are correct.
 - **At-risk rates**: 565/11,748 ≈ 4.8%, and 79/1,000 ≈ 7.9%, match the docs' "about 1 in 20" and "about 8%".
@@ -319,6 +330,29 @@ So nobody spends time re-checking these:
 - **Core design**: deterministic engine, boundary labels, most-private-reveal-wins, 404 on denied access, and insert-only audit are all sound.
 
 **Not verified:** the news and study citations in `docs/01` generally, LOINC codes against the current FHIR IG (spec marks these `VERIFY`), and Azure OpenAI availability in UAE North.
+
+---
+
+## 8. Global readiness issues
+
+Added on 5 Nov 2026, when the project was re-scoped as global. See [docs/07](07_Global_Design_and_Country_Packs.md). All were found by reading the spec.
+
+### S9. "Global" must not become an overclaim
+The challenge asks for global solutions, but the Challenge 03 text is framed around Abu Dhabi, and cultural fit can't be assumed for a country nobody has reviewed.
+**Fix:** global core, reviewed country packs, and Abu Dhabi as the first reference. Claim only the packs that have been reviewed.
+
+| ID | Tied to one place today | Fix |
+|---|---|---|
+| **G1** | Languages are hard-coded (`Lang = Literal["ar", "en"]`), Arabic is the default, and validators branch on `lang == "ar"` | Language codes and defaults come from the pack, and validators load per-language rules |
+| **G2** | National ID and phone formats are UAE only (`eid_hash`, the `784` and `+971` patterns) in logging, redaction, ingestion and the generator | Use a generic `national_id_hash`, with patterns from the pack. Fail closed if a pack has none |
+| **G3** | Clinical data has one source: panel name, frequencies, options, centres, Al Amal notes, support contacts | Move to the pack. A gene missing from the pack gives "no number, refer" |
+| **G4** | Legal behaviour is assumed: residency, retention, consent forms, right not to know, licensing | Read from `legal.yaml`, with a safe default of most restrictive |
+| **G5** | Integrations are named directly: UAE PASS, Malaffi, Azure UAE North, UAE-region hosting | Keep them behind adapters selected by the pack, with one deployment per country or region |
+| **G6** | Equity strata and SLAs are fixed (Abu Dhabi, Al Ain, Al Dhafra; 24 h and 72 h) | Read from the pack. Equity reports can then compare groups within each country |
+| **G7** | Escalation assumes accredited counsellors exist, and the flows assume a mandatory programme and a lab feed | The pack defines the qualified human. Add a "no qualified service available" state, a flow with no result on file, and clinician entry |
+| **G8** | Screens and copy are Emirati-specific (illustrations, personas, "Arabic default", right-to-left treated as Arabic only) | Content comes from the pack, with general right-to-left and left-to-right support |
+| **G9** | Cultural content assumes one setting: an Islamic faith library, cousin marriage as the framing, and a Gulf-only lexicon. Clan and caste aren't considered | Faith and culture content per pack, written with local reviewers |
+| **G10** | Hindi doesn't reach the Indian states with the highest consanguinity, which are in the south | State this as a limitation, and put Tamil, Kannada and Telugu on the roadmap |
 
 ---
 
@@ -332,3 +366,4 @@ So nobody spends time re-checking these:
 - [Baker McKenzie: UAE data and cyber laws](https://resourcehub.bakermckenzie.com/en/resources/global-data-and-cyber-handbook/emea/uae/topics/key-data-and-cybersecurity-laws) · [Taylor Wessing on the PDPL](https://www.taylorwessing.com/de/insights-and-events/insights/2022/01/me-personal-data-protection-in-the-uae)
 - [360Dx: Dubai premarital screening and Al Amal](https://www.360dx.com/molecular-diagnostics/mandatory-premarital-genetic-carrier-screening-program-dubai-ids-risk-couples)
 - [PyPI: openmined.psi](https://pypi.org/project/openmined.psi/)
+- [Bittles and Black, PNAS 2010](https://pmc.ncbi.nlm.nih.gov/articles/PMC2868287)

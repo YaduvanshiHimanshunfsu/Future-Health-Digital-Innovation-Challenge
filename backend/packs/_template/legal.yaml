@@ -1,0 +1,7 @@
+# FILE: backend/packs/_template/legal.yaml
+# STATUS: STUB. Documentation only; no code until explicitly requested.
+# ORIGIN: [NEW] Added for the global design, docs/07.
+# PURPOSE: Legal rules. Copy this folder to add a country.
+# PLANNED LOGIC: Consent form, retention, residency, right not to know, licensing, sex-selection flag. Default to most restrictive.
+# PHASE: 2.6 | SPEC: docs/07
+# CLOSE THESE ISSUES (docs/04): G4

@@ -1,4 +1,8 @@
-# frontend.md — Silah Frontend: Design System + Copy-Paste Prompts
+# frontend.md — Samvid Frontend: Design System + Copy-Paste Prompts
+
+> **Scope update (5 Nov 2026):** Samvid is global by design. UAE and Abu Dhabi details in this document describe the first reference pack, not the limit of the product. Supported languages are English, Arabic and Hindi. See [docs/07](07_Global_Design_and_Country_Packs.md).
+
+> **Stitch prompts have moved:** use [STITCH_PROMPTS.md](STITCH_PROMPTS.md). It replaces §3 and §5 here. The rest of this guide still applies to the code stage.
 
 > **Goal:** a **light-theme, "Ceramic Chromatic", colourful, animated**, multi-page website and web app, designed in **Google Stitch**, then built and animated with **Google Antigravity** (or Cursor / Claude Code) and wired to the backend in [backend.md](backend.md).
 > **Style name, "Ceramic Chromatic":** glossy, soft-clay ("claymorphism") ceramic surfaces in a bright **tile-mosaic** palette inspired by Islamic and Emirati geometric ceramics. *If "cramistic" meant something else, change only §2 and the master prompt in §3; every page prompt reuses those tokens.*
@@ -79,7 +83,7 @@ Warm porcelain backgrounds · glossy, rounded "glazed tile" cards with soft clay
 | `--ink` (text) | `#1F2433` | Primary text (contrast 15:1 on porcelain) |
 | `--slate` (text-2) | `#5B6275` | Secondary text (≥ 4.5:1) |
 | `--lapis` (primary) | `#2F5BEA` | Primary buttons, links, focus |
-| `--turquoise` (secondary) | `#14A89B` | Secondary actions, "carrier" in charts |
+| `--turquoise` (secondary) | `#14A89B` | Fills and borders, "carrier" in charts. For text use `#0E776E` |
 | `--terracotta` | `#E2725B` | Highlights, illustrations (not used for "danger") |
 | `--saffron` | `#F4B740` | Badges, attention (non-alarming) |
 | `--rose-clay` | `#E58FA8` | Illustrations, family elements |
@@ -125,7 +129,7 @@ Rules: animation **explains** things (inheritance, flow, progress) rather than d
 - Full **RTL** mirroring for Arabic. Icons with direction (arrows) flip; charts keep their numeric axis order.
 - Literacy toggle (Simple / Standard / Detailed) is always visible. Simple mode uses larger text and more icons.
 - Voice button ("Listen") next to every explanation.
-- Illustrations: modest dress, diverse ages, Emirati family settings, no medical gore, no sad or sick children.
+- Illustrations: modest dress, diverse ages and family settings, adapted per country, no medical gore, no sad or sick children.
 - Copy is **non-directive** ("Your options", "The choice is yours"), **non-stigmatising** ("share a genetic finding", never "incompatible"), and makes clear that risk is not a diagnosis.
 
 ---
@@ -133,8 +137,9 @@ Rules: animation **explains** things (inheritance, flow, progress) rather than d
 ## 3. Master prompt (paste first in Stitch)
 
 ```text
-Design system for "Silah" (صلة) — a bilingual (Arabic RTL + English) web app that helps Emirati
-individuals and couples understand genetic carrier screening results privately and kindly.
+Design system for "Samvid" — a multilingual web app (English, Hindi, and Arabic right-to-left) that
+helps individuals and couples around the world understand genetic carrier screening results privately
+and kindly.
 
 STYLE: "Ceramic Chromatic" LIGHT theme. Warm porcelain background #FBF8F3, white glazed cards with
 soft clay (neumorphic) shadows, 24px rounded corners, pill buttons, glossy top highlight on cards.
@@ -147,14 +152,14 @@ multicolour mosaic-tile divider strips between sections.
 TYPOGRAPHY: Readex Pro for headings (Arabic + Latin), Inter for English body, IBM Plex Sans Arabic for
 Arabic body. Generous spacing, max 68 characters per line, large readable text.
 
-ILLUSTRATION: friendly, rounded, flat-3D clay-style illustrations of diverse Emirati families,
+ILLUSTRATION: friendly, rounded, flat-3D clay-style illustrations of diverse families from many cultures,
 couples and counsellors; modest clothing; hopeful and calm; DNA strands drawn as colourful
 ceramic beads; family trees drawn as connected ceramic tiles.
 
 TONE: warm, private, respectful, non-judgmental, never alarming. Avoid red for risk. Use plum for
 "condition", turquoise for "carrier", sand for "neither", always with patterns and labels.
 
-COMPONENTS: top nav with language switch (العربية / English) and literacy toggle
+COMPONENTS: top nav with language switch (Arabic / English) and literacy toggle
 (Simple / Standard / Detailed), a "Listen" voice button on explanations, privacy lock badges,
 progress steppers, chips, clay cards, tabs, bottom sheet on mobile.
 
@@ -179,7 +184,7 @@ flowchart TB
         P5["P5 Sign in + language + literacy"] --> P6["P6 My journey dashboard"]
         P6 --> P7["P7 My result"]
         P6 --> P8["P8 Couple risk explainer"]
-        P6 --> P9["P9 Ask Silah (AI chat)"]
+        P6 --> P9["P9 Ask Samvid (AI chat)"]
         P6 --> P10["P10 Options & values"]
         P6 --> P11["P11 Partner sharing & couple match"]
         P6 --> P12["P12 Invite family privately"]
@@ -207,7 +212,7 @@ flowchart TB
 | P6 | My journey | `/[locale]/app` | `GET /v1/me/results`, pathway state |
 | P7 | My result | `/[locale]/app/result` | `GET /v1/me/results` |
 | P8 | Couple risk | `/[locale]/app/couple` | `GET /v1/me/risk`, `POST /v1/couples/{id}/match` |
-| P9 | Ask Silah | `/[locale]/app/ask` | `POST /v1/chat` |
+| P9 | Ask Samvid | `/[locale]/app/ask` | `POST /v1/chat` |
 | P10 | Options & values | `/[locale]/app/options` | `GET /v1/options` |
 | P11 | Partner sharing | `/[locale]/app/partner` | `POST /v1/couples`, `/consent-match`, `/match` |
 | P12 | Invite family | `/[locale]/app/family` | `POST /v1/invitations` |
@@ -228,12 +233,12 @@ flowchart TB
 
 ### P1 — Home (public landing)
 ```text
-Create the HOME page for Silah using the Ceramic Chromatic light design system.
+Create the HOME page for Samvid using the Ceramic Chromatic light design system.
 
 HERO (full width, porcelain bg with a soft lapis→turquoise→saffron glaze gradient at 15%):
 - Left: headline "Understand your genetic results — privately, kindly, in your language."
-  Arabic subline: "افهم نتائجك الجينية بخصوصية ولطف وبلغتك."
-  Supporting text: "Silah explains premarital and preconception screening results in plain words,
+  Arabic subline: (native-speaker translation of the headline above).
+  Supporting text: "Samvid explains premarital and preconception screening results in plain words,
   connects you with qualified genetic counsellors, and lets you decide what to share."
   Buttons: primary pill "Start privately" (lapis), secondary pill "How it works" (turquoise outline).
   Trust row: lock icon "Your data stays in the UAE", shield "You control sharing",
@@ -242,7 +247,7 @@ HERO (full width, porcelain bg with a soft lapis→turquoise→saffron glaze gra
   beads gently twisting, with small tile-shaped family icons orbiting it.
   (Motion note: helix slowly rotates; beads shimmer on hover.)
 
-SECTION "What Silah does" — 4 glazed cards in a row with icons and short text:
+SECTION "What Samvid does" — 4 glazed cards in a row with icons and short text:
 1 "Explains your result" (icon: speech bubble with DNA), 2 "Shows your options — the choice is
 yours" (icon: branching path), 3 "Connects you to a counsellor" (icon: two people),
 4 "Protects your family's privacy" (icon: lock + family tree).
@@ -256,7 +261,6 @@ SECTION "Did you know?" — 3 large stat tiles with mosaic borders:
 SECTION "How it works" — horizontal 5-step stepper of ceramic tiles connected by a dotted line:
 Screening → Your result explained → Ask questions → Talk to a counsellor → Your informed choice.
 
-SECTION "Built with" — logos placeholder row (Department of Health Abu Dhabi, M42 — placeholders only).
 FOOTER: language switch, privacy promise link, accessibility statement, contact.
 Include the mosaic-tile divider strips between sections and the 5% geometric tile pattern.
 ```
@@ -270,7 +274,7 @@ Show a sticky chapter progress rail on the left (5 ceramic dots).
 Chapter 1 "Genes come in pairs": two parents drawn as friendly clay figures, each holding two
 ceramic gene tiles (one lapis, one turquoise).
 Chapter 2 "What is a carrier?": one tile is a different colour (plum dot pattern). Text: "A carrier has
-one changed copy and one working copy. Carriers are healthy."
+one changed copy and one working copy. Carriers usually don't have the condition."
 Chapter 3 "When both parents carry the same change": a 2×2 Punnett square made of glossy tiles:
 AA (sand), Aa (turquoise), Aa (turquoise), aa (plum, hatched). Labels underneath: 25% · 50% · 25%.
 (Motion note: tiles flip in one by one.)
@@ -285,7 +289,7 @@ Literacy toggle at the top changes text density (show Simple version).
 ### P3 — Cousin marriage & genetics: facts, not myths
 ```text
 Create a respectful educational page "Cousin marriage and genetics — facts, not myths".
-Tone: culturally respectful, never judgmental. Header illustration: an Emirati family gathering
+Tone: culturally respectful, never judgmental. Header illustration: a family gathering
 drawn in clay style with warm terracotta and saffron tones.
 
 Section 1 intro text: "Marrying a relative is a long-standing tradition. Genetics can help families
@@ -301,7 +305,7 @@ Section 2: an interactive "Myth or Fact?" card grid (6 flip cards, clay style):
 Section 3: a simple bar comparison (illustrative): "Background chance of a serious condition" vs
 "Chance for first cousins" shown as small ranges with an info tooltip
 "Source: NSGC recommendations, 2002".
-Section 4: CTA tiles: "Get screened", "Talk to a counsellor", "Ask Silah a question".
+Section 4: CTA tiles: "Get screened", "Talk to a counsellor", "Ask Samvid a question".
 ```
 
 ### P4 — Privacy promise
@@ -326,21 +330,21 @@ FAQ accordion (5 questions). Footer.
 Create a 3-step onboarding flow on one screen with a top stepper (1 Sign in · 2 Language ·
 3 Reading level) inside a large centred glazed card on porcelain background.
 
-Step 1: "Sign in securely" — big pill button "Continue with UAE PASS" (placeholder logo) and
+Step 1: "Sign in securely" — big pill button "Continue with national ID (demo)" and
 secondary "Sign in with email". Small lock note "We never share your data without your permission."
-Step 2: "Choose your language" — two big selectable clay tiles "العربية" and "English", plus
+Step 2: "Choose your language" — two big selectable clay tiles "Arabic" and "English", plus
 "More languages soon".
 Step 3: "How would you like explanations?" — three selectable clay cards with sample text preview:
 Simple (big text, pictures), Standard, Detailed (more science). Also a toggle "Read explanations
 aloud". Primary button "Continue".
-Right side (desktop): illustration of a calm young Emirati woman reading on a phone with ceramic
+Right side (desktop): illustration of a calm young woman reading on a phone with ceramic
 tile shapes floating around.
 ```
 
 ### P6 — My journey dashboard
 ```text
 Create the signed-in DASHBOARD "My journey" for an individual user.
-Top bar: Silah logo, language switch, literacy toggle, "Listen" button, profile avatar,
+Top bar: Samvid logo, language switch, literacy toggle, "Listen" button, profile avatar,
 privacy lock badge "Private".
 Greeting: "Welcome, Fatima" with a soft saffron glaze sparkle.
 
@@ -351,7 +355,7 @@ Main grid (clay cards):
   with button "Manage partner sharing".
 - Card "My care journey" — a horizontal progress stepper with 6 ceramic tile steps:
   Result released ✓, Explained ✓, Understood (current, pulsing), Counselling, Next steps, Done.
-- Card "Ask Silah" — chat preview with suggested question chips:
+- Card "Ask Samvid" — chat preview with suggested question chips:
   "What does carrier mean?", "Can we still have healthy children?", "What are our options?"
 - Card "Privacy" — "2 active shares" with "Manage" link and a mini access-log list.
 - Card "Talk to a counsellor" — counsellor illustration, "Book a free session".
@@ -364,7 +368,7 @@ Create the "My result" page. Header: "Your screening result" with date and lab n
 plus a "Listen" button and literacy toggle.
 
 Hero clay card in turquoise glaze: "You carry one changed copy of the HBB gene."
-Big reassuring line: "Being a carrier is not an illness. You are healthy."
+Big reassuring line: "Being a carrier usually doesn't cause illness. A counsellor can tell you more."
 Below: three info tiles in a row:
 1 "What it means for you" (healthy, no treatment needed),
 2 "What it could mean for children" (only matters if a partner carries the same gene),
@@ -394,27 +398,28 @@ VISUAL 2 — PUNNETT SQUARE: 2×2 glossy tiles with parent tiles on top and side
 VISUAL 3 — "Every pregnancy" strip: 4 pregnancy cards with the same 25/50/25 mini donut each.
 
 Below: "Your options" preview — 6 equal-size option chips (no ranking, alphabetical):
-Adoption, Donor options, IVF with embryo testing (PGT-M), Natural pregnancy, Prenatal testing,
-Take time to decide. Button "Explore options". Button "Talk to a counsellor (recommended for
-shared findings)". Small note "A counsellor will contact you within 3 days."
+Fostering, IVF with embryo testing (PGT-M), Natural pregnancy, Prenatal testing, More testing,
+Take time to decide. The list comes from the country's settings, so show it as a repeating chip row.
+Button "Explore options". Button "Talk to a counsellor". Small note "You can ask a counsellor whenever
+you're ready."
 ```
 
-### P9 — Ask Silah (AI chat)
+### P9 — Ask Samvid (AI chat)
 ```text
-Create the "Ask Silah" chat page.
+Create the "Ask Samvid" chat page.
 Layout: left column (desktop) with suggested topics as ceramic chips; main chat area; right column
 "Facts used in this answer" panel.
 
-Chat bubbles: user bubbles in lapis tint (right in English, left in Arabic RTL); Silah bubbles in
-lilac-white glaze with a small ceramic-bead avatar. Each Silah answer shows a small LABEL chip at
+Chat bubbles: user bubbles in lapis tint (right in English, left in Arabic RTL); Samvid bubbles in
+lilac-white glaze with a small ceramic-bead avatar. Each Samvid answer shows a small LABEL chip at
 the top: "Education" (turquoise), "Your options" (saffron), or "A counsellor can help with this"
 (lapis) — and a "Listen" icon and "Was this clear?" thumbs.
 Show one example exchange:
 User: "If we are both carriers, will our first child be sick?"
-Silah (Education label): "Not necessarily. In each pregnancy there is a 25% chance… The chance is
+Samvid (Education label): "Not necessarily. In each pregnancy there is a 25% chance… The chance is
 the same every time…" with an inline mini icon-array.
 Second example: User: "Should we do IVF?"
-Silah (Counsellor label): "That's an important personal decision and a genetic counsellor can talk it
+Samvid (Counsellor label): "That's an important personal decision and a genetic counsellor can talk it
 through with you. Would you like to book a session?" + button "Book counsellor".
 Input bar: rounded clay input "Type or speak your question…", mic button, send button,
 small privacy note "Don't include names or ID numbers".
@@ -428,9 +433,9 @@ inheritance".
 Create the "Your options" page with two tabs: "Options" and "What matters to me".
 
 Tab Options: a grid of 6 EQUAL clay cards (same size, same style, alphabetical, no 'recommended'
-badge): Adoption, Donor options, IVF with embryo testing (PGT-M), Natural pregnancy, Prenatal testing,
+badge): Fostering, IVF with embryo testing (PGT-M), Natural pregnancy, Prenatal testing, More testing,
 Take time to decide. Each card: illustration, "What it involves", "Things to consider",
-"Learn more", and for PGT-M a small saffron note "May be funded for eligible Emirati couples".
+"Learn more", and for PGT-M a small saffron note "Funding may be available. Ask your counsellor.".
 Top banner: "There is no right or wrong choice. These options are equally valid."
 
 Tab What matters to me: 5 soft clay sliders with ceramic thumbs:
@@ -461,11 +466,11 @@ Result state example: "You share one finding. A counsellor will explain the deta
 ### P12 — Invite family privately
 ```text
 Create the "Invite family privately" page.
-Intro: "Relatives may share the same gene changes. You can invite them to free screening —
+Intro: "Relatives may share the same gene changes. You can let them know screening exists —
 without revealing your identity or result, unless you choose to."
 Form card: relationship selector as ceramic chips (Parent, Sibling, Cousin, Aunt/Uncle, Child, Other);
 toggle "Include my name in the invitation" (default OFF); preview card on the right showing
-exactly what the relative will see: "A family member recommends free genetic screening.
+exactly what the relative will see: "A family member wanted you to know about genetic screening.
 Here's what it involves…" (no name, no result).
 Buttons: "Create private link", "Send by SMS", "Copy link". Note "Links expire in 30 days and can be
 used once." Limit note "Up to 5 invitations per day."
@@ -512,7 +517,7 @@ Question example: "If both partners carry the same gene change, what is the chan
 pregnancy?" Answers as large clay option buttons with icons: "1 in 4", "Every child", "No chance",
 "Only the first child". Feedback panel after answering: turquoise "That's right!" or lilac
 "Good question — here's another way to see it" with a mini Punnett square (never red/wrong styling).
-End screen: confetti of small ceramic tiles, "Thanks! This helps us explain better.", buttons
+End screen: a calm row of ceramic tiles settling into place, "Thanks. This helps us explain better.", buttons
 "Review explanation", "Talk to a counsellor".
 ```
 
@@ -547,7 +552,7 @@ assignment): saffron warning "State a reason to continue".
 Create an ADMIN ANALYTICS DASHBOARD "Programme outcomes" in the Ceramic Chromatic light style
 with colourful but calm charts.
 Top filters: date range, region (Abu Dhabi / Al Ain / Al Dhafra), language, literacy level.
-KPI row (6 clay tiles with sparkline): Comprehension improvement +31pp, Counselling uptake (at-risk)
+Banner across the top: "Synthetic demo data, not real patients." KPI row (6 clay tiles with sparkline): Comprehension improvement +31pp, Counselling uptake (at-risk)
 92%, Median time to counselling 3.2 days, Referrals completed 87%, Privacy incidents 0,
 AI answers escalated 14%.
 Charts grid:
@@ -589,18 +594,42 @@ Show both English LTR and Arabic RTL examples.
 
 ---
 
+### P21 — Centre finder (public)
+```text
+Create a "Find screening and counselling" page. A search bar and region chips at the top, then a list of
+clay cards: centre name, services, contact, and a small line "Source and date checked". Include a friendly
+empty state: "We don't have a verified list for this country yet." Show that no sign-in is needed.
+```
+
+### P22 — Invitation landing (public)
+```text
+Create a calm page for someone who received a private invitation link. Heading: "A family member wanted you
+to know about genetic screening." Three short clay cards: what screening is, that it's your choice, and how
+your privacy is protected. One pill button "Continue" and a secondary link "Not now". No names, no results,
+and no suggestion that anyone is ill.
+```
+
+### P23 — Country and language settings (component)
+```text
+Add a component sheet showing the country switch and language switch used across the app: "Abu Dhabi" (English,
+Arabic) and "India — demo" (English, Hindi), with an "Illustrative, not reviewed" chip for any unreviewed
+country. Show the options list and the support contacts card changing when the country changes.
+```
+
+---
+
 ## 6. Story Mode: 10-slide animated pitch site
 
 A full-screen, scroll- or arrow-key-driven **slide website** for judges and the demo video (`/story`). Each slide is 100vh with GSAP ScrollTrigger or Motion page transitions.
 
 ### Stitch prompt (design all 10 slides)
 ```text
-Design a 10-slide full-screen presentation website "Silah — Story Mode" in the Ceramic Chromatic
+Design a 10-slide full-screen presentation website "Samvid — Story Mode" in the Ceramic Chromatic
 light style (16:9 desktop frames). Each slide has a mosaic-tile progress bar at the bottom
 (10 tiles), slide number, and arrow buttons. Big typography, one idea per slide, rich illustration.
 
-Slide 1 Title: "Silah — private, kind understanding of inherited risk." DNA ceramic-bead helix,
-team name, "Future Health Challenge 2026 · Fertility Challenge 03".
+Slide 1 Title: "Samvid — private, kind understanding of inherited risk." DNA ceramic-bead helix,
+team Vigyan_Viveka_Vijaya, "Future Health Challenge 2026 · Fertility Challenge 03".
 Slide 2 The context: big stat tiles "11,748 couples screened in Abu Dhabi", "~1 in 20 share a genetic
 finding", "570 genes · 840+ conditions". Map of UAE.
 Slide 3 The gap: a broken path of tiles: Test ✓ → Understanding ✗ → Counselling ⚠ → Choice ⚠ →
@@ -612,7 +641,7 @@ Private sharing · Measured outcomes.
 Slide 6 How it works: architecture diagram as tiles: Results → Risk engine (numbers from code) →
 AI explainer (words) → Counsellor (decisions) with a privacy shield wrapping everything.
 Slide 7 Couple-only match: two tile sets entering a glass box, only shared tile emerges.
-Slide 8 Live demo screenshots: 3 phone mockups (Result, Couple view icon array, Ask Silah).
+Slide 8 Live demo screenshots: 3 phone mockups (Result, Couple view icon array, Ask Samvid).
 Slide 9 Impact & metrics: KPI tiles + note "We don't measure cancelled marriages."
 Slide 10 Roadmap & ask: timeline tiles (Pilot → Malaffi integration → National cascade screening),
 "Partner with us for a DoH pilot".
@@ -741,7 +770,7 @@ and a friendly error state. Each chart has a "View as table" toggle for accessib
 ## 9. Build and backend integration prompt (Antigravity)
 
 ```text
-You are building the Silah frontend. Read docs/frontend.md and docs/backend.md first.
+You are building the Samvid frontend. Read docs/frontend.md and docs/backend.md first.
 
 TASK: Convert the exported Stitch HTML/Tailwind screens in /design-export into a production-ready
 Next.js 15 (App Router, TypeScript, Tailwind, shadcn/ui) app in /frontend, then connect it to the
@@ -811,7 +840,8 @@ config).
 4. **Refine in small steps**: "Make the icon array larger and move the legend under it", "Increase spacing between cards to 32px", "Make the hero illustration more colourful with terracotta and saffron".
 5. **Ask for variants**: "Give me 3 variations of the hero" and pick the best.
 6. **Generate mobile separately**: "Now create the 390px mobile version of this screen with a bottom navigation bar."
-7. **Arabic**: "Create the Arabic RTL version with all text in Arabic, mirrored layout, IBM Plex Sans Arabic body font."
+7. **Hindi**: "Create the Hindi version with all text in Hindi, left-to-right, using Noto Sans Devanagari for body text." Have a Hindi speaker check it.
+8. **Arabic**: "Create the Arabic RTL version with all text in Arabic, mirrored layout, IBM Plex Sans Arabic body font."
 8. **Upload references**: a screenshot of the previous screen (for consistency) or a ceramic tile photo (for texture).
 9. **Export**: use HTML/Tailwind export for code and Figma export for fine-tuning, then hand off to Antigravity using the §9 prompt.
 10. **Keep a "style lock" screen** (P20 component sheet) and reference it: "Use exactly the same components as the component sheet."

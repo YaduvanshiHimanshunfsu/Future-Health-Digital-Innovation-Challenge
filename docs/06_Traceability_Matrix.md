@@ -39,36 +39,9 @@ Every metric the challenge asks for needs a source. These are the ones that had 
 | Technical depth and architecture | Technical doc, test suites, threat model | 2, 3, 4, 6.4 |
 | Working solution and demonstration quality | End-to-end journey, video | 5.5, 6.5 |
 | Responsible AI, safety and data governance | Safety report, privacy tests, legal baseline | 1.2, 3, 4.2, 6.1, 6.3 |
-| Scalability and deployment readiness | One-command stack, deployment section | 1.3, 6.3, 6.4 |
+| Scalability and deployment readiness | One-command stack, country pack swap, deployment section | 1.3, 2.6, 6.3, 6.4 |
 | Commercial viability and path to pilot | Commercial and pilot plan | 6.4 |
 
 ## Issues to phases
 
-| Sub-phase | Issues closed |
-|---|---|
-| 1.1 | S1, S2, S3 |
-| 1.2 | S4, S5, S6 (decisions), H4, H13, H19 |
-| 1.3 | H15, H16 |
-| 1.4 | M12 |
-| 1.5 | H18, M2, M10 |
-| 1.6 | M5, M13 |
-| 2.3 | C1, M8 |
-| 2.4 | C3, C4, C7 (engine), H1, H2, H3, H4, H5 |
-| 2.2 | M3 |
-| 3.1 | H7 |
-| 3.2 | H8, H19 |
-| 3.3 | C1, C2, C7 (full), S6, S8 |
-| 3.4 | H17 |
-| 3.5 | H6 |
-| 4.1 | M7, M11 |
-| 4.2 | C5, H12 |
-| 4.3 | C6, C10, H9, M1, M4 |
-| 4.4 | S5 (implementation) |
-| 4.5 | C8, C9 |
-| 5.1 | H10 |
-| 5.2 | H14 (booking, referrals, centres) |
-| 5.4 | H11, M9 |
-| 6.2 | S7 |
-| 6.4 | S2, S4, S8 (documents) |
-
-H14 closes across several sub-phases, as listed in each phase file. M6 was fixed on 3 Nov 2026 (see `brain.md` #001).
+See [phases/CROSS_VERIFICATION.md](phases/CROSS_VERIFICATION.md), which maps every issue to its sub-phase and check.

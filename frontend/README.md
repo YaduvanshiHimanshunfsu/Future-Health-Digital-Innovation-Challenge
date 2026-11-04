@@ -27,3 +27,29 @@ Next.js 15 app built from Stitch exports. Spec: `docs/frontend.md`.
 | `playwright.config.ts` | End-to-end config. | 5.5 |  |
 | `tailwind.config.ts` | Tailwind tokens. | 1.6 | M5 |
 | `tsconfig.json` | TypeScript config. Empty placeholder. | 1.6 |  |
+
+## Colour contrast
+
+Calculated, not estimated. All pairs reach the WCAG AA minimum of 4.5:1 (M5, V1.6.1). The original accents are too light to use as text, so use the `-text` tokens for text.
+
+| Text colour | Hex | On white | On porcelain | On sand |
+|---|---|---|---|---|
+| Ink | `#1F2433` | 15.46 | 14.59 | 13.28 |
+| Slate | `#5B6275` | 6.09 | 5.75 | 5.23 |
+| Lapis | `#2F5BEA` | 5.52 | 5.21 | 4.74 |
+| Plum | `#7A4FD6` | 5.36 | 5.06 | 4.61 |
+| Turquoise text | `#0E776E` | 5.41 | 5.11 | 4.65 |
+| Terracotta text | `#A55342` | 5.36 | 5.06 | 4.61 |
+| Saffron text | `#866523` | 5.39 | 5.08 | 4.63 |
+| Rose clay text | `#905A6A` | 5.45 | 5.14 | 4.68 |
+| Olive text | `#517333` | 5.45 | 5.15 | 4.69 |
+
+| Text on a coloured fill | Contrast |
+|---|---|
+| Ink on turquoise | 5.23 |
+| Ink on terracotta | 5.00 |
+| Ink on saffron | 8.61 |
+| Ink on olive | 5.89 |
+| Ink on rose clay | 6.50 |
+| White on lapis | 5.52 |
+| White on plum | 5.36 |

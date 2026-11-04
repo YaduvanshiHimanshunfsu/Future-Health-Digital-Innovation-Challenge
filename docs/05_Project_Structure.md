@@ -20,11 +20,12 @@ Future Health/
 │   ├── alembic/         Database migrations
 │   ├── synthetic/       Synthetic data and personas
 │   └── tests/           unit, api, eval
+│   (backend/packs/ holds per-country settings)
 ├── frontend/            Next.js app
 │   ├── app/             Routes (P1 to P19, Story Mode)
 │   ├── components/      ui, layout, motion, risk, charts
 │   ├── lib/             API client, auth, i18n
-│   ├── messages/        Arabic and English text
+│   ├── messages/        English, Arabic and Hindi text
 │   └── tests/e2e/       Playwright
 ├── infra/               Compose, OpenFGA, Keycloak, Postgres
 ├── scripts/             Runbooks
@@ -47,7 +48,7 @@ Future Health/
 
 | File | Purpose | Phase | Req | Issues |
 |---|---|---|---|---|
-| `ci.yml.stub` | CI pipeline, as a stub. | 1.3 |  | H16 |
+| `ci.yml` | CI pipeline: lint, types, security scans, tests, image scan. | 1.3 |  | H16 |
 
 ## `backend/`
 
@@ -135,12 +136,6 @@ Future Health/
 |---|---|---|---|---|
 | `service.py` [NEW] | Screening and counselling centre finder. | 5.2 | R2 | H14 |
 
-## `backend/app/centres/data/`
-
-| File | Purpose | Phase | Req | Issues |
-|---|---|---|---|---|
-| `centres.yaml` [NEW] | Centre directory. | 5.2 | R2 | H14 |
-
 ## `backend/app/core/`
 
 | File | Purpose | Phase | Req | Issues |
@@ -165,7 +160,6 @@ Future Health/
 | File | Purpose | Phase | Req | Issues |
 |---|---|---|---|---|
 | `options.py` | Option cards. | 4.4 | R2 | S5 |
-| `options_abu_dhabi.yaml` [NEW] | Options available in Abu Dhabi. | 4.4 | R2 | S5 |
 | `values.py` | Values reflection. | 4.4 | R2 | H14 |
 
 ## `backend/app/explain/`
@@ -195,6 +189,7 @@ Future Health/
 | `judge_directive.txt` [NEW] | Directiveness judge prompt. | 4.2 | R2 | H12 |
 | `router_system.txt` [NEW] | Router prompt. | 4.3 | R3 | C6 |
 | `system_ar.txt` | Arabic system prompt. | 4.3 | R1 | C5, H13 |
+| `system_hi.txt` [NEW] | Hindi system prompt. | 4.3 | R1 | C5, H13 |
 | `system_en.txt` | English system prompt. | 4.3 | R1 | C5, H13 |
 
 ## `backend/app/explain/validators/`
@@ -385,12 +380,12 @@ Future Health/
 | `test_crypto.py` | Encryption round trip and tamper checks. | 2.1 |  |  |
 | `test_engine_boundaries.py` [NEW] | Risk engine imports nothing from DB, API or LLM layers. | 2.4 |  |  |
 | `test_fairness.py` [NEW] | Equity gaps and suppression. | 5.4 |  | H11, M9 |
-| `test_redaction.py` [NEW] | Arabic and English PII, plus failing closed. | 3.5 |  | H6 |
+| `test_redaction.py` [NEW] | English, Arabic and Hindi PII, plus failing closed. | 3.5 |  | H6 |
 | `test_risk_engine.py` | Risk maths and invariants, including all V2.4 checks. | 2.4 |  | C3, C4, H1, H2, H3, H5 |
-| `test_router.py` [NEW] | Boundary routing. Includes the حامل pair. | 4.3 |  | C6 |
+| `test_router.py` [NEW] | Boundary routing. Includes the hamil (pregnant or carrier) pair. | 4.3 |  | C6 |
 | `test_state_machine.py` | Transitions, decline from each state, SLA. | 5.1 |  | H10 |
 | `test_triage.py` | Priorities for every persona. | 4.5 |  | C8 |
-| `test_validators.py` | Validators in Arabic and English, including all V4.2 checks. | 4.2 |  | C5, H12, H13 |
+| `test_validators.py` | Validators in English, Arabic and Hindi, including all V4.2 checks. | 4.2 |  | C5, H12, H13 |
 
 ## `docs/clinical/`
 
@@ -485,7 +480,7 @@ Future Health/
 
 | File | Purpose | Phase | Req | Issues |
 |---|---|---|---|---|
-| `page.tsx` | P9 Ask Silah. Scope tier T1. | 4.3 | R1, R3 | M1 |
+| `page.tsx` | P9 Ask Samvid. Scope tier T1. | 4.3 | R1, R3 | M1 |
 
 ## `frontend/app/[locale]/(app)/app/check/`
 
@@ -697,6 +692,7 @@ Future Health/
 | File | Purpose | Phase | Req | Issues |
 |---|---|---|---|---|
 | `ar.json` | Arabic UI text. Empty placeholder for now. | 1.6 |  | H13 |
+| `hi.json` [NEW] | Hindi UI text. Empty placeholder for now. | 1.6 |  | H13 |
 | `en.json` | English UI text. Empty placeholder for now. | 1.6 |  | H13 |
 
 ## `frontend/public/illustrations/`
@@ -722,7 +718,7 @@ Future Health/
 
 | File | Purpose | Phase | Req | Issues |
 |---|---|---|---|---|
-| `realm-silah.json` | Keycloak realm export. | 3.1 | R4 | M2 |
+| `realm-samvid.json` | Keycloak realm export. | 3.1 | R4 | M2 |
 
 ## `infra/openfga/`
 
@@ -746,9 +742,59 @@ Future Health/
 | `seed_demo.md` [NEW] | Runbook: reset and seed the demo personas in one command. | 5.5 |  |  |
 | `verify_audit_chain.md` [NEW] | Runbook: verify the audit chain before a demo. | 6.3 |  |  |
 
+## `backend/app/country_packs/` [NEW]
+
+| File | Purpose | Phase | Req | Issues |
+|---|---|---|---|---|
+| `schema.py` [NEW] | Pack schema. | 2.6 |  | S9, G3, G4 |
+| `loader.py` [NEW] | Loads and validates the active pack. | 2.6 |  | S9, G1–G6 |
+
+## `backend/packs/_template/`, `ae-abu-dhabi/` and `in-india/` [NEW]
+
+All three folders hold the same files. See `docs/07`.
+
+| File | Purpose | Issues |
+|---|---|---|
+| `pack.yaml` | Pack identity. | G1, S9 |
+| `options.yaml` | Reproductive options available here. | S5, G3 |
+| `legal.yaml` | Legal rules. | G4 |
+| `panel.yaml` | Screening panel and gene data. | G3, H2, H3 |
+| `services.yaml` | Local care services. | G3, G7 |
+| `support_contacts.yaml` | Crisis and support contacts. | C10, G3 |
+| `identity.yaml` | Identity and records. | G2, G5 |
+| `lexicon.yaml` | Word list selection. | G1, G9, H12 |
+| `strata.yaml` | Equity strata and SLAs. | G6 |
+
+## Added in Phase 1
+
+| File | Purpose |
+|---|---|
+| `backend/app/asgi.py` | Entry point for the server |
+| `backend/app/models/enums.py` | Shared value lists and their database checks |
+| `backend/app/core/messages/` | Error messages in English and Hindi |
+| `backend/app/ops/check_services.py` | Operator check of every dependency, including a real token |
+| `backend/tests/api/test_http_hardening.py`, `test_denied_audit.py` | Headers, limits, errors, denied-access auditing |
+| `backend/tests/unit/test_config.py`, `test_logging.py`, `test_i18n.py`, `test_rate_limit.py`, `test_schema.py` | Foundation tests |
+| `infra/postgres/init.sh` | Passes role passwords to `init.sql` |
+| `scripts/generate_env.py` | Creates local secrets |
+| `docs/runbook_local_stack.md` | How to run everything |
+| `docs/STITCH_PROMPTS.md` | Every frontend prompt, replacing §3 and §5 of `docs/frontend.md` |
+| `docs/security/data_classification.md` | Every database column, and why it's stored as it is |
+| `docs/clinical/lexicon_seeds.md` | Starting word lists for review |
+| `.github/workflows/ci.yml` | CI, replacing the earlier stub |
+
+## `docs/submission/` additions
+
+| File | Purpose |
+|---|---|
+| `competition_requirements.md` | Official dates, FAQ answers and judging criteria |
+| `data_sources.md` | Declaration of every data source |
+| `maturity_statement.md` | What existed, and what was built during the challenge |
+| `evidence/` | Screenshots of the challenge page |
+
 ## `backend/app/explain/templates/` (pattern)
 
-`<scenario>.<lang>.<level>.j2`, 60 stubs. Languages: `en`, `ar`. Levels: `simple`, `standard`, `detailed`.
+`<scenario>.<lang>.<level>.j2`, 90 stubs. Languages: `en`, `ar`, `hi`. Levels: `simple`, `standard`, `detailed`.
 
 | Scenario | Used for |
 |---|---|
@@ -765,7 +811,7 @@ Future Health/
 
 ## `backend/app/kb/content/` (pattern)
 
-`<condition>/<lang>_<level>.md`, 66 stubs.
+`<condition>/<lang>_<level>.md`, 99 stubs.
 
 | Condition folder | Topic |
 |---|---|

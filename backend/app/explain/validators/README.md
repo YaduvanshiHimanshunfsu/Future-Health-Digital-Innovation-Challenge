@@ -2,7 +2,7 @@
 
 Numeric, stigma, directive, diagnosis and readability guards.
 
-**Rules:** Must work in Arabic and Gulf dialect. Evaluate with humans too (H12).
+**Rules:** Must work in Arabic, Gulf dialect and Hindi. Evaluate with humans too (H12).
 
 **Status:** stubs only. No code until requested.
 

@@ -3,4 +3,4 @@
 # PURPOSE: Gene reference data.
 # PLANNED LOGIC: PLACEHOLDER values for synthetic demo. Add risk groups (HBA1/HBA2), retinal and glaucoma genes. Replace with reviewed data before any real use.
 # PHASE: 2.2 | REQ: R1 | SPEC: backend.md 11.17
-# CLOSE THESE ISSUES (docs/04): H2, H3, M3
+# CLOSE THESE ISSUES (docs/04): H2, H3, M3, G3

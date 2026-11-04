@@ -34,6 +34,8 @@
 | V5.1.5 | Advancing resets the SLA, so it doesn't instantly re-stall | Test |
 | V5.1.6 | Worker runs in compose and flags an overdue case | Run log |
 | V5.1.7 | Concurrent updates give one success and one 409 | Test |
+| V5.1.8 | Lost-to-follow-up and not-confirmed outcomes are recorded | Test |
+| V5.1.9 | A user can read their own journey, and others get 404 | API test |
 
 ---
 
@@ -65,6 +67,7 @@
 | V5.2.3 | Double booking a slot is prevented | Test |
 | V5.2.4 | No gene, condition or name in notifications | Template scan test |
 | V5.2.5 | Result-to-referral timeline visible for a persona | Screenshot |
+| V5.2.6 | The centre finder shows pack data with source and date, and works with no result on file | Test |
 
 ---
 
@@ -78,8 +81,8 @@
 - O5.3.3 Failing twice offers help without judgement.
 
 **Work** (step 23)
-- Teach-back items reviewed by a counsellor and Arabic speaker.
-- Adapted MMIC and SURE, marked as "adapted, not validated in Arabic" unless a validated version is found.
+- Teach-back items reviewed by a counsellor, and by Arabic and Hindi speakers.
+- Adapted MMIC and SURE, marked as "adapted, not validated in Arabic or Hindi" unless a validated version is found.
 - Paired pre and post scoring.
 
 **Files:** `backend/app/assessments/*`, `backend/app/api/v1/assessments.py`, `frontend/app/[locale]/(app)/app/check/`
@@ -89,9 +92,10 @@
 | ID | Check | Evidence |
 |---|---|---|
 | V5.3.1 | Scoring correct on known answers | Unit test |
-| V5.3.2 | Arabic and English items mean the same | Back-translation note |
+| V5.3.2 | Arabic, Hindi and English items mean the same | Back-translation note |
 | V5.3.3 | Two failures create a P3 case | Test |
 | V5.3.4 | Licence or permission for each instrument is noted | Note in the file |
+| V5.3.5 | Adapted instruments are labelled as adapted on screen and in reports | Screenshot |
 
 ---
 
@@ -126,6 +130,8 @@
 | V5.4.5 | Events have no free text | Schema test |
 | V5.4.6 | Each KPI in `docs/03` §5 has a query or a stated gap | Table reviewed |
 | V5.4.7 | The dashboard says "synthetic data" | Screenshot |
+| V5.4.8 | No metric, schema field or dashboard treats cancelled marriages or any one choice as success | Schema and screen review |
+| V5.4.9 | Gap alerts fire at the set thresholds: 5 pp between languages, 10 pp between literacy levels | Test |
 
 ---
 
@@ -137,7 +143,7 @@
 - O5.5.1 Typed client generated from the API.
 - O5.5.2 T1 screens are wired up.
 - O5.5.3 Tokens stay server-side.
-- O5.5.4 Arabic RTL works on the main path.
+- O5.5.4 Right-to-left and left-to-right languages work on the main path, using Arabic and Hindi.
 
 **Work** (step 24)
 - Generate the client, BFF proxy and login.
@@ -154,25 +160,29 @@
 6. A counsellor claims the case and advances it to referral.
 7. Fatima stops a share and sees it in her access log.
 8. An admin sees the metrics, with an equity breakdown.
+9. Switching to the India pack changes the language to Hindi, and changes the options and contacts, with no code change.
 
 **Files:** `frontend/lib/*`, `frontend/app/api/proxy/`, `frontend/middleware.ts`, `frontend/tests/e2e/*`, `scripts/seed_demo.md`
-**Issues to close:** M2, S8
+**Issues to close:** M2, S8, G8
 
 **Cross-verification**
 | ID | Check | Evidence |
 |---|---|---|
-| V5.5.1 | The journey passes in Arabic and English | Playwright report |
+| V5.5.1 | The journey passes in English, Arabic and Hindi | Playwright report |
 | V5.5.2 | No tokens in browser storage | Automated check |
 | V5.5.3 | axe has no serious issues on T1 screens | Report |
 | V5.5.4 | Consent revoke waits for the server | Test with a delayed response |
 | V5.5.5 | A person outside the team completes the journey unaided | Observation note |
 | V5.5.6 | Demo resets from one command | Timed run |
+| V5.5.7 | The client is generated from OpenAPI, with no hand-written request types | Code review |
+| V5.5.8 | Sign-in is outside the role guard, and guards are tested | Test |
+| V5.5.9 | Switching pack changes screen content | Playwright report |
 
 ---
 
 ## Phase 5 exit gate
 
-- [ ] Demo journey passes in both languages
+- [ ] Demo journey passes in all three languages
 - [ ] Dashboard numbers trace to events
 - [ ] Fairness and time-to-referral tests pass
 - [ ] Rehearsal run done with a recorded backup

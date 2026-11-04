@@ -1,6 +1,6 @@
 # Phase 3: Privacy Fabric, Consent and Family Sharing
 
-**Dates:** 9–11 Nov 2026 · **Build steps:** `backend.md` §9 steps 12–16 · **Requirements:** R4 (main), R6 (privacy metrics)
+**Dates:** 10–11 Nov 2026 · **Build steps:** `backend.md` §9 steps 12–16 · **Requirements:** R4 (main), R6 (privacy metrics)
 
 **Phase goal:** people control exactly who sees what, and tests prove that nothing leaks, including through the couple match.
 
@@ -20,7 +20,7 @@
 
 **Work** (step 12): Keycloak realm with an audience mapper, OpenFGA model and bootstrap, adapter that fails closed, outbox or reconcile for tuple writes.
 
-**Files:** `infra/keycloak/realm-silah.json`, `infra/openfga/model.fga`, `backend/app/privacy/authz.py`, `backend/app/privacy/outbox.py`, `scripts/bootstrap_openfga.md`
+**Files:** `infra/keycloak/realm-samvid.json`, `infra/openfga/model.fga`, `backend/app/privacy/authz.py`, `backend/app/privacy/outbox.py`, `scripts/bootstrap_openfga.md`
 **Issues to close:** H7, M2 (roles)
 
 **Cross-verification**
@@ -52,7 +52,7 @@
 - Right-not-to-know flow, shaped by Art. 9(2)–(3) and counsellor input.
 
 **Files:** `backend/app/privacy/consent_service.py`, `backend/app/api/v1/consents.py`, `backend/app/api/v1/shared.py`, `backend/app/models/consent.py`
-**Issues to close:** H8, H19 (purpose codes)
+**Issues to close:** H8, H19 (purpose codes), H7, H11, H14
 
 **Cross-verification**
 | ID | Check | Evidence |
@@ -64,6 +64,7 @@
 | V3.2.5 | Summary-scope grantee can't see full detail | Test |
 | V3.2.6 | Two grants to one person work, and revoking one behaves as documented | Test |
 | V3.2.7 | No genetic data is shown before service consent | Test |
+| V3.2.8 | Right not to know works, with exceptions set by the pack's legal rules | Test |
 
 ---
 
@@ -78,6 +79,7 @@
 - O3.3.4 Inputs come only from attested records.
 - O3.3.5 Consent can be withdrawn.
 - O3.3.6 Both partners get care, not just the person who ran the match.
+- O3.3.7 Pitch and screen wording match what the match actually does.
 
 **Work** (step 14)
 - Couple invite and accept, consent, match.
@@ -86,7 +88,7 @@
 - PSI as an optional T3 extra, described accurately.
 
 **Files:** `backend/app/privacy/matching.py`, `backend/app/privacy/psi_adapter.py`, `backend/app/api/v1/couples.py`, `frontend/app/[locale]/(app)/app/partner/`
-**Issues to close:** **C1, C2, C7**, S6, S8
+**Issues to close:** **C1, C2, C7**, S6, S8, H8
 
 **Cross-verification**
 | ID | Check | Evidence |
@@ -99,6 +101,7 @@
 | V3.3.6 | Withdrawn consent blocks the next match | Test |
 | V3.3.7 | Both partners can see the follow-up | Test |
 | V3.3.8 | Pitch wording matches what the code does | Reviewer checks the deck against S8 |
+| V3.3.9 | When partners choose differently, the more private setting is used | Test |
 
 ---
 
@@ -137,15 +140,15 @@
 **Objectives**
 - O3.5.1 The access log includes counsellor and partner actions, in plain language.
 - O3.5.2 Break-glass needs a reason and raises a flag.
-- O3.5.3 Redaction fails closed and covers Arabic.
+- O3.5.3 Redaction fails closed and covers Arabic and Hindi.
 
 **Work** (step 16)
 - Access log that joins case and couple resources to the person.
 - Break-glass endpoint and review list.
-- Redaction with Arabic handling, and the LLM allowlist.
+- Redaction with Arabic and Hindi handling, and the LLM allowlist.
 
 **Files:** `backend/app/api/v1/access_log.py`, `backend/app/privacy/break_glass.py`, `backend/app/privacy/redaction.py`, `frontend/app/[locale]/(app)/app/privacy/`
-**Issues to close:** **H6**, part of H11, part of H14
+**Issues to close:** **H6**, part of H11, part of H14, G2
 
 **Cross-verification**
 | ID | Check | Evidence |
@@ -153,7 +156,7 @@
 | V3.5.1 | A counsellor viewing a case appears in the subject's log | API test |
 | V3.5.2 | Break-glass without a reason is refused; with one, it's flagged | Test |
 | V3.5.3 | If the redaction engine fails, no LLM call happens | Fault-injection test |
-| V3.5.4 | Arabic and English PII samples are redacted, including Arabic names | Parametrised test; a native speaker writes the samples |
+| V3.5.4 | Arabic, Hindi and English PII samples are redacted, including Arabic and Hindi names | Parametrised test; a native speaker writes the samples |
 | V3.5.5 | The LLM context has only allowlisted fields | Unit test with a recording stub |
 
 ---

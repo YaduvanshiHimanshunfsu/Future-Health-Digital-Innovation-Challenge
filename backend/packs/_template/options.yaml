@@ -1,0 +1,7 @@
+# FILE: backend/packs/_template/options.yaml
+# STATUS: STUB. Documentation only; no code until explicitly requested.
+# ORIGIN: [NEW] Added for the global design, docs/07.
+# PURPOSE: Reproductive options available here. Copy this folder to add a country.
+# PLANNED LOGIC: Each option has a source and reviewer. Same fields for all; no ranking.
+# PHASE: 2.6 | SPEC: docs/07
+# CLOSE THESE ISSUES (docs/04): S5, G3

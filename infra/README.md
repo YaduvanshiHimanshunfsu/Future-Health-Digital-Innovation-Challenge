@@ -4,7 +4,7 @@ Docker Compose, OpenFGA model, Keycloak realm, Postgres bootstrap.
 
 **Rules:** Ports stay on localhost. Secrets come from `.env`, never Git.
 
-**Status:** stubs only. No code until requested.
+**Status:** built and running. See `docs/runbook_local_stack.md`. The OpenFGA model arrives in sub-phase 3.1.
 
 ## Sub-folders
 

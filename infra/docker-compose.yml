@@ -1,6 +1,167 @@
-# FILE: infra/docker-compose.yml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# PURPOSE: Local stack.
-# PLANNED LOGIC: Postgres, Redis, Keycloak, OpenFGA, API, worker, beat. Ports on localhost. Service hostnames inside containers.
-# PHASE: 1.3 | SPEC: backend.md 11.33
-# CLOSE THESE ISSUES (docs/04): H15
+name: samvid
+
+x-backend: &backend
+  build: ../backend
+  image: samvid-backend:dev
+  read_only: true
+  tmpfs: [/tmp]
+  security_opt: ["no-new-privileges:true"]
+  cap_drop: [ALL]
+  environment: &backend-env
+    ENV: dev
+    DATABASE_URL: postgresql+asyncpg://samvid_app:${SAMVID_APP_PASSWORD:?run scripts/generate_env.py}@postgres:5432/samvid
+    REDIS_URL: redis://:${REDIS_PASSWORD:?run scripts/generate_env.py}@redis:6379/0
+    ALLOWED_HOSTS: localhost,127.0.0.1,api
+    CORS_ORIGINS: http://localhost:3000
+    # Browsers reach Keycloak on localhost and containers reach it as "keycloak". Keycloak writes
+    # the same issuer either way (see KC_HOSTNAME), so tokens verify from both sides.
+    OIDC_ISSUER: http://localhost:8080/realms/samvid
+    OIDC_JWKS_URL: http://keycloak:8080/realms/samvid/protocol/openid-connect/certs
+    OPENFGA_API_URL: http://openfga:8080
+    KMS_PROVIDER: local
+    LOCAL_KEK_B64: ${LOCAL_KEK_B64:?run scripts/generate_env.py}
+    AUDIT_HMAC_KEY: ${AUDIT_HMAC_KEY:?run scripts/generate_env.py}
+    INVITE_HMAC_KEY: ${INVITE_HMAC_KEY:?run scripts/generate_env.py}
+    NATIONAL_ID_HMAC_KEY: ${NATIONAL_ID_HMAC_KEY:?run scripts/generate_env.py}
+    ANALYTICS_HMAC_KEY: ${ANALYTICS_HMAC_KEY:?run scripts/generate_env.py}
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_SUPERUSER_PASSWORD:?run scripts/generate_env.py}
+      SAMVID_OWNER_PASSWORD: ${SAMVID_OWNER_PASSWORD:?run scripts/generate_env.py}
+      SAMVID_APP_PASSWORD: ${SAMVID_APP_PASSWORD:?run scripts/generate_env.py}
+      OPENFGA_DB_PASSWORD: ${OPENFGA_DB_PASSWORD:?run scripts/generate_env.py}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres/init.sh:/docker-entrypoint-initdb.d/init.sh:ro
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/sql/init.sql:ro
+    ports: ["127.0.0.1:5432:5432"]
+    healthcheck:
+      # Checks the app database, so it only passes once init.sql has finished.
+      test: ["CMD-SHELL", "pg_isready -U postgres -d samvid"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}", "--appendonly", "yes"]
+    volumes: [redisdata:/data]
+    ports: ["127.0.0.1:6379:6379"]
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" --no-auth-warning ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?run scripts/generate_env.py}
+      KC_HOSTNAME: http://localhost:8080
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
+      KC_HEALTH_ENABLED: "true"
+      LAB_CLIENT_SECRET: ${LAB_CLIENT_SECRET:?run scripts/generate_env.py}
+    volumes: ["./keycloak:/opt/keycloak/data/import:ro"]
+    ports: ["127.0.0.1:8080:8080"]
+    healthcheck:
+      # The image has no curl, so this speaks HTTP over bash's /dev/tcp.
+      test:
+        - CMD-SHELL
+        - >-
+          exec 3<>/dev/tcp/127.0.0.1/9000;
+          printf 'GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3;
+          grep -q '"UP"' <&3
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  openfga-migrate:
+    image: openfga/openfga:v1.8.4
+    command: migrate
+    environment: &openfga-env
+      OPENFGA_DATASTORE_ENGINE: postgres
+      OPENFGA_DATASTORE_URI: postgres://openfga:${OPENFGA_DB_PASSWORD}@postgres:5432/openfga?sslmode=disable
+    depends_on:
+      postgres: {condition: service_healthy}
+
+  openfga:
+    image: openfga/openfga:v1.8.4
+    command: run
+    environment:
+      <<: *openfga-env
+      OPENFGA_PLAYGROUND_ENABLED: "false"
+    depends_on:
+      openfga-migrate: {condition: service_completed_successfully}
+    ports: ["127.0.0.1:8081:8080"]
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/grpc_health_probe", "-addr=:8081"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  migrate:
+    <<: *backend
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      <<: *backend-env
+      MIGRATION_DATABASE_URL: postgresql+asyncpg://samvid_owner:${SAMVID_OWNER_PASSWORD}@postgres:5432/samvid
+    depends_on:
+      postgres: {condition: service_healthy}
+
+  api:
+    <<: *backend
+    environment:
+      <<: *backend-env
+      # Only used by `python -m app.ops.check_services` to prove a real token verifies.
+      LAB_CLIENT_ID: samvid-lab
+      LAB_CLIENT_SECRET: ${LAB_CLIENT_SECRET}
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+      keycloak: {condition: service_healthy}
+      openfga: {condition: service_healthy}
+    ports: ["127.0.0.1:8000:8000"]
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request as u; u.urlopen(u.Request('http://127.0.0.1:8000/v1/ready', headers={'Host': 'localhost'}), timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  worker:
+    <<: *backend
+    command: ["celery", "-A", "app.workers.celery_app", "worker", "--loglevel=INFO", "--concurrency=2", "--without-gossip", "--without-mingle"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A app.workers.celery_app inspect ping -d celery@$$HOSTNAME --timeout 5"]
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      start_period: 20s
+
+  beat:
+    <<: *backend
+    # The schedule file has to go on tmpfs, because the root filesystem is read-only.
+    command: ["celery", "-A", "app.workers.celery_app", "beat", "--loglevel=INFO", "--schedule=/tmp/celerybeat-schedule", "--pidfile=/tmp/celerybeat.pid"]
+    depends_on:
+      redis: {condition: service_healthy}
+
+volumes:
+  pgdata: {}
+  redisdata: {}

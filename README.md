@@ -1,5 +1,6 @@
 <div align="center">
 
+# Samvid · संविद्
 
 ### Understand inherited disease risk: privately, kindly, in your own language
 
@@ -7,29 +8,34 @@
 
 <br/>
 
-![Status: planning](https://img.shields.io/badge/status-planning%20%C2%B7%20no%20code%20yet-F4B740?style=for-the-badge)
+![Status: early build](https://img.shields.io/badge/status-early%20build%20%C2%B7%20phase%201-F4B740?style=for-the-badge)
 ![Prototype due 20 Nov 2026](https://img.shields.io/badge/prototype%20due-20%20Nov%202026-2F5BEA?style=for-the-badge)
 ![Synthetic data only](https://img.shields.io/badge/data-synthetic%20only-14A89B?style=for-the-badge)
-![Arabic and English](https://img.shields.io/badge/languages-Arabic%20%2B%20English-7A4FD6?style=for-the-badge)
+![Global by design](https://img.shields.io/badge/scope-global%20by%20design-0E7C72?style=for-the-badge)
+![Multilingual](https://img.shields.io/badge/languages-English%20%C2%B7%20Arabic%20%C2%B7%20Hindi-7A4FD6?style=for-the-badge)
+![Team Vigyan_Viveka_Vijaya](https://img.shields.io/badge/team-Vigyan__Viveka__Vijaya-E2725B?style=for-the-badge)
 
 **Future Health Digital Innovation Challenge 2026 · Fertility · Challenge 03**
 
-[The problem](#the-problem) · [The solution](#the-solution) · [Architecture](#system-architecture) · [Workflows](#core-workflows) · [Privacy](#privacy-by-design) · [Measurement](#what-we-measure) · [Roadmap](#delivery-plan) · [Docs](#documentation)
+[The problem](#the-problem) · [The solution](#the-solution) · [Global design](#global-by-design) · [Architecture](#system-architecture) · [Workflows](#core-workflows) · [Privacy](#privacy-by-design) · [Measurement](#what-we-measure) · [Roadmap](#delivery-plan) · [Docs](#documentation)
 
 </div>
 
 ---
 
 > [!IMPORTANT]
-> **This project is in planning.** The repo holds specifications and a documented file skeleton, with **no working code yet**. This README describes the **target design**, and nothing here has been clinically validated. "Silah" is a placeholder name.
+> **This project is in early build.** The secure API foundation, database and local stack work. The risk engine, AI explanation and screens are **still to come**, so most of this README describes the **target design**. Nothing here has been clinically validated.
 
 ## At a glance
 
 | | |
 |---|---|
+| **Team** | Vigyan_Viveka_Vijaya |
+| **The name** | *Samvid* (संविद्) is Sanskrit for knowledge and understanding, and also agreement and consent |
+| **Languages** | English, Arabic and Hindi first, with more added per country |
 | **What** | A companion that explains genetic carrier results, supports informed choices, and links people to qualified counsellors |
 | **Who for** | Individuals and couples, families, genetic counsellors, physicians, and health programme managers |
-| **Where** | Designed for Abu Dhabi's premarital and preconception screening programmes |
+| **Where** | Global by design, with per-country settings. Abu Dhabi is the first reference, and no country is supported until its settings are reviewed locally |
 | **What makes it different** | Risk numbers come only from tested code, AI only explains them, and every sharing decision belongs to the individual |
 | **What it never does** | Diagnose, tell anyone whether to marry or conceive, or contact relatives without the person's action |
 
@@ -37,11 +43,11 @@
 
 ## The problem
 
-Abu Dhabi has invested heavily in genetic screening. Its programme covers [570 genes and over 840 conditions](https://www.360dx.com/molecular-diagnostics/mandatory-premarital-genetic-carrier-screening-program-dubai-ids-risk-couples). But a screening result only helps once people understand it and can act on it. The gap comes **after the lab**.
+Couples related as second cousins or closer, and their children, were estimated at [10.4% of the world's population](https://pmc.ncbi.nlm.nih.gov/articles/PMC2868287), mostly across Africa, the Middle East and Asia (a 2009-era estimate). Screening is growing, but a result only helps once people understand it and can act on it. Abu Dhabi, which hosts this challenge, shows the pattern: its programme covers [570 genes and over 840 conditions](https://www.360dx.com/molecular-diagnostics/mandatory-premarital-genetic-carrier-screening-program-dubai-ids-risk-couples), yet the hardest part still comes **after the lab**.
 
 ```mermaid
 flowchart LR
-    A["<b>Test done</b><br/>Strong foundation"]:::good --> B["<b>Result understood?</b><br/>Probabilistic, confusing"]:::bad
+    A["<b>Screening</b><br/>Growing, varies by country"]:::warn --> B["<b>Result understood?</b><br/>Probabilistic, confusing"]:::bad
     B --> C["<b>Counselling</b><br/>Few accredited counsellors"]:::warn
     C --> D["<b>Informed choice</b><br/>Family and cultural pressure"]:::warn
     D --> E["<b>Care pathway</b><br/>Fragmented hand-offs"]:::warn
@@ -56,7 +62,7 @@ flowchart LR
 
 - Misread results cause anxiety, stigma, family tension or false certainty.
 - A carrier result says something about parents, siblings and cousins, so one person's data is never only theirs.
-- Consanguineous marriage is a long-standing practice, so a good system supports **informed choice**, not judgement.
+- Consanguineous marriage is a long-standing practice in many communities, so a good system supports **informed choice**, not judgement.
 - Success can't be measured by cancelled marriages. That would be coercive, and it says nothing about understanding.
 
 ### The genetics in one picture
@@ -124,12 +130,58 @@ flowchart TB
 
 | | Requirement | Planned approach | Main modules |
 |---|---|---|---|
-| **R1** | Risk explanation | Exact risk figures, icon arrays, three reading levels, plain Arabic and English | `risk_engine` `explain` `kb` |
+| **R1** | Risk explanation | Exact risk figures, icon arrays, three reading levels, plain English, Arabic and Hindi | `risk_engine` `explain` `kb` |
 | **R2** | Values-sensitive choices | Options shown with equal weight, plus private values reflection that's never scored | `decision` `centres` |
 | **R3** | Qualified human counselling | Every question labelled, with clinical or complex cases escalated to people | `explain/router` `triage` `booking` |
 | **R4** | Privacy-preserving family workflows | Granular, revocable consent, couple-only match, anonymous family invitations, access log | `privacy` |
 | **R5** | Safe linkage to services | Traceable pathway from result to counselling, testing and specialist care | `pathway` |
 | **R6** | Measurable comprehension and access | Teach-back, uptake and time-to-referral metrics, split by language and literacy | `assessments` `analytics` |
+
+---
+
+## Global by design
+
+Samvid isn't tied to one country. The safety core stays the same everywhere, and everything that differs by country is held in a **country pack**: settings, not code. Abu Dhabi is the first reference pack, because the challenge is hosted there.
+
+```mermaid
+flowchart TB
+    subgraph CORE["GLOBAL CORE · the same everywhere"]
+        direction LR
+        C1["Risk rules"]:::core ~~~ C2["Safety validators<br/>and boundary router"]:::core ~~~ C3["Consent, audit,<br/>encryption"]:::core ~~~ C4["Care pathway<br/>and metrics"]:::core
+    end
+
+    L["<b>Pack loader</b><br/>Blocks unreviewed packs in production<br/>A pack can never switch off a safety rule"]:::gate
+
+    subgraph PACKS["COUNTRY PACKS · settings, not code"]
+        direction LR
+        P1["<b>Abu Dhabi</b><br/>First reference pack<br/>Arabic, English"]:::first ~~~ P2["<b>India</b><br/>Illustrative demo pack<br/>Hindi, English"]:::next ~~~ P3["<b>Template</b><br/>For any new country"]:::next
+    end
+
+    subgraph HAS["EACH PACK HOLDS"]
+        direction LR
+        H1["Languages and<br/>word lists"]:::has ~~~ H2["Law and reproductive<br/>options"]:::has ~~~ H3["Gene panel and<br/>frequencies"]:::has ~~~ H4["Services, funding,<br/>support contacts"]:::has ~~~ H5["Identity, records,<br/>hosting region"]:::has
+    end
+
+    CORE -->|reads settings through| L --> PACKS
+    PACKS -.-> HAS
+
+    classDef core fill:#DCE6FF,stroke:#2F5BEA,color:#1F2433
+    classDef gate fill:#FDF0CF,stroke:#B8860B,color:#1F2433,stroke-width:2px
+    classDef first fill:#D3F3EF,stroke:#0E7C72,color:#1F2433,stroke-width:2px
+    classDef next fill:#FFFFFF,stroke:#5B6275,color:#1F2433,stroke-dasharray:5 4
+    classDef has fill:#E9E1FB,stroke:#7A4FD6,color:#1F2433
+    style CORE fill:#F2F6FF,stroke:#2F5BEA,color:#1F2433
+    style PACKS fill:#F2FBFA,stroke:#0E7C72,color:#1F2433
+    style HAS fill:#F7F3FE,stroke:#7A4FD6,color:#1F2433
+```
+
+- **First two packs:** Abu Dhabi (Arabic and English) and India (Hindi and English). India is labelled illustrative until it's reviewed.
+- **Adding a country needs no code change**, only a reviewed pack.
+- **No country counts as supported until local clinicians and legal advisers have reviewed its pack.** "Global" describes the design, not today's coverage.
+- **Where accredited counsellors are scarce,** the pack names the qualified human. If nobody qualified is available, the product says so honestly, and AI never fills the gap.
+- **Genetic data stays in its country** by default, with a separate deployment per country or region.
+
+Read the full design in [docs/07](docs/07_Global_Design_and_Country_Packs.md).
 
 ---
 
@@ -144,7 +196,7 @@ flowchart TB
         U1["Individuals<br/>and couples"]:::user ~~~ U2["Counsellors<br/>and physicians"]:::user ~~~ U3["Programme<br/>managers"]:::user ~~~ U4["Screening lab<br/>FHIR feed"]:::user
     end
 
-    FE["<b>Next.js frontend</b><br/>Arabic RTL + English · typed API client"]:::web
+    FE["<b>Next.js frontend</b><br/>Right-to-left and left-to-right languages · typed API client"]:::web
 
     subgraph API["FASTAPI BACKEND · versioned REST API"]
         direction TB
@@ -152,7 +204,7 @@ flowchart TB
         subgraph DOM["Domain modules"]
             direction LR
             D1["ingestion"]:::dom ~~~ D2["risk_engine<br/>pure, no I/O"]:::core ~~~ D3["explain<br/>LangGraph"]:::dom ~~~ D4["decision"]:::dom
-            D5["privacy"]:::dom ~~~ D6["triage"]:::dom ~~~ D7["pathway"]:::dom ~~~ D8["assessments<br/>analytics"]:::dom
+            D5["privacy"]:::dom ~~~ D6["triage"]:::dom ~~~ D7["pathway"]:::dom ~~~ D8["assessments<br/>analytics"]:::dom ~~~ D9["country_packs<br/>per-country settings"]:::core
         end
         GW --> DOM
     end
@@ -265,7 +317,7 @@ sequenceDiagram
     autonumber
     actor A as Partner A
     actor B as Partner B
-    participant S as Silah
+    participant S as Samvid
     participant C as Counsellor queue
 
     A->>S: Invite partner
@@ -380,7 +432,7 @@ flowchart LR
 flowchart LR
     subgraph NEVER["NEVER REACHES THE LLM"]
         direction TB
-        N1["Names and Emirates IDs"]:::no ~~~ N2["Phone numbers and emails"]:::no ~~~ N3["Exact variant details"]:::no ~~~ N4["A partner's non-shared findings"]:::no ~~~ N5["Any relative's data"]:::no
+        N1["Names and national IDs"]:::no ~~~ N2["Phone numbers and emails"]:::no ~~~ N3["Exact variant details"]:::no ~~~ N4["A partner's non-shared findings"]:::no ~~~ N5["Any relative's data"]:::no
     end
 
     G{{"Redaction and<br/>field allowlist<br/><b>fails closed</b>"}}:::gate
@@ -437,32 +489,32 @@ flowchart LR
 
 ## Delivery plan
 
-Six phases from 3 to 20 November 2026, with a target to submit a day early.
+Six phases from 5 to 20 November 2026, with a target to submit a day early. Every objective, check and issue is cross-verified in [CROSS_VERIFICATION.md](docs/phases/CROSS_VERIFICATION.md).
 
 ```mermaid
 gantt
-    title Build plan (3–20 Nov 2026)
+    title Build plan (5–20 Nov 2026)
     dateFormat YYYY-MM-DD
     axisFormat %d %b
     tickInterval 2day
     todayMarker off
 
     section Milestones
-    Registration closes       :crit, milestone, 2026-11-10, 0d
+    Registration closes, team registered :milestone, 2026-11-10, 0d
     Submit target             :milestone, 2026-11-19, 0d
     Prototype deadline        :crit, milestone, 2026-11-20, 0d
 
     section Phases
-    1 Foundation and decisions       :p1, 2026-11-03, 3d
+    1 Foundation and decisions       :p1, 2026-11-05, 2d
     2 Data and risk engine           :p2, after p1, 3d
-    3 Privacy and family sharing     :p3, after p2, 3d
+    3 Privacy and family sharing     :p3, after p2, 2d
     4 AI and human escalation        :p4, after p3, 3d
     5 Pathway, metrics, integration  :p5, after p4, 3d
     6 Evaluation and submission      :p6, after p5, 3d
 
     section Frontend
-    Design system and screens        :f1, 2026-11-03, 6d
-    Build and wire screens           :f2, 2026-11-09, 9d
+    Design system and screens        :f1, 2026-11-05, 5d
+    Build and wire screens           :f2, 2026-11-10, 8d
 ```
 
 | Phase | Goal | Done when | Plan |
@@ -470,7 +522,7 @@ gantt
 | **1** | Foundation, decisions, compliance baseline | Registered, scope locked, stack runs from a clean clone, audit tamper test passes | [Phase 1](docs/phases/PHASE_1_Foundation.md) |
 | **2** | Genomic data and deterministic risk engine | Hand-worked risk answers match, and correct risk appears on screen | [Phase 2](docs/phases/PHASE_2_Genomic_Data_and_Risk_Engine.md) |
 | **3** | Privacy fabric and family sharing | Privacy tests pass, and no partner-only data appears in any output | [Phase 3](docs/phases/PHASE_3_Privacy_and_Family_Sharing.md) |
-| **4** | AI explanation and human escalation | Safe answers in Arabic and English, even with the LLM off, and cases reach a counsellor | [Phase 4](docs/phases/PHASE_4_AI_Explanation_and_Escalation.md) |
+| **4** | AI explanation and human escalation | Safe answers in English, Arabic and Hindi, even with the LLM off, and cases reach a counsellor | [Phase 4](docs/phases/PHASE_4_AI_Explanation_and_Escalation.md) |
 | **5** | Care pathway, measurement, integration | Full demo journey works in both languages, with traceable metrics | [Phase 5](docs/phases/PHASE_5_Care_Pathway_Measurement_Integration.md) |
 | **6** | Evaluation, hardening, submission | Honest safety report and limitations, and submitted with confirmation saved | [Phase 6](docs/phases/PHASE_6_Evaluation_and_Submission.md) |
 
@@ -481,8 +533,9 @@ gantt
 | Problem research and specifications | Written, with [known issues](docs/04_Project_Review_Issues_and_Improvements.md) to correct |
 | Phase plan and verification checks | Written |
 | Folder and file skeleton | Created, with documentation-only stubs |
-| Backend and frontend code | **Not started** |
-| Clinical review | **Not started** |
+| Backend foundation: API security, database, audit trail, local stack | **Built and tested** |
+| Risk engine, privacy flows, AI, pathway, frontend | **Not started** |
+| Clinical review | **Not started**: no reviewer yet |
 | Evaluation and user testing | **Not started** |
 
 ---
@@ -499,7 +552,8 @@ All planned, per [docs/backend.md](docs/backend.md) and [docs/frontend.md](docs/
 | **AI** | LangGraph, an OpenAI-compatible LLM (Azure OpenAI or Jais), BGE-M3 embeddings | Explicit, testable pipeline with strong Arabic options |
 | **Privacy and security** | AES-256-GCM, Vault or Key Vault, Presidio, optional OpenMined PSI | Envelope encryption, PII redaction, private matching between institutions |
 | **Interoperability** | FHIR R4 | Common language of health-system integration |
-| **Frontend** | Next.js 15, TypeScript, Tailwind, shadcn/ui, next-intl | Fast multi-page build with accessible components and Arabic RTL |
+| **Note** | The challenge is technology-neutral, so these are our choices, not requirements | |
+| **Frontend** | Next.js 15, TypeScript, Tailwind, shadcn/ui, next-intl | Fast multi-page build with accessible components and right-to-left support |
 | **Visuals** | Custom SVG, Recharts or ECharts, Motion | Precise risk visuals, with a reduced-motion option |
 | **Quality** | pytest, Hypothesis, Playwright, axe-core, ruff, mypy, gitleaks, trivy | Property tests for risk maths, plus accessibility and security checks |
 
@@ -522,12 +576,14 @@ Future Health/
 │   │   ├── triage/           Priorities, assignment, case summaries
 │   │   ├── pathway/          Care state machine, FHIR mapping
 │   │   ├── decision/         Options and values reflection
-│   │   ├── kb/               Curated content (Arabic and English, 3 levels)
+│   │   ├── kb/               Curated content (English, Arabic, Hindi; 3 levels)
 │   │   ├── assessments/      Teach-back and adapted instruments
 │   │   ├── analytics/        Metrics and fairness
 │   │   ├── ingestion/        Lab results to minimal encrypted findings
+│   │   ├── country_packs/    Loads and validates per-country settings
 │   │   └── api/, core/, db/, models/, schemas/, repositories/, ...
 │   ├── alembic/              Database migrations
+│   ├── packs/                Country packs: law, options, languages, services
 │   ├── synthetic/            Synthetic population and demo personas
 │   └── tests/                unit, api, eval
 │
@@ -535,7 +591,7 @@ Future Health/
 │   ├── app/                  Public site, user app, counsellor console, dashboards
 │   ├── components/           ui, layout, motion, risk, charts
 │   ├── lib/                  API client, auth, i18n
-│   ├── messages/             Arabic and English text
+│   ├── messages/             English, Arabic and Hindi text
 │   └── tests/e2e/            End-to-end and accessibility tests
 │
 ├── infra/                    Docker Compose, OpenFGA model, Keycloak, Postgres
@@ -557,20 +613,31 @@ Future Health/
 |---|---|
 | [Documentation map](docs/README.md) | Find anything, and see which document wins when they disagree |
 | [Project review](docs/04_Project_Review_Issues_and_Improvements.md) | See known issues and what to do first |
+| [Competition requirements](docs/submission/competition_requirements.md) | See official dates, FAQ answers and judging criteria |
 | [Phase overview](docs/phases/00_PHASE_OVERVIEW.md) | See the plan, scope tiers and critical path |
+| [Global design](docs/07_Global_Design_and_Country_Packs.md) | See how Samvid works across countries |
 | [Problem statement](problem%20statement.md) · [Problem understanding](docs/01_Problem_Understanding.md) | Understand the challenge and evidence |
 | [Solution and plan](docs/02_Solution_Architecture_and_Plan.md) · [Features and roadmap](docs/03_Features_Limitations_Roadmap.md) | Understand the concept, features and limits |
-| [Backend guide](docs/backend.md) · [Frontend guide](docs/frontend.md) | Get engineering and design detail |
+| [Stitch prompts](docs/STITCH_PROMPTS.md) · [Backend guide](docs/backend.md) · [Frontend guide](docs/frontend.md) | Get engineering and design detail |
 | [Project structure](docs/05_Project_Structure.md) · [Traceability](docs/06_Traceability_Matrix.md) | Trace requirements through files, tests and checks |
 
 > [!WARNING]
-> The specs contain known errors, including out-of-date dates in `docs/01` and `docs/02`, and bugs in the sample code in `docs/backend.md`. Read them alongside the [project review](docs/04_Project_Review_Issues_and_Improvements.md).
+> The specs contain known errors, including bugs in the sample code in `docs/backend.md`. Read them alongside the [project review](docs/04_Project_Review_Issues_and_Improvements.md).
 
 ---
 
 ## Getting started
 
-**There's nothing to run yet.** Setup instructions will appear here when Phase 1 is complete. To contribute now:
+Run the foundation built so far:
+
+```bash
+python scripts/generate_env.py
+cd infra
+docker compose up -d --build --wait
+docker compose exec api python -m app.ops.check_services
+```
+
+The [runbook](docs/runbook_local_stack.md) covers tests and everything else. To contribute:
 
 1. Read the latest entries in [brain.md](brain.md).
 2. Pick up the next open sub-phase in the [phase plan](docs/phases/00_PHASE_OVERVIEW.md).
@@ -579,12 +646,12 @@ Future Health/
 
 ## Responsible use
 
-- **Synthetic data only.** This repo must never contain real genetic or personal data.
+- **Synthetic data only.** This repo must never contain real genetic or personal data. The organisers provide no data, so we generate our own and [declare every source](docs/submission/data_sources.md).
 - **Not medical advice.** This is a competition prototype in planning. It isn't a medical device and has not been clinically validated.
-- **Legal review pending.** A real pilot would need a licensed health partner and regulatory approval.
+- **Legal review pending.** A real pilot in any country would need a licensed local health partner and regulatory approval.
 
 ## Competition
 
-Built for the [Future Health Digital Innovation Challenge 2026](https://hack2skill.com/event/futurehealthchallenge/). Registration closes 10 Nov 2026, and prototypes are due 20 Nov 2026. Dates may change, so check the challenge page. This is an independent entry, with no endorsement from any organiser or partner implied.
+Built by team **Vigyan_Viveka_Vijaya** for the [Future Health Digital Innovation Challenge 2026](https://hack2skill.com/event/futurehealthchallenge/). The team is registered, and prototypes are due 20 Nov 2026. Dates may change, so check the challenge page. This is an independent entry, with no endorsement from any organiser or partner implied.
 
-**Licence:** not chosen yet. Check the challenge's IP terms first.
+**IP and licence:** intellectual property stays with the team, under the challenge FAQ, and the code may be requested for evaluation. No licence has been chosen yet.

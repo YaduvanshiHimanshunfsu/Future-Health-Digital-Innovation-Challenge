@@ -4,7 +4,7 @@ Alembic environment and versions.
 
 **Rules:** Run as the owner role. The app role has no DDL rights.
 
-**Status:** stubs only. No code until requested.
+**Status:** built and tested.
 
 ## Sub-folders
 

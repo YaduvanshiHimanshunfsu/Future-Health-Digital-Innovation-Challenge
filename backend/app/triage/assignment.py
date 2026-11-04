@@ -4,4 +4,4 @@
 # PURPOSE: Counsellor assignment.
 # PLANNED LOGIC: Unassigned pool, claim, coordinator assignment, OpenFGA tuples.
 # PHASE: 4.5 | REQ: R3 | SPEC: docs/04 C9
-# CLOSE THESE ISSUES (docs/04): C9
+# CLOSE THESE ISSUES (docs/04): C9, G7
