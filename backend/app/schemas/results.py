@@ -1,4 +1,6 @@
+from datetime import datetime
 from typing import Any
+from uuid import UUID
 
 from app.risk_engine.types import RiskFact
 from app.schemas.common import Out
@@ -39,6 +41,8 @@ class MyResultsOut(Out):
     has_report: bool
     facts: list[FactOut]
     panels: list[str]
+    # Condition keys per gene in this person's own facts, from the country pack.
+    conditions: dict[str, list[str]] = {}
     pack: PackInfo
     # The person has chosen not to know. Facts stay empty until they change their mind.
     withheld: bool = False
@@ -53,3 +57,12 @@ class MyRiskOut(Out):
     pack: PackInfo
     withheld: bool = False
     human_contact_required: bool = False
+
+
+class CareStepOut(Out):
+    """A person's own follow-up. Priority and reasons stay with the counsellor."""
+
+    case_id: UUID
+    state: str
+    step_due: datetime
+    with_partner: bool

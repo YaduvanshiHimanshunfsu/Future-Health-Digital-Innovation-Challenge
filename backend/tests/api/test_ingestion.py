@@ -159,7 +159,10 @@ async def test_malformed_input_gets_422_and_stores_nothing(stack: Stack, name: s
     """V2.3.4. An unrecognised significance is refused, not dropped: it could be pathogenic."""
     response = await stack.ingest(MALFORMED[name])
     assert response.status_code == 422, response.text
-    assert "784" not in response.text
+    # The ID's own format, not just "784": every response carries a random hex request ID, which
+    # sometimes contains "784" by chance. That made this test fail about 1 run in 12.
+    assert "784-0000" not in response.text
+    assert stack.people["fatima"].national_id not in response.text
     async with stack.factory() as session:
         assert await session.scalar(select(func.count()).select_from(Person)) == 0
 

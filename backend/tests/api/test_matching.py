@@ -301,6 +301,14 @@ async def test_an_invite_code_works_once(stack: Stack) -> None:
         "/v1/couples/join", json={"invite_code": "x" * 22}, headers=third
     )
     assert reused.status_code == unknown.status_code == 404
+    # The code's hash goes once used, so a stolen copy of the database can't be used to join.
+    async with stack.factory() as session:
+        from app.models.couple import Couple
+
+        couple = await session.scalar(select(Couple))
+        assert couple is not None
+        assert couple.invite_code_hash is None
+        assert couple.invite_expires_at is None
     assert reused.json()["code"] == unknown.json()["code"]
 
 
@@ -459,3 +467,30 @@ async def test_either_partner_choosing_not_to_know_stops_the_match(stack: Stack)
     assert (
         await stack.http.post(f"/v1/couples/{couple_id}/match", headers=second)
     ).status_code == 409
+
+
+@pytest.mark.parametrize("untrusted", ["fatima", "khalid"])
+async def test_one_untrusted_report_is_enough_to_give_no_result(
+    stack: Stack, untrusted: str
+) -> None:
+    """Each partner's report is checked on its own, so either one being untrusted counts."""
+    couple_id, first, _ = await stack.ready_couple("fatima", "khalid")
+    national_id = stack.people[untrusted].national_id
+    from sqlalchemy import update
+
+    from app.models.genetic import GeneticReport
+    from app.models.person import Person
+
+    async with stack.factory() as session:
+        person = await session.scalar(
+            select(Person).where(Person.keycloak_sub == f"{untrusted}-login")
+        )
+        assert person is not None
+        await session.execute(
+            update(GeneticReport)
+            .where(GeneticReport.person_id == person.id)
+            .values(attestation="unverified")
+        )
+        await session.commit()
+    assert national_id
+    assert (await run(stack, couple_id, first))["outcome"] == "cannot_determine"

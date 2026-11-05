@@ -31,6 +31,23 @@ docker compose exec api python -m app.ops.check_services
 
 The second command checks Postgres, Redis, Keycloak and OpenFGA from inside the API container, then fetches a real token and verifies it the way the API would.
 
+The app is at http://localhost:3000. To sign in, create the demo accounts first:
+
+```bash
+cd backend
+uv run python -m synthetic.generate
+uv run python ../scripts/seed_demo.py     # prints the accounts. The password is DEMO_PASSWORD in infra/.env
+```
+
+| Account | Shows |
+|---|---|
+| `demo-fatima` and `demo-khalid` | A couple who share a finding. Link them on the Partner page |
+| `demo-x-carrier`, `demo-x-man` | X-linked results, with their own picture |
+| `demo-uncertain` | An uncertain finding, with no number |
+| `demo-no-report` | What "no report yet" looks like |
+| `demo-priya`, `demo-rohan` | The India pack, in Hindi |
+| `demo-doctor`, `demo-auditor` | Emergency access, and reviewing it |
+
 Then check the whole flow, using real tokens and a real database dump:
 
 ```bash
@@ -44,6 +61,19 @@ It's safe to repeat. It posts synthetic reports, signs in through the real brows
 On Windows, call the API at `127.0.0.1` from scripts and server-side code. `localhost` tries IPv6 first, and the ports only listen on IPv4, which adds about 2 s to every new connection. This measured 2.16 s for a revoke by name and 0.09 s by address. Keycloak has to stay on `localhost`, because that's the issuer its tokens carry.
 
 Keycloak only reads `infra/keycloak/realm-samvid.json` when its container starts fresh. After changing that file, run `docker compose up -d --force-recreate keycloak`.
+
+## Run the browser tests
+
+With the stack running, including `web`:
+
+```bash
+cd frontend
+npm install
+npx playwright install chromium
+npm run test:e2e
+```
+
+They create their own synthetic people and sign in through Keycloak's real page, so they don't depend on the demo accounts.
 
 ## Run the tests
 

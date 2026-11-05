@@ -186,6 +186,8 @@ async def test_a_grant_pending_in_the_outbox_cannot_outlive_its_revocation(stack
     assert not await real.check(
         f"user:{grantee_id}", "can_view_full", f"report:{await stack.person_id(owner)}"
     )
+    # The grant's own tuple must be gone too, not just the link to the report.
+    assert not await real.check(f"user:{grantee_id}", "holder", f"grant:{share['id']}")
 
 
 @pytest.mark.parametrize(
@@ -460,3 +462,28 @@ async def test_people_cannot_fake_a_grant_of_another_kind(stack: Stack) -> None:
     given = (await stack.http.get("/v1/consents", headers=headers)).json()["given"]
     service = next(item for item in given if item["kind"] == "service")
     assert (await stack.http.get(f"/v1/shared/{service['id']}", headers=headers)).status_code == 404
+
+
+async def test_a_full_share_needs_full_access_in_openfga(stack: Stack) -> None:
+    """If OpenFGA only says "summary", a full share stays closed, even with the ledger saying yes."""
+    owner, grantee, share = await shared_people(stack, "share_full")
+    authz: Authz = stack.app.state.authz
+    owner_id = await stack.person_id(owner)
+    grant = f"grant:{share['id']}#holder"
+    await authz.delete(RelationTuple(grant, "full_grant", f"report:{owner_id}"))
+    await authz.write(RelationTuple(grant, "summary_grant", f"report:{owner_id}"))
+    response = await stack.http.get(f"/v1/shared/{share['id']}", headers=grantee)
+    assert response.status_code == 404
+
+
+async def test_only_share_kinds_can_be_read_as_a_share(stack: Stack) -> None:
+    """A consent of another kind, even one naming the reader, never opens through this route."""
+    owner, grantee, share = await shared_people(stack)
+    async with stack.factory() as session:
+        row = await session.get(Consent, uuid.UUID(share["id"]))
+        assert row is not None
+        row.kind = "research"
+        await session.commit()
+    response = await stack.http.get(f"/v1/shared/{share['id']}", headers=grantee)
+    assert response.status_code == 404
+    assert owner

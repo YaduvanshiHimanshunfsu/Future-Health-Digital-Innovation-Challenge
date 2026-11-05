@@ -2,7 +2,7 @@
 
 **Generated on 5 Nov 2026 from the phase files**, then checked by script. If you change a phase, update this document too.
 
-**Status:** updated 5 Nov 2026. The audit below covers the **plan**. Results exist for Phases 1 and 2, in the evidence table further down.
+**Status:** updated 6 Nov 2026. The audit below covers the **plan**. Results exist for Phases 1 to 3, in the evidence table further down.
 
 ## Audit result
 
@@ -238,7 +238,7 @@ Each objective is written out in its phase file.
 
 ## Checks with evidence so far
 
-Phases 1 and 2. All later checks are open.
+Phases 1 to 3. All later checks are open.
 
 | Check | Status | Evidence |
 |---|---|---|
@@ -256,7 +256,7 @@ Phases 1 and 2. All later checks are open.
 | V1.2.8 | Open | Needs a counsellor or M42 |
 | V1.2.9 | **Done** | Draft table in the legal baseline |
 | V1.2.10 | Open | Needs Arabic and Hindi reviewers |
-| V1.3.1 | Partly | Clean rebuild: 72 s, all healthy (first build 148 s). Second person still needed |
+| V1.3.1 | Partly | Clean rebuild works, now including the web app, so `docker compose up` gives the whole demo. Second person still needed |
 | V1.3.2 | **Done** | `check_services`: all reachable, and a real Keycloak token verified |
 | V1.3.3 | **Done** | Planted token blocked by the gitleaks hook, exit 1 |
 | V1.3.4 | Partly | Every step passes locally. CI itself hasn't run, since nothing is pushed |
@@ -275,8 +275,10 @@ Phases 1 and 2. All later checks are open.
 | V1.5.6 | **Done** | `test_schema.py`, and the realm and code use the same roles |
 | V1.5.7 | **Done** | `tests/api/test_ingestion.py`: ingestion writes its audit row last, and the chain verifies with concurrent deliveries |
 | V1.6.1 | **Done** | Calculated table in `frontend/README.md` |
-| V1.6.2 | Partly | Removed from the Stitch prompts. Screens not generated yet |
-| V1.6.3 to V1.6.5 | Open | Waiting on Stitch screens from the team |
+| V1.6.2 | **Done** | The Stitch export broke these rules, so its words weren't used. `frontend/tests/unit/copy.test.mjs` enforces them on every word the app shows |
+| V1.6.3 | Open | Hindi needs a native speaker. Arabic text waits on approval and a reviewer |
+| V1.6.4 | **Done** | `frontend/design-export/DESIGN.md`, implemented in `tailwind.config.ts` |
+| V1.6.5 | Partly | Screens for Phases 1 to 3 built from the Stitch layouts, in English and Hindi. Later screens are honest placeholders |
 
 ### Phase 2 evidence
 
@@ -298,18 +300,58 @@ Phases 1 and 2. All later checks are open.
 | V2.2.6 | Partly | Every input listed in `data_sources.md`. LOINC, HL7 terminology and gene symbol terms **not confirmed**: a person must read them |
 | V2.2.7 | **Done** | `test_personas_exist_for_both_packs` |
 | V2.3.1 to V2.3.4, V2.3.6, V2.3.7 | **Done** | `tests/api/test_ingestion.py`, `tests/api/test_results.py`, and the smoke script |
-| V2.3.5 | Partly | Demo attestation is recorded and readable as trusted. The link to matching comes with V3.3.1 |
+| V2.3.5 | **Done** | Matching reads trusted reports only: V3.3.1, and `test_one_untrusted_report_is_enough_to_give_no_result` |
 | V2.4.1 to V2.4.11, V2.4.13, V2.4.15 | **Done** | `tests/unit/test_risk_engine.py`, `test_engine_boundaries.py`, coverage report. Hand-worked answers are the author's own, and `risk_rules_review.md` asks for a second person |
 | V2.4.12 | Open | Needs a clinician. A stated limitation until then |
 | V2.4.14 | Partly | No empiric figure is shown at all, which is stricter than the check asks. Clinician wording still needed |
 | V2.5.1 | **Done, differently** | Personal routes take no person ID, so there's nothing to tamper with: `tests/api/test_bola.py`. Shared data gets its own check in V3.2.1 |
 | V2.5.2 | **Done** | `tests/unit/test_visuals.py` |
-| V2.5.3 | Partly | Unit tests pass. Screenshot waits on Stitch screens |
-| V2.5.4, V2.5.6 | Open | Need the screens and a non-technical reader |
+| V2.5.3 | **Done** | In a real browser: a single carrier sees no square, and X-linked has its own picture (`frontend/tests/e2e/demo_journey.spec.ts`) |
+| V2.5.4 | **Done** | Pattern, label and a table for every visual, checked by axe with no WCAG AA violations, right to left too (`frontend/tests/e2e/accessibility.spec.ts`) |
+| V2.5.6 | Open | Needs a non-technical reader |
 | V2.5.5 | **Done** | `test_reading_results_creates_an_audit_row` |
 | V2.6.1 | Partly | Options, languages, ID format, services and genes change with the pack. Crisis contacts are still empty in both packs, on purpose, until verified (V1.2.4) |
 | V2.6.2 to V2.6.5, V2.6.7, V2.6.8 | **Done** | `tests/unit/test_country_packs.py`, `tests/api/test_ingestion.py` |
 | V2.6.6 | Partly | The pack states "none" and nothing substitutes for it. Showing that on screen waits on Stitch |
+
+### Phase 3 evidence
+
+**Last full run: 625 backend tests pass, with 89% coverage.** 36 browser tests pass against the containerised app, and `scripts/smoke_stack.py` passes all 65 checks on the real stack, including stopping OpenFGA for real.
+
+**Mutation check:** 81 privacy rules were broken on purpose, one at a time. The tests caught 74 on the first pass. The other 7 exposed weak tests, all fixed and re-checked, so all 81 are now caught. Two of those needed the ledger and OpenFGA to be tested separately: each layer alone has to be able to say no.
+
+**What testing found in the product:** a revoked grant still waiting in the outbox could have been applied after its revocation (cancelled now); Windows `localhost` adds 2 s to each new connection (a client-side issue, measured 2.16 s against 0.09 s by address); and the build was silently dropping the outcome colours, which every functional test missed and a screenshot caught.
+
+| Check | Status | Evidence |
+|---|---|---|
+| V3.1.1 | **Done** | `test_an_outage_means_no_access_and_writes_say_so`, `test_protected_routes_deny_during_an_outage`, and the smoke script with OpenFGA really stopped |
+| V3.1.2 | **Done** | `test_denied_access_gets_404_and_an_audit_row` |
+| V3.1.3 | **Done** | `test_a_person_cannot_call_a_staff_route` |
+| V3.1.4 | **Done** | `test_invalid_grants_are_refused` |
+| V3.1.5 | **Done** | `test_a_failed_commit_leaves_no_access` |
+| V3.2.1 | **Done** | `test_after_revoke_the_grantee_gets_404`, and in a real browser |
+| V3.2.2 | **Done** | Under 1 s in tests. On the real stack, 0.08 s for the whole request and about 18 ms on the server. The figure goes into the audit row |
+| V3.2.3 | **Done** | `test_revoking_during_an_outage_says_so_and_changes_nothing`, and the smoke script |
+| V3.2.4 | **Done** | `test_an_expired_share_stops_with_no_job_running`, and the OpenFGA-only version |
+| V3.2.5 | **Done** | `test_a_summary_grantee_cannot_see_full_detail` |
+| V3.2.6 | **Done** | `test_two_grants_to_one_person_are_independent` |
+| V3.2.7 | **Done** | `test_no_genetic_data_before_service_consent`, and in a real browser |
+| V3.2.8 | Partly | Works, including the pack's legal switches. "Must inform" uses "possibly affected" as a stand-in until a counsellor defines it |
+| V3.3.1 | **Done** | `test_a_known_at_risk_couple_gets_shared`, and in a real browser |
+| V3.3.2 | **Done** | `test_a_partner_with_no_report_cannot_read_as_none` |
+| V3.3.3 | **Done** | `test_yes_or_no_returns_no_gene_names` |
+| V3.3.4 | **Done** | `test_a_partner_only_gene_appears_nowhere`: responses, logs, audit rows and the AI context. Chat fact IDs get the same check when chat exists (4.3) |
+| V3.3.5 | **Done** | `test_a_gene_list_in_the_request_is_refused` |
+| V3.3.6 | **Done** | `test_withdrawing_blocks_the_next_match` |
+| V3.3.7 | **Done** | `test_both_partners_can_see_the_follow_up`, and in a real browser |
+| V3.3.8 | Partly | `docs/submission/judge_qa.md` says plainly it isn't PSI, and the README matches. The pitch deck isn't written yet |
+| V3.3.9 | **Done** | `test_the_more_private_choice_wins`, and in a real browser |
+| V3.4.1 to V3.4.5 | **Done** | `tests/api/test_invitations.py`, and in a real browser, including link previews |
+| V3.5.1 | **Done** | `test_a_counsellor_viewing_a_case_shows_in_the_subjects_log`. Real assignment arrives in 4.5 |
+| V3.5.2 | **Done** | `tests/api/test_transparency.py`, and in a real browser through to review |
+| V3.5.3 | **Done** | `test_if_redaction_fails_no_llm_call_happens` |
+| V3.5.4 | Partly | English, Hindi, Romanised Arabic and Gulf dialect samples pass, written by the author. Native speakers still need to write the real samples, and Arabic script waits on approval |
+| V3.5.5 | **Done** | `test_only_listed_fields_reach_the_llm` |
 
 ## Issues to sub-phases and checks
 

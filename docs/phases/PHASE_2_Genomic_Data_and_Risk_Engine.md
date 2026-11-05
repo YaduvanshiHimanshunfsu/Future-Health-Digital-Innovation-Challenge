@@ -209,7 +209,7 @@
 - [ ] All V2.4 checks pass, including the hand-worked answers. **All pass except V2.4.12, which needs a clinician.** The hand-worked answers were worked out by the author, not by a second person as `risk_rules_review.md` asks
 - [x] All demo personas give correct results
 - [x] Pack swap test passes (V2.6.1)
-- [ ] Results and risk visible on screen for the at-risk couple. **The API serves one person's results and risk. The couple view arrives in 3.3, and the screens wait on Stitch**
+- [x] Results and risk visible on screen for the at-risk couple: `frontend/tests/e2e/demo_journey.spec.ts`
 - [x] No plaintext gene names in the database
 - [x] `brain.md` is up to date
 

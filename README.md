@@ -535,8 +535,9 @@ gantt
 | Folder and file skeleton | Created, with documentation-only stubs |
 | Backend foundation: API security, database, audit trail, local stack | **Built and tested** |
 | Risk engine, encryption, lab report ingestion, synthetic data, country packs | **Built and tested**, on placeholder gene values with no clinical review. Reachable through the API, with no screens yet |
-| Consent ledger, couple match, family invitations, access log, break-glass, redaction | **Built and tested** through the API, with no screens yet |
-| AI, full care pathway, frontend | **Not started** |
+| Consent ledger, couple match, family invitations, access log, break-glass, redaction | **Built and tested** |
+| Frontend for all of the above, in English and Hindi, from the Stitch design | **Built and tested** in a real browser against the real stack |
+| AI explanation, options, counsellor queue, care pathway, dashboards | **Not started**: Phases 4 and 5 |
 | Clinical review | **Not started**: no reviewer yet |
 | Evaluation and user testing | **Not started** |
 

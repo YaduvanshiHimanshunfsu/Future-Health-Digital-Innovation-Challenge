@@ -354,3 +354,62 @@ Bugs found by testing, and fixed: error handlers read global settings; FastAPI t
 ### Follow-ups
 - [ ] Re-run the full suite with the complete output kept, and with no other heavy Docker work going on. If that test fails again, read the error before changing anything (Claude, first thing next session)
 
+## #014 · 2026-11-06 · Phase 3 privacy fabric, and the frontend built from the Stitch design
+**What:**
+- **Phase 3 backend:** OpenFGA model and adapter that deny on any failure, an outbox with reconciliation, the consent ledger with receive codes, the shared-report read path, right not to know, the couple match with three outcomes, family invitations, the access log, break-glass with review, and word-list redaction.
+- **Frontend:** built in Next.js from the team's Stitch export (56 screens), with sign-in on the app's own server, an allow-listed proxy, English and Hindi, a right-to-left Arabic layout, and colour and motion.
+- **Stack and tooling:** the `web` service in Compose, `scripts/seed_demo.py`, and the public `/v1/packs` and `/v1/me/care` routes.
+
+**How:** Real OpenFGA and Postgres containers in backend tests. A real browser against the real stack for the frontend, signing in through Keycloak's own page. Then a deliberate mutation check of 81 privacy rules, and screenshots read by eye.
+
+**Why these decisions:**
+- **Every share must be live in the ledger and in OpenFGA.** Each layer alone can refuse, and tests now prove each one does.
+- **One OpenFGA tuple per grant.** Two grants to one person expire and revoke independently, and a duplicate write can't break a second grant (H7).
+- **Access is written after commit (outbox) and removed before commit (revoke).** A failed commit can't leave access, and a failed revoke says 503 and changes nothing.
+- **Receive codes instead of looking people up.** Nobody can find out whether someone uses the service, and no result arrives unasked.
+- **Redaction keeps only listed words.** No model detects Arabic or Hindi names reliably, so unknown words are masked. Arabic loses every word until it has a list, which costs answer quality, never privacy.
+- **Stitch's words weren't used.** 43 of 56 screens claimed things the product doesn't do: zero-knowledge, on-device, HIPAA and ISO certificates, invented study results, and real hospitals' names. The layouts are Stitch's, and every word comes from `messages/`, where a test enforces the rules.
+- **Tokens never reach browser code.** They sit in an encrypted HttpOnly cookie, and the browser calls a proxy.
+
+**Bugs found by testing, all fixed:**
+- **A grant still waiting in the outbox could be applied after its revocation.** The revoke now cancels it, under the same row lock.
+- **The build silently dropped the outcome colours,** because Tailwind removes class names it can't see written in full. The icon array was empty, and every functional test passed regardless. A screenshot caught it, and a test now checks the colours.
+- **On phones, a wide table made the privacy page scroll sideways,** and keyboard users couldn't scroll it.
+- **On Windows, `localhost` adds 2 s to every new connection.** This is client side: measured at 2.16 s, against 0.09 s by address.
+- **My own mistakes, caught along the way:**
+  - One browser run I reported as "against the container" actually reached a stray local server still answering on IPv6 `localhost`. It was repeated properly: 36 passed against the container.
+  - Shell escaping put two invisible backspace characters into a test, and broke a script once.
+  - One mutation definition was itself broken.
+
+### Verification
+- 625 backend tests pass, with 89% coverage. ruff, mypy strict, bandit, pip-audit and npm audit are clean.
+- 36 browser tests pass against the containerised app: every journey, sign-out ending the Keycloak session, tokens absent from the browser, the proxy list, the cross-site refusal, and axe at desktop and phone width in all three locales.
+- The smoke script passes all 65 checks on the real stack, including stopping OpenFGA for real and the worker recovering afterwards.
+- All 81 mutations are caught. 74 were caught on the first pass, and the other 7 led to better tests.
+- **Not verified:**
+  - No native speaker has read the Hindi.
+  - Arabic text waits on approval.
+  - No counsellor has defined "must inform".
+  - No pitch deck is written yet.
+  - CI hasn't run, because nothing is pushed.
+  - Nobody outside the team has used the screens.
+
+### Follow-ups
+- [ ] Hindi review of `frontend/messages/hi.json` and `backend/app/privacy/safe_words/hi.txt` (user)
+- [ ] Decide on Arabic text and test data (user)
+- [ ] A counsellor to define "must inform" and review the G6PD rule (user)
+- [ ] Phase 4 needs AI model access, or ships in template mode, which the plan allows (user)
+- [ ] Commit and push when asked
+
+## #015 · 2026-11-06 · Solved the intermittent test failure, and added Run_Samvid.py
+**What:**
+- **The intermittent failure from #013 is explained.** `test_malformed_input_gets_422_and_stores_nothing` searched every refused response for "784", the start of every Abu Dhabi ID. But each response carries a random hexadecimal request ID, which contains "784" by chance in about 1 run in 12 across the 25 inputs. The product was never at fault. The test now checks for the ID's real format.
+- **Added `Run_Samvid.py` at the repository root,** at the user's request. One command starts the whole stack, prepares demo data, prints where to go and which demo accounts to use, then shows live, readable activity from the web app, the API and the workers. It says which phases are done and gets updated after every phase.
+- **The web app now logs one privacy-safe line per page and API call,** with paths reduced to their pattern, so the launcher can show frontend activity. Tokens, IDs and invitation codes never appear.
+
+**Why:** the user asked for a single launcher, with frontend and backend activity visible in the terminal.
+
+### Verification
+- 625 backend tests pass, with no failures.
+- The launcher passes ruff and mypy in strict mode. Its live view was checked against the real stack (see #016, or the next entry).
+

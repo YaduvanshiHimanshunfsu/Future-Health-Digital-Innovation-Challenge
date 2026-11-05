@@ -142,6 +142,7 @@ async def test_response_holds_only_listed_fields(stack: Stack) -> None:
         "has_report",
         "facts",
         "panels",
+        "conditions",
         "pack",
         "withheld",
         "human_contact_required",
@@ -267,3 +268,50 @@ async def test_two_tabs_signing_in_together_both_succeed(stack: Stack) -> None:
     )
     assert (first.status_code, second.status_code) == (200, 200)
     assert first.json()["id"] == second.json()["id"]
+
+
+async def test_results_name_the_conditions_from_the_pack(stack: Stack) -> None:
+    await stack.ingest(bundle_for("fatima"))
+    headers = await stack.sign_in("fatima-login", "fatima")
+    body = (await stack.http.get("/v1/me/results", headers=headers)).json()
+    assert body["conditions"] == {"HBB": ["beta_thal", "sickle_cell"]}
+
+
+async def test_a_gene_outside_the_pack_has_no_conditions_to_name(stack: Stack) -> None:
+    await stack.ingest(bundle_for("gene_not_in_pack"))
+    headers = await stack.sign_in("g-login", "gene_not_in_pack")
+    body = (await stack.http.get("/v1/me/results", headers=headers)).json()
+    assert body["conditions"] == {}
+
+
+async def test_the_country_list_is_public_and_says_what_is_reviewed(stack: Stack) -> None:
+    response = await stack.http.get("/v1/packs")
+    assert response.status_code == 200
+    packs = {pack["code"]: pack for pack in response.json()}
+    assert set(packs) == {"ae-abu-dhabi", "in-india"}
+    assert packs["in-india"]["languages"] == ["hi", "en"]
+    assert all(pack["reviewed"] is False for pack in packs.values())
+
+
+async def test_a_person_sees_their_own_care_without_reasons_or_priority(stack: Stack) -> None:
+    await stack.ingest(bundle_for("x_man"))
+    headers = await stack.sign_in("x-login", "x_man")
+    response = await stack.http.get("/v1/me/care", headers=headers)
+    assert response.status_code == 200
+    steps = response.json()
+    assert [step["state"] for step in steps] == ["COUNSELLING_REQUESTED"]
+    assert set(steps[0]) == {"case_id", "state", "step_due", "with_partner"}
+    assert "possibly" not in response.text
+    assert "P1" not in response.text
+
+
+async def test_care_is_private_to_each_person(stack: Stack) -> None:
+    await stack.ingest(bundle_for("x_man"))
+    await stack.sign_in("x-login", "x_man")
+    stranger = await stack.sign_in("stranger")
+    assert (await stack.http.get("/v1/me/care", headers=stranger)).json() == []
+
+
+async def test_care_needs_service_consent(stack: Stack) -> None:
+    headers = await stack.provision("no-consent")
+    assert (await stack.http.get("/v1/me/care", headers=headers)).status_code == 403

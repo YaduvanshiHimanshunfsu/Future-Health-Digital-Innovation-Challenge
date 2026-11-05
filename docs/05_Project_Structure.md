@@ -424,6 +424,20 @@ Future Health/
 | `submission_checklist.md` [NEW] | Final check before submitting on 19 Nov. | 6.6 |  |  |
 | `technical_documentation.md` [NEW] | A required deliverable. Must match the code. | 6.4 |  |  |
 
+## Frontend: what changed when it was built (6 Nov 2026)
+
+The folders below are the original plan. Building the frontend changed these files:
+
+| Change | Files | Why |
+|---|---|---|
+| Removed | `app/api/auth/[...nextauth]/route.ts`, `app/layout.tsx`, `lib/api/hooks.ts`, `app/[locale]/dev/` | Sign-in is handled by this app's own server instead of NextAuth, and `app/[locale]/layout.tsx` is the root layout |
+| Added | `app/api/auth/[action]/route.ts`, `lib/auth/oidc.ts`, `lib/api/server.ts`, `lib/api/origin.ts`, `lib/api/types.ts` | Sign-in with PKCE, server-side API calls, and the cross-site check |
+| Added | `app/[locale]/(app)/app/shared/[id]/`, `app/[locale]/(admin)/admin/break-glass/` | Reading a share, and reviewing emergency access |
+| Added | `components/forms/`, `components/risk/FactList.tsx`, `components/risk/Visuals.tsx`, `components/layout/SiteShell.tsx`, `I18nProvider.tsx`, `Later.tsx` | Interactive parts, the page shell, and honest placeholders |
+| Added | `lib/i18n/translate.ts`, `lib/i18n/server.ts`, `lib/risk/words.ts` | Translation without a library, and words for facts |
+| Added | `Dockerfile`, `.dockerignore`, `postcss.config.mjs`, `tests/unit/copy.test.mjs`, `tests/e2e/fixtures.ts` | Container build, wording rules, and test helpers |
+| Added outside `frontend/` | `backend/app/api/v1/packs.py`, `scripts/seed_demo.py` | The public country list, and demo accounts |
+
 ## `frontend/`
 
 | File | Purpose | Phase | Req | Issues |
@@ -772,6 +786,7 @@ All three folders hold the same files. See `docs/07`.
 | `infra/postgres/init.sh` | Passes role passwords to `init.sql` |
 | `scripts/generate_env.py` | Creates local secrets |
 | `scripts/smoke_stack.py` | Checks the running stack end to end with real tokens and a real database dump |
+| `scripts/seed_demo.py` | Creates demo accounts and synthetic reports on the local stack |
 | `docs/runbook_local_stack.md` | How to run everything |
 | `docs/STITCH_PROMPTS.md` | Every frontend prompt, replacing §3 and §5 of `docs/frontend.md` |
 | `docs/security/data_classification.md` | Every database column, and why it's stored as it is |

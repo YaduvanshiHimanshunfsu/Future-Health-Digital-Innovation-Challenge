@@ -10,6 +10,7 @@ pytestmark = pytest.mark.db
 PUBLIC = {
     "/v1/health",
     "/v1/ready",
+    "/v1/packs",
     # Recipients of an invitation have no account. Tests in test_invitations.py cover these.
     "/v1/invitations/{token}",
     "/v1/invitations/{token}/redeem",
@@ -21,6 +22,7 @@ EXPECTED = {
     "/v1/me/results",
     "/v1/me/risk",
     "/v1/me/access-log",
+    "/v1/me/care",
     "/v1/me/results-preference",
     "/v1/consents",
     "/v1/consents/{consent_id}",

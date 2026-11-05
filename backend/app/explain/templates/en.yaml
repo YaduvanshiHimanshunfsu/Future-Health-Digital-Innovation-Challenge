@@ -1,0 +1,27 @@
+# Draft, awaiting clinical review. {fact} is filled by code with a number from the risk engine.
+fact:
+  carrier: You carry one changed copy of {gene}. Being a carrier usually doesn't cause illness.
+  uncertain: The lab found a change in {gene} whose meaning isn't known yet. A number can't be given for it, and a counsellor can explain what it means for you.
+  refer: This finding in {gene} is outside what can be assessed here, so a specialist needs to look at it. That isn't a negative result.
+  possible_affected: This finding in {gene} needs a conversation with a counsellor, because it may matter for your own health. Only a clinician can say.
+  review: This needs a counsellor to look at both of your results together.
+  background: Because you're related, there is some added background chance that a panel can't measure. A counsellor can explain it.
+  two_copies: There is a {fact} chance in each pregnancy that a child inherits two copies.
+  carrier_chance: There is a {fact} chance in each pregnancy that a child is a carrier, with one copy.
+  neither: There is a {fact} chance in each pregnancy that a child inherits neither copy.
+  son_affected: Each son has a {fact} chance of inheriting this change.
+  daughter_carrier: Each daughter has a {fact} chance of inheriting one copy, as a carrier.
+  daughter_two_copies: Each daughter has a {fact} chance of inheriting two copies.
+  daughter_neither: Each daughter has a {fact} chance of inheriting neither copy.
+gene_hidden: a gene you share
+no_facts: There is no result on file to explain yet. That isn't a negative result.
+general: Here is some general information that may help.
+no_answer: That's a good question for a counsellor, who can talk it through with you.
+memory: Chance has no memory between pregnancies.
+clinical: That question needs a qualified person, because the answer depends on your own health and situation. A counsellor has been asked to contact you, and you can also book a session.
+decision: The choice is yours, and there is no right or wrong answer. The options page shows each option with the same detail, and a counsellor can talk them through with you.
+distress: It sounds like things are very hard right now, and you don't have to face this alone. A counsellor has been alerted and will contact you.
+distress_contacts: "If you need someone to talk to now, you can contact:"
+distress_no_contacts: If you are in danger, please contact your local emergency services now.
+coercion: Nobody should pressure you about your results, your sharing choices or your marriage. You stay in control of what you share. A counsellor has been asked to contact you privately.
+script_pending: Answers in Arabic are waiting for review, so this answer is in English. A counsellor can also help in Arabic.

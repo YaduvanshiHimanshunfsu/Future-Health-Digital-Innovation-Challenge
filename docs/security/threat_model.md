@@ -52,6 +52,10 @@
 | **I**nformation disclosure | Looking someone up to learn whether they use the service | No lookup exists. The person receiving a share creates a single-use code and passes it on themselves | Built: `test_consents.py` |
 | **R**epudiation | Emergency access used and never questioned | Needs a reason, ends after an hour, is flagged in the subject's log, and is reviewed by someone else | Built: `test_transparency.py` |
 | **D**enial of service | An OpenFGA outage | Reads are refused, revoking says 503 and changes nothing, and saved grants wait in the outbox | Built, and tested by stopping the real service: `scripts/smoke_stack.py` |
+| **I**nformation disclosure | A script in the page stealing a token | Tokens stay on the web server in an encrypted, HttpOnly cookie. Browser code calls a proxy that adds the token | Built: `frontend/tests/e2e/demo_journey.spec.ts` |
+| **E**levation of privilege | A browser reaching an API route it shouldn't, such as lab ingestion | The proxy allows a fixed list of paths and refuses unsafe segments | Built: same test |
+| **T**ampering | Another site making a signed-in person's browser change something | Changes must come from this site's own origin, and cookies are SameSite=Lax | Built: same test |
+| **I**nformation disclosure | Injected script, or an invitation token leaking through the Referer header | Nonce CSP with `strict-dynamic`, no framing, and `no-referrer` | Built: same test |
 | **E**levation of privilege | Calling a staff route | Role checks, denied attempts audited | Built |
 | **E**levation of privilege | Setting `role` in a request body | Unknown fields refused | Built |
 | **E**levation of privilege | API role altering the schema or history | Separate roles, no DDL rights | Built: `tests/unit/test_schema.py` |

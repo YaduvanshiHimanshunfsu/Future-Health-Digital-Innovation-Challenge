@@ -36,17 +36,19 @@ def main() -> int:
         "INVITE_HMAC_KEY": key(),
         "NATIONAL_ID_HMAC_KEY": key(),
         "ANALYTICS_HMAC_KEY": key(),
+        "WEB_SESSION_SECRET": key(),
+        "DEMO_PASSWORD": password(),
     }
     existing = TARGET.read_text(encoding="utf-8") if TARGET.exists() else ""
     present = {line.split("=", 1)[0] for line in existing.splitlines() if "=" in line}
     missing = {name: value for name, value in values.items() if name not in present}
     if not missing:
-        print(f"{TARGET} is already complete.")
+        sys.stdout.write(f"{TARGET} is already complete.\n")
         return 0
     separator = "" if not existing or existing.endswith("\n") else "\n"
     addition = "\n".join(f"{name}={value}" for name, value in missing.items()) + "\n"
     TARGET.write_text(existing + separator + addition, encoding="utf-8")
-    print(f"Wrote {len(missing)} new settings to {TARGET}")
+    sys.stdout.write(f"Wrote {len(missing)} new settings to {TARGET}\n")
     return 0
 
 

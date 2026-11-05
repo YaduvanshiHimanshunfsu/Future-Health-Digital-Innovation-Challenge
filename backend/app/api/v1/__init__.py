@@ -9,6 +9,7 @@ from app.api.v1 import (
     health,
     invitations,
     me,
+    packs,
     reports,
     results,
     shared,
@@ -17,6 +18,7 @@ from app.api.v1 import (
 api_v1 = APIRouter()
 for module in (
     health,
+    packs,
     reports,
     me,
     results,

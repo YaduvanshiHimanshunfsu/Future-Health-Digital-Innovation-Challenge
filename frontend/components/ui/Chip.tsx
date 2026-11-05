@@ -1,6 +1,10 @@
-// FILE: frontend/components/ui/Chip.tsx
-// STATUS: STUB. Documentation only; no code until explicitly requested.
-// PURPOSE: Chip.
-// PLANNED LOGIC: Text contrast at least 4.5:1.
-// PHASE: 1.6 | SPEC: frontend.md §7, §8, §9
-// CLOSE THESE ISSUES (docs/04): M5
+import type { ReactNode } from "react";
+
+export function Chip({ children, tone = "plain" }: { children: ReactNode; tone?: "plain" | "demo" | "draft" }) {
+  const tones = {
+    plain: "",
+    demo: "border-saffron bg-saffron-tint text-saffron-deep",
+    draft: "border-lilac bg-plum-tint text-plum-deep",
+  };
+  return <span className={`chip ${tones[tone]}`}>{children}</span>;
+}

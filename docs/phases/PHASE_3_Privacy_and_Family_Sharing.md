@@ -2,6 +2,8 @@
 
 **Dates:** 10–11 Nov 2026 · **Build steps:** `backend.md` §9 steps 12–16 · **Requirements:** R4 (main), R6 (privacy metrics)
 
+**Status (6 Nov 2026):** built and tested, backend and screens. Two checks wait on people: V3.2.8's exceptions need a counsellor, and V3.5.4 needs native speakers. Evidence per check is in [CROSS_VERIFICATION.md](CROSS_VERIFICATION.md).
+
 **Phase goal:** people control exactly who sees what, and tests prove that nothing leaks, including through the couple match.
 
 **Why here:** genetic data is shared across families by nature, and this is the part of the pitch judges are most likely to probe.
@@ -163,10 +165,10 @@
 
 ## Phase 3 exit gate
 
-- [ ] Privacy test suite green, including V3.3.4
-- [ ] Revoke-then-deny shown on screen
-- [ ] At-risk couple flow works from consent to result
-- [ ] Threat model updated with what was learned
-- [ ] `brain.md` is up to date
+- [x] Privacy test suite green, including V3.3.4
+- [x] Revoke-then-deny shown on screen: `frontend/tests/e2e/demo_journey.spec.ts`
+- [x] At-risk couple flow works from consent to result, in a real browser: same file
+- [x] Threat model updated with what was learned
+- [x] `brain.md` is up to date
 
 **If behind:** cut break-glass UI and invitation polish. Don't cut 3.2 or 3.3.

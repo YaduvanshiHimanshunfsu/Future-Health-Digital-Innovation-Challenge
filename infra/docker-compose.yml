@@ -171,6 +171,33 @@ services:
     depends_on:
       redis: {condition: service_healthy}
 
+  web:
+    build: ../frontend
+    image: samvid-web:dev
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+    environment:
+      API_URL: http://api:8000
+      APP_ORIGIN: http://localhost:3000
+      # Browsers are sent to localhost. The server talks to Keycloak inside the network.
+      KEYCLOAK_PUBLIC_ISSUER: http://localhost:8080/realms/samvid
+      KEYCLOAK_INTERNAL_ISSUER: http://keycloak:8080/realms/samvid
+      KEYCLOAK_CLIENT_ID: samvid-web
+      SESSION_SECRET: ${WEB_SESSION_SECRET:?run scripts/generate_env.py}
+      # Plain http on this machine only. Production serves https and leaves this unset.
+      SESSION_COOKIE_SECURE: "false"
+    depends_on:
+      api: {condition: service_healthy}
+    ports: ["127.0.0.1:3000:3000"]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/en').then(r=>process.exit(r.status<500?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+
 volumes:
   pgdata: {}
   redisdata: {}

@@ -136,3 +136,11 @@ def test_llm_facts_carry_no_flags_or_citations() -> None:
     assert built["has_number"] is False
     assert "citation" not in built
     assert "flags" not in built
+
+
+def test_a_pack_format_the_generic_rules_miss_is_still_removed() -> None:
+    """Some countries use IDs with letters, or numbers too short for the generic rule."""
+    pattern = r"\bAB-[A-Z]{3}\b"
+    genes = ["AB", "QXZ"]
+    assert "AB-QXZ" in redact("ref AB-QXZ", "en", genes=genes), "the generic rules alone miss it"
+    assert "AB-QXZ" not in redact("ref AB-QXZ", "en", patterns=[pattern], genes=genes)
