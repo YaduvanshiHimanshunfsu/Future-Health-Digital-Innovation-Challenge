@@ -2,6 +2,8 @@
 
 **Dates:** 7–9 Nov 2026 · **Build steps:** `backend.md` §9 steps 7–11 · **Requirements:** R1, R4 (minimisation), R5 (start of trace)
 
+**Status (5 Nov 2026):** backend built and tested, ahead of the 7 Nov start. Three things keep this phase open: clinical review of the rules, the screens, and a comprehension check. Evidence per check is in [CROSS_VERIFICATION.md](CROSS_VERIFICATION.md).
+
 **Phase goal:** a synthetic lab result goes in, encrypted, and the correct risk appears on screen, with every number traceable to a tested rule.
 
 **Why here:** every explanation, triage decision and metric depends on these numbers. This is where the review found the most dangerous bugs.
@@ -204,11 +206,11 @@
 
 ## Phase 2 exit gate
 
-- [ ] All V2.4 checks pass, including the hand-worked answers
-- [ ] All demo personas give correct results
-- [ ] Pack swap test passes (V2.6.1)
-- [ ] Results and risk visible on screen for the at-risk couple
-- [ ] No plaintext gene names in the database
-- [ ] `brain.md` is up to date
+- [ ] All V2.4 checks pass, including the hand-worked answers. **All pass except V2.4.12, which needs a clinician.** The hand-worked answers were worked out by the author, not by a second person as `risk_rules_review.md` asks
+- [x] All demo personas give correct results
+- [x] Pack swap test passes (V2.6.1)
+- [ ] Results and risk visible on screen for the at-risk couple. **The API serves one person's results and risk. The couple view arrives in 3.3, and the screens wait on Stitch**
+- [x] No plaintext gene names in the database
+- [x] `brain.md` is up to date
 
 **If behind:** cut gene count and visual polish. Don't cut V2.4.

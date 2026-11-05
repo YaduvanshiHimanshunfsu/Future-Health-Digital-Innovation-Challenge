@@ -1,7 +1,2 @@
-# FILE: backend/packs/in-india/support_contacts.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Added for the India pack and Hindi, docs/07.
-# PURPOSE: Crisis and support contacts. India pack, labelled illustrative. Not reviewed.
-# PLANNED LOGIC: Verified with a local clinician, with source and date. Never invented, never LLM generated.
-# PHASE: 2.6 | SPEC: docs/07
-# CLOSE THESE ISSUES (docs/04): C10, G3
+# Empty on purpose. Never guess a crisis number.
+contacts: []

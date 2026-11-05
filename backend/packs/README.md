@@ -4,7 +4,7 @@ Everything that differs by country lives here as settings, not code. See [docs/0
 
 **Rules:** a pack can make things stricter, but can never switch off a safety rule. Unreviewed packs are labelled, and refused in production. Never invent clinical data, services or contacts.
 
-**Status:** stubs only. No code until requested.
+**Status:** both packs load and run. Neither is reviewed, so both are refused in production. Gene values are placeholders.
 
 | Folder | Use |
 |---|---|

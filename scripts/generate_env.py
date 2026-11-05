@@ -1,6 +1,7 @@
 """Create infra/.env with fresh random secrets for local development.
 
-Refuses to overwrite an existing file, because that would lock you out of the current database.
+Never changes a value already there, because that would lock you out of the current database. If
+the file exists, only settings added since it was created get filled in.
 """
 
 import base64
@@ -21,14 +22,12 @@ def key() -> str:
 
 
 def main() -> int:
-    if TARGET.exists():
-        print(f"{TARGET} already exists. Delete it first if you really want new secrets.")
-        return 1
     values = {
         "POSTGRES_SUPERUSER_PASSWORD": password(),
         "SAMVID_OWNER_PASSWORD": password(),
         "SAMVID_APP_PASSWORD": password(),
         "OPENFGA_DB_PASSWORD": password(),
+        "OPENFGA_PRESHARED_KEY": password(),
         "REDIS_PASSWORD": password(),
         "KEYCLOAK_ADMIN_PASSWORD": password(),
         "LAB_CLIENT_SECRET": password(),
@@ -38,10 +37,16 @@ def main() -> int:
         "NATIONAL_ID_HMAC_KEY": key(),
         "ANALYTICS_HMAC_KEY": key(),
     }
-    TARGET.write_text(
-        "\n".join(f"{name}={value}" for name, value in values.items()) + "\n", encoding="utf-8"
-    )
-    print(f"Wrote {TARGET}")
+    existing = TARGET.read_text(encoding="utf-8") if TARGET.exists() else ""
+    present = {line.split("=", 1)[0] for line in existing.splitlines() if "=" in line}
+    missing = {name: value for name, value in values.items() if name not in present}
+    if not missing:
+        print(f"{TARGET} is already complete.")
+        return 0
+    separator = "" if not existing or existing.endswith("\n") else "\n"
+    addition = "\n".join(f"{name}={value}" for name, value in missing.items()) + "\n"
+    TARGET.write_text(existing + separator + addition, encoding="utf-8")
+    print(f"Wrote {len(missing)} new settings to {TARGET}")
     return 0
 
 

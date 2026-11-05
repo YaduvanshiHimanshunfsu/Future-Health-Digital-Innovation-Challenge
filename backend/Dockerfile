@@ -12,6 +12,7 @@ COPY --from=build /opt/venv /opt/venv
 COPY app ./app
 COPY alembic ./alembic
 COPY alembic.ini ./
+COPY packs ./packs
 ENV PATH="/opt/venv/bin:$PATH" PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
 USER 10001
 EXPOSE 8000

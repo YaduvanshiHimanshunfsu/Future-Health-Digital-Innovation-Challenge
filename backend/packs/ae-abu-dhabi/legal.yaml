@@ -1,7 +1,10 @@
-# FILE: backend/packs/ae-abu-dhabi/legal.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Added for the global design, docs/07.
-# PURPOSE: Legal rules. Abu Dhabi reference pack. Pending clinical and legal review.
-# PLANNED LOGIC: Consent form, retention, residency, right not to know, licensing, sex-selection flag. Default to most restrictive.
-# PHASE: 2.6 | SPEC: docs/07
-# CLOSE THESE ISSUES (docs/04): G4
+# Draft reading of the law, not legal advice. See docs/compliance/legal_baseline.md.
+hosting_region: uae-north
+data_may_leave_region: false
+health_record_retention_years: 25
+right_not_to_know: true
+must_inform_if_life_threatening: true
+sex_selection_restricted: true
+licensed_partner_required: true
+notes:
+  - Federal Decree-Law 49/2023, Federal Law 2/2019

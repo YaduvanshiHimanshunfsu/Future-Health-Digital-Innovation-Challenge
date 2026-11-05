@@ -24,10 +24,13 @@ _MAX_META_VALUE_CHARS = 200
 # An allowlist, so a careless caller can't put health data in the permanent log.
 ALLOWED_META_KEYS = frozenset(
     {
+        "actor_kind",
         "boundary",
         "case_id",
         "consent_id",
         "count",
+        "flagged",
+        "latency_ms",
         "mode",
         "priority",
         "reason",

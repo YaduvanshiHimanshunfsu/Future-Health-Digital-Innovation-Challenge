@@ -303,3 +303,54 @@ Bugs found by testing, and fixed: error handlers read global settings; FastAPI t
 
 ## #011 · 2026-11-05 · Wrote the complete Stitch prompt file
 **What:** Added `docs/STITCH_PROMPTS.md`: a design system prompt, a component sheet, every screen and its other states, Hindi, mobile and right-to-left variants, fix-up prompts, motion plan, hand-over steps and a screen-to-endpoint map. It replaces §3 and §5 of `docs/frontend.md`. **How:** Rewrote each prompt with the review's fixes built in, and structured them per Stitch's own guidance of one screen per prompt. A script checked for banned wording, Arabic script, colour contrast and that every prompt appears in the order table. **Why:** The user asked for one detailed prompt file, and builds the screens themselves. New states were added for results the spec missed: uncertain finding, talk to a counsellor first, no shared finding, and can't determine yet. The Arabic variant holds no Arabic text, because the rule still stands, so Stitch would translate it, which needs approval and a native reviewer. **Verified:** The script's checks passed. **Not verified:** No prompt has been run in Stitch. Stitch export options and limits come from secondary sources. The Hindi glossary hasn't been checked by a native speaker.
+
+## #012 · 2026-11-05 · Built the Phase 2 backend: encryption, packs, ingestion, risk engine, synthetic data
+**What:** On "do phase 2", built envelope encryption with Local and Vault key providers, country packs for Abu Dhabi and India, FHIR report ingestion, triage at ingest, the case state machine, the risk engine with visuals, the provisioning, consent and results APIs, the synthetic generator with personas, and `scripts/smoke_stack.py`. The user then asked to move to Phase 3 if Phases 1 and 2 are complete, and stopped the session for the day before that happened. **Phase 3 has not started:** its plan and stubs were read, and no Phase 3 code was written.
+
+**How:** Pure risk engine using exact fractions, with expected values worked out by hand. Real Postgres and Redis containers in tests. Then the real Compose stack with real tokens through the browser sign-in flow, followed by a deliberate mutation check: 44 rules broken one at a time in a throwaway copy.
+
+**Why these decisions:**
+- **No empiric consanguinity figure (H4).** Published figures describe unscreened couples, so quoting one after a negative panel would mislead.
+- **The "yes or no" view hides residual facts as well,** since seeing which of your genes has a figure would show which one was shared.
+- **National ID comes only from a verified token, and is admin-only in Keycloak.** Otherwise anyone could type someone's number and read their results.
+- **Unknown significance codes are refused, not dropped,** because a dropped code could be a pathogenic finding.
+- **G6PD is P3 when hemizygous.** An engineering default, flagged for a clinician in `risk_rules_review.md`.
+- **Keycloak user profile added to the realm.** Keycloak 26 drops undeclared attributes, so the national ID needed declaring anyway, and declaring it let us lock it.
+
+**Bugs found by testing, all fixed:**
+- **The database dump check proved nothing.** `pg_dump` writes binary columns as hex, so it passed with encryption switched off. Only the mutation check revealed this. The real data was encrypted throughout. My first two attempts at the fix were also wrong, one matching nothing and one a regex error, which a new "found at least one binary value" check and re-running the mutation exposed. The mutation had looked caught both times for the wrong reason.
+- **No test covered the yes-or-no view hiding private facts.** The code was right, and it's now protected.
+- **A reused report ID naming another person would have cancelled the first person's result.** Now refused.
+- **Two first reports arriving together returned a 500,** and two tabs signing in together got a false conflict.
+- **My route-walking security tests checked nothing** on this FastAPI version, because its route objects changed. They now use the published schema and assert that the routes exist.
+- **A country-specific example** sat in a comment in `schema.py`. The search test found it.
+
+### Verification
+- Last complete test run: 453 passed, 1 failed, with 92% coverage and 100% branch coverage on the risk engine. The failure was the dump-search pattern, since fixed, and its 3 tests pass. **The final full run after that fix did not finish.** It was still going after 20 minutes, against the usual 2 to 3, when the user stopped the session. The database was still answering, so it doesn't look like a lock, but the cause wasn't found. Re-run it first.
+- ruff, mypy strict, bandit, pip-audit and Trivy (0 fixable HIGH or CRITICAL) are clean.
+- All 44 mutations are now caught. The first 42 were run together, and the last 2 re-run individually after their fixes.
+- Smoke script against the real stack passes, and repeats safely. It includes proof that a user can edit their profile but is refused on `national_id`.
+- **Not verified:** the Vault provider has only met a simulated Vault. CI hasn't run. No clinician has reviewed any rule, and the hand-worked answers are the author's own, with no second person checking them. No screens exist, so V2.5.3, V2.5.4 and V2.5.6 stay open. LOINC, HL7 terminology and gene symbol licence terms aren't confirmed: LOINC's site refused an automated fetch.
+
+### Follow-ups
+- [ ] Re-run the full test suite, and find out why the last run was slow (Claude, first thing next session)
+- [ ] Start Phase 3 on the user's word. Before V3.5.4, ask how to handle Arabic test samples, since project files can't hold Arabic script (Claude)
+- [ ] Read the LOINC terms and add any required notice (user)
+- [ ] Find a clinician to review the rules, including the G6PD default (user)
+- [ ] Have a second person work the expected answers by hand (user)
+- [ ] Generate the Stitch screens (user)
+
+## #013 · 2026-11-05 · Correction to #012: the final test run did finish, with one unexplained failure
+**What:** #012 says the final full run didn't finish and was stopped. That's wrong. It finished on its own moments before the kill command, which found no process: 453 passed, 1 failed, in 21.5 minutes, with 92% coverage.
+
+**How:** The failure was `test_malformed_input_gets_422_and_stores_nothing[no_entries]`, a different test from the dump-search one fixed in #012. Re-run alone it passed, and its group of 25 passed too.
+
+**Why it's logged:** the suite has **not** had a fully clean run since the last fixes, and this failure is unexplained. The output of that run was filtered down to summary lines, so its error message is lost. It may be connected to the unusual slowness, but that's a guess.
+
+### Verification
+- The single test passes alone (1 passed), and with its group (25 passed).
+- **Not verified:** the cause of the failure or the slowness. No clean full run yet.
+
+### Follow-ups
+- [ ] Re-run the full suite with the complete output kept, and with no other heavy Docker work going on. If that test fails again, read the error before changing anything (Claude, first thing next session)
+

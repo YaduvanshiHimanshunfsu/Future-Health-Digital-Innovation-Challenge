@@ -1,7 +1,2 @@
-# FILE: backend/packs/_template/support_contacts.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Added for the global design, docs/07.
-# PURPOSE: Crisis and support contacts. Copy this folder to add a country.
-# PLANNED LOGIC: Verified with a local clinician, with source and date. Never invented, never LLM generated.
-# PHASE: 2.6 | SPEC: docs/07
-# CLOSE THESE ISSUES (docs/04): C10, G3
+# Only verified contacts, with source and date. Never guess.
+contacts: []

@@ -1,7 +1,18 @@
-# FILE: backend/app/privacy/right_not_to_know.py
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Not in the original file list; added by docs/04 review.
-# PURPOSE: Right not to know.
-# PLANNED LOGIC: Records the choice and limits display. Exceptions follow Art. 9(3) of Decree-Law 49/2023, defined with a counsellor.
-# PHASE: 3.2 | REQ: R4 | SPEC: docs/04 S4
-# CLOSE THESE ISSUES (docs/04): S4, H8
+from collections.abc import Iterable
+
+from app.country_packs.loader import CountryPack
+from app.risk_engine.types import Flag, RiskFact
+
+
+def can_withhold(pack: CountryPack) -> bool:
+    return pack.legal.right_not_to_know
+
+
+def human_contact_required(facts: Iterable[RiskFact], pack: CountryPack) -> bool:
+    """Some laws require telling someone anyway. That's a counsellor's conversation, never a screen.
+
+    "Possibly affected" stands in for "threatens life" until a clinician defines the real rule.
+    """
+    return pack.legal.must_inform_if_life_threatening and any(
+        Flag.POSSIBLE_AFFECTED in fact.flags for fact in facts
+    )

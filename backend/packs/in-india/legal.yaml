@@ -1,7 +1,5 @@
-# FILE: backend/packs/in-india/legal.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Added for the India pack and Hindi, docs/07.
-# PURPOSE: Legal rules. India pack, labelled illustrative. Not reviewed.
-# PLANNED LOGIC: Consent, retention, residency, right not to know, sex-selection flag (PCPNDT Act). Default to most restrictive.
-# PHASE: 2.6 | SPEC: docs/07
-# CLOSE THESE ISSUES (docs/04): G4
+# Unreviewed starting point. Anything not settled stays at the most restrictive default.
+hosting_region: india
+sex_selection_restricted: true
+notes:
+  - DPDP Act 2023, ART Regulation Act 2021, PCPNDT Act. None reviewed.

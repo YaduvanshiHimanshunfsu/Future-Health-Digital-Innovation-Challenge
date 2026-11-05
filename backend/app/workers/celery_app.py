@@ -26,8 +26,11 @@ celery_app.conf.update(
     task_time_limit=90,
     broker_connection_retry_on_startup=True,
     worker_hijack_root_logger=False,
-    # Filled in as the jobs arrive: SLA scan in 5.1, authorisation outbox in 3.1.
-    beat_schedule={},
+    # The SLA scan joins these in sub-phase 5.1.
+    beat_schedule={
+        "apply-authz-outbox": {"task": "samvid.apply_authz_outbox", "schedule": 30.0},
+        "reconcile-authz": {"task": "samvid.reconcile_authz", "schedule": 900.0},
+    },
 )
 
 

@@ -24,6 +24,8 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 from testcontainers.community.postgres import PostgresContainer
+from testcontainers.community.redis import RedisContainer
+from testcontainers.core.container import DockerContainer
 
 from app.core.config import Settings
 from app.core.logging import clear_scrub_patterns
@@ -152,6 +154,42 @@ def _alembic(database_url: str, *args: str) -> subprocess.CompletedProcess[str]:
         timeout=120,
         check=False,
     )
+
+
+OPENFGA_TOKEN = "test-openfga-key"
+
+
+@pytest.fixture(scope="session")
+def openfga_url() -> Iterator[str]:
+    """A real OpenFGA, because conditions and tuple rules are the part a mock would get wrong."""
+    container = (
+        DockerContainer("openfga/openfga:v1.8.4")
+        .with_command("run")
+        .with_exposed_ports(8080)
+        .with_env("OPENFGA_AUTHN_METHOD", "preshared")
+        .with_env("OPENFGA_AUTHN_PRESHARED_KEYS", OPENFGA_TOKEN)
+    )
+    with container:
+        url = f"http://{container.get_container_host_ip()}:{container.get_exposed_port(8080)}"
+        deadline = time.monotonic() + 60
+        while True:
+            try:
+                if httpx.get(f"{url}/healthz", timeout=2).status_code == 200:
+                    break
+            except httpx.HTTPError:
+                pass
+            if time.monotonic() > deadline:
+                raise RuntimeError("OpenFGA didn't start")
+            time.sleep(0.25)
+        yield url
+
+
+@pytest.fixture(scope="session")
+def redis_url() -> Iterator[str]:
+    with RedisContainer("redis:7-alpine") as container:
+        host = container.get_container_host_ip()
+        port = container.get_exposed_port(6379)
+        yield f"redis://{host}:{port}/0"
 
 
 @pytest.fixture(scope="session")

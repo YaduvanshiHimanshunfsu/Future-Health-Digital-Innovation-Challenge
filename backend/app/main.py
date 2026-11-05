@@ -17,14 +17,19 @@ from app.core.middleware import (
     SecurityHeadersMiddleware,
 )
 from app.core.security import JwksCache, TokenVerifier
+from app.country_packs.loader import load_registry
 from app.db.session import build_engine, build_session_factory
 from app.privacy.audit import AuditTrail
+from app.privacy.authz import Authz
+from app.privacy.crypto import FieldCipher
+from app.privacy.kms import build_kek
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     yield
     await app.state.redis.aclose()
+    await app.state.authz.aclose()
     await app.state.engine.dispose()
 
 
@@ -64,6 +69,15 @@ def create_app(
     )
     app.state.audit = AuditTrail(
         decode_key(settings.audit_hmac_key, "AUDIT_HMAC_KEY"), app.state.session_factory
+    )
+
+    app.state.authz = Authz.from_settings(settings)
+    app.state.cipher = FieldCipher(build_kek(settings))
+    app.state.packs = load_registry(
+        settings.packs_dir,
+        settings.enabled_packs,
+        settings.default_pack,
+        production=settings.is_production,
     )
 
     # add_middleware wraps what's already there, so the last one added runs first on a request.

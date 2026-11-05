@@ -4,7 +4,7 @@ Deterministic risk maths. Requirement R1.
 
 **Rules:** **Pure:** no I/O, no database, no LLM. Uncertain means no number. Most critical code in the project (C3, C4, C7, H1–H5).
 
-**Status:** stubs only. No code until requested.
+**Status:** built and tested in Phase 2, with 100% branch coverage. The rules haven't had clinical review (V2.4.12).
 
 ## Sub-folders
 

@@ -1,6 +1,34 @@
-# FILE: infra/openfga/model.fga
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# PURPOSE: Authorisation model.
-# PLANNED LOGIC: Person, report, couple and case relations. Time-based conditions for consent expiry.
-# PHASE: 3.1 | REQ: R4 | SPEC: backend.md 11.34
-# CLOSE THESE ISSUES (docs/04): H8
+# Who may reach what. backend/app/privacy/authz_model.json is the same model in the form OpenFGA
+# loads, and tests/unit/test_authz_model.py keeps the two from drifting apart.
+#
+# A person's own data isn't here: those routes take no ID, so the token decides whose data is read.
+model
+  schema 1.1
+
+type user
+
+# One per share or break-glass event, so that two grants to one person expire and revoke separately.
+type grant
+  relations
+    define holder: [user with not_expired]
+
+type report
+  relations
+    define summary_grant: [grant#holder]
+    define full_grant: [grant#holder]
+    define can_view_summary: summary_grant or full_grant
+    define can_view_full: full_grant
+
+type couple
+  relations
+    define member: [user]
+
+type care_case
+  relations
+    define assigned: [user]
+    define emergency: [grant#holder]
+    define can_view: assigned or emergency
+
+condition not_expired(current_time: timestamp, expires_at: timestamp) {
+  current_time < expires_at
+}

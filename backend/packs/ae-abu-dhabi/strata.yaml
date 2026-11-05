@@ -1,7 +1,5 @@
-# FILE: backend/packs/ae-abu-dhabi/strata.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Added for the global design, docs/07.
-# PURPOSE: Equity strata and SLAs. Abu Dhabi reference pack. Pending clinical and legal review.
-# PLANNED LOGIC: Regions, age bands and priority time targets.
-# PHASE: 2.6 | SPEC: docs/07
-# CLOSE THESE ISSUES (docs/04): G6
+# Equity reporting groups and time targets. Targets need clinical review.
+regions: [abu-dhabi, al-ain, al-dhafra]
+age_bands: [18-24, 25-34, 35-44, 45+]
+genders: [woman, man, other, not-stated]
+sla_hours: {P1: 24, P2: 72, P3: 168, P4: 336}

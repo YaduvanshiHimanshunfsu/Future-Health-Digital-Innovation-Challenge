@@ -98,3 +98,6 @@ def configure_logging(level: str = "INFO") -> None:
         named.propagate = True
     # The access log prints raw paths and query strings, and invitation tokens travel in paths.
     logging.getLogger("uvicorn.access").disabled = True
+    # These log every outgoing URL at INFO, and a URL is exactly what shouldn't be in a log.
+    for name in ("httpx", "httpcore"):
+        logging.getLogger(name).setLevel(logging.WARNING)

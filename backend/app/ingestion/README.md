@@ -4,7 +4,7 @@ Lab results to minimal, encrypted findings. Requirements R4 and R5.
 
 **Rules:** Benign variants are dropped. Triage runs on arrival (C8).
 
-**Status:** stubs only. No code until requested.
+**Status:** built and tested in Phase 2. Signed lab reports remain a limitation: see `lab_attestation`.
 
 ## Files
 

@@ -1,6 +1,7 @@
 import base64
 import binascii
 from functools import lru_cache
+from pathlib import Path
 from typing import Annotated, Literal
 from urllib.parse import urlsplit
 
@@ -8,6 +9,7 @@ from pydantic import AnyHttpUrl, Field, SecretStr, field_validator, model_valida
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 MIN_KEY_BYTES = 32
+DEFAULT_PACKS_DIR = Path(__file__).resolve().parents[2] / "packs"
 
 CommaList = Annotated[list[str], NoDecode]
 
@@ -46,9 +48,14 @@ class Settings(BaseSettings):
     jwt_leeway_seconds: int = Field(default=30, ge=0, le=120)
 
     openfga_api_url: str = "http://127.0.0.1:8081"
+    openfga_store_name: str = "samvid"
+    openfga_token: SecretStr | None = None
 
     kms_provider: Literal["local", "vault"] = "local"
     local_kek_b64: SecretStr | None = None
+    vault_addr: str | None = None
+    vault_token: SecretStr | None = None
+    vault_transit_key: str = "samvid-kek"
 
     audit_hmac_key: SecretStr
     invite_hmac_key: SecretStr
@@ -57,7 +64,17 @@ class Settings(BaseSettings):
 
     llm_provider: Literal["template", "azure", "openai_compat"] = "template"
 
-    @field_validator("allowed_hosts", "cors_origins", "supported_languages", mode="before")
+    packs_dir: Path = DEFAULT_PACKS_DIR
+    enabled_packs: CommaList = ["ae-abu-dhabi", "in-india"]
+    default_pack: str = "ae-abu-dhabi"
+
+    # How far to trust an authenticated lab client's reports. "demo" treats them as attested for the
+    # prototype, since real signature checks need a real lab. Refused in production.
+    lab_attestation: Literal["demo", "unverified", "verified"] = "demo"
+
+    @field_validator(
+        "allowed_hosts", "cors_origins", "supported_languages", "enabled_packs", mode="before"
+    )
     @classmethod
     def _split_commas(cls, value: object) -> object:
         if isinstance(value, str):
@@ -89,6 +106,8 @@ class Settings(BaseSettings):
             if self.local_kek_b64 is None:
                 raise ValueError("LOCAL_KEK_B64 is required when KMS_PROVIDER=local")
             decode_key(self.local_kek_b64, "LOCAL_KEK_B64")
+        if self.default_pack not in self.enabled_packs:
+            raise ValueError("default_pack must be one of enabled_packs")
         if self.env == "prod":
             self._check_production()
         return self
@@ -96,6 +115,16 @@ class Settings(BaseSettings):
     def _check_production(self) -> None:
         if self.kms_provider == "local":
             raise ValueError("a local KEK is not allowed in production")
+        if not self.openfga_api_url.startswith("https://") or not self.openfga_token:
+            raise ValueError("production needs OPENFGA_API_URL over https and OPENFGA_TOKEN")
+        if self.lab_attestation == "demo":
+            raise ValueError("demo lab attestation is not allowed in production")
+        if (
+            not self.vault_addr
+            or not self.vault_addr.startswith("https://")
+            or not self.vault_token
+        ):
+            raise ValueError("production needs VAULT_ADDR over https and VAULT_TOKEN")
         if "*" in self.allowed_hosts or "*" in self.cors_origins:
             raise ValueError("wildcard hosts or origins are not allowed in production")
         for name, url in (("OIDC_ISSUER", self.oidc_issuer), ("OIDC_JWKS_URL", self.oidc_jwks_url)):

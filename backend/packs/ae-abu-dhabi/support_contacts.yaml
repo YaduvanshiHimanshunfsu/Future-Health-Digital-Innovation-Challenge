@@ -1,7 +1,2 @@
-# FILE: backend/packs/ae-abu-dhabi/support_contacts.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Added for the global design, docs/07.
-# PURPOSE: Crisis and support contacts. Abu Dhabi reference pack. Pending clinical and legal review.
-# PLANNED LOGIC: Verified with a local clinician, with source and date. Never invented, never LLM generated.
-# PHASE: 2.6 | SPEC: docs/07
-# CLOSE THESE ISSUES (docs/04): C10, G3
+# Empty on purpose. See docs/clinical/support_contacts.md. Never guess a crisis number.
+contacts: []

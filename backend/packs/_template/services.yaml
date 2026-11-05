@@ -1,7 +1,4 @@
-# FILE: backend/packs/_template/services.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Added for the global design, docs/07.
-# PURPOSE: Local care services. Copy this folder to add a country.
-# PLANNED LOGIC: Centres, qualified human service type, tele-genetics, funding notes. Public data, dated. Don't invent entries.
-# PHASE: 2.6 | SPEC: docs/07
-# CLOSE THESE ISSUES (docs/04): G3, G7
+# qualified_human: counsellor | tele_genetics | trained_clinician | none. With none, the app says no service is listed.
+qualified_human: none
+centres: []
+funding_notes: []

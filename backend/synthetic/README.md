@@ -4,7 +4,7 @@ Generator and demo personas. Output goes in `out/`, which Git ignores.
 
 **Rules:** Never real data. Every scenario must be represented.
 
-**Status:** stubs only. No code until requested.
+**Status:** built in Phase 2. Run `uv run python -m synthetic.generate`.
 
 ## Files
 

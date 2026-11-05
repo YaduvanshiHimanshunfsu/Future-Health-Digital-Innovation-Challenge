@@ -44,9 +44,10 @@ These end in `_enc` and hold AES-256-GCM ciphertext, encrypted per record (imple
 | `audit_log.hash` | Low | Chain link |
 | `authz_outbox.id` | Random | Random UUID, meaningless on its own |
 | `authz_outbox.operation` | Low | Pending change |
-| `authz_outbox.subject` | Pseudonym | Login ID |
+| `authz_outbox.subject` | Pseudonym | Internal person ID, or a grant ID |
 | `authz_outbox.relation` | Low | Relation name |
 | `authz_outbox.object` | Pseudonym | IDs only |
+| `authz_outbox.expires_at` | Low | When the access runs out |
 | `authz_outbox.attempts` | Low | Retry count |
 | `authz_outbox.applied_at` | Low | Completion |
 | `authz_outbox.created_at` | Low | Time of creation, needed for ordering and retention |
@@ -91,6 +92,7 @@ These end in `_enc` and hold AES-256-GCM ciphertext, encrypted per record (imple
 | `person.age_band` | Quasi-identifier | Equity reporting. A band, never a birth date |
 | `person.gender` | Quasi-identifier | Equity reporting, and harm monitoring |
 | `person.service_consent_at` | Low | Must be checked before showing any genetic data |
+| `person.results_withheld_at` | Sensitive link | The person chose not to know. It must be readable to withhold results, and says nothing about what they are |
 | `person.created_at` | Low | Time of creation, needed for ordering and retention |
 | `assessment.id` | Random | Random UUID, meaningless on its own |
 | `assessment.person_id` | Sensitive link | Pairs before and after scores |

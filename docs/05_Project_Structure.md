@@ -292,12 +292,6 @@ Future Health/
 | `types.py` | Domain types. | 2.4 | R1 | C3, C4 |
 | `visuals.py` | Visual specs. | 2.5 | R1 | H5 |
 
-## `backend/app/risk_engine/data/`
-
-| File | Purpose | Phase | Req | Issues |
-|---|---|---|---|---|
-| `carrier_frequencies.yaml` | Gene reference data. | 2.2 | R1 | H2, H3, M3 |
-
 ## `backend/app/schemas/`
 
 | File | Purpose | Phase | Req | Issues |
@@ -343,7 +337,7 @@ Future Health/
 | File | Purpose | Phase | Req | Issues |
 |---|---|---|---|---|
 | `generate.py` | Synthetic population. | 2.2 |  | M3 |
-| `personas.yaml` [NEW] | Named demo personas. | 2.2 |  | C3, C4 |
+| `personas.yaml` [NEW] | Named demo personas and couples for both packs. | 2.2 |  | C3, C4 |
 
 ## `backend/tests/`
 
@@ -777,6 +771,7 @@ All three folders hold the same files. See `docs/07`.
 | `backend/tests/unit/test_config.py`, `test_logging.py`, `test_i18n.py`, `test_rate_limit.py`, `test_schema.py` | Foundation tests |
 | `infra/postgres/init.sh` | Passes role passwords to `init.sql` |
 | `scripts/generate_env.py` | Creates local secrets |
+| `scripts/smoke_stack.py` | Checks the running stack end to end with real tokens and a real database dump |
 | `docs/runbook_local_stack.md` | How to run everything |
 | `docs/STITCH_PROMPTS.md` | Every frontend prompt, replacing §3 and §5 of `docs/frontend.md` |
 | `docs/security/data_classification.md` | Every database column, and why it's stored as it is |

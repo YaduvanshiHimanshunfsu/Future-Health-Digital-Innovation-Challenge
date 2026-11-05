@@ -4,7 +4,7 @@ State machine, FHIR mapping, stall detection. Requirement R5.
 
 **Rules:** All changes go through one function. Declining is always possible and is never a failure.
 
-**Status:** stubs only. No code until requested.
+**Status:** the state machine is built (Phase 2). The scheduler and FHIR mapper are stubs until Phase 5.
 
 ## Files
 

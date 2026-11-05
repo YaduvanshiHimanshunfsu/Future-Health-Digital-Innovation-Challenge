@@ -4,7 +4,7 @@ Priority rules, case creation, assignment, summaries. Requirement R3.
 
 **Rules:** Transparent rules, not ML. Every case records why.
 
-**Status:** stubs only. No code until requested.
+**Status:** rule scoring and case opening at ingest are built (Phase 2). Assignment and the copilot are stubs until Phase 4.
 
 ## Files
 

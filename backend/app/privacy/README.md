@@ -4,7 +4,7 @@ Encryption, audit, authorisation, consent, matching, invitations, redaction. Req
 
 **Rules:** Fail closed. One person's data never reaches another without consent.
 
-**Status:** stubs only. No code until requested.
+**Status:** audit trail (Phase 1), encryption and key providers (Phase 2) are built. The rest are stubs until Phase 3.
 
 ## Files
 

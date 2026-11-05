@@ -1,6 +1,8 @@
 import io
 import logging
+import shutil
 from collections.abc import AsyncIterator
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -8,6 +10,7 @@ import pytest_asyncio
 from fastapi import APIRouter, FastAPI
 from pydantic import Field
 
+from app.core.config import DEFAULT_PACKS_DIR
 from app.core.logging import PhiSafeJsonFormatter
 from app.schemas.common import StrictIn
 from tests.conftest import client_for
@@ -180,13 +183,29 @@ async def test_docs_csp_does_not_leak_to_other_routes(app_factory: Any) -> None:
     assert "default-src 'none'" in response.headers["content-security-policy"]
 
 
-async def test_docs_are_off_in_production(app_factory: Any) -> None:
+async def test_docs_are_off_in_production(app_factory: Any, tmp_path: Path) -> None:
+    pack = tmp_path / "ae-abu-dhabi"
+    shutil.copytree(DEFAULT_PACKS_DIR / "ae-abu-dhabi", pack)
+    manifest = (pack / "pack.yaml").read_text("utf-8")
+    (pack / "pack.yaml").write_text(
+        manifest.replace("status: reference", "status: reviewed").replace(
+            "reviewers: []", "reviewers: [Example Reviewer]"
+        ),
+        "utf-8",
+    )
     app = app_factory(
         env="prod",
         kms_provider="vault",
         local_kek_b64=None,
+        vault_addr="https://vault.example",
+        vault_token="t",
+        lab_attestation="verified",
+        openfga_api_url="https://fga.example",
+        openfga_token="t",
         oidc_issuer="https://idp.example/realms/samvid",
         oidc_jwks_url="https://idp.example/realms/samvid/protocol/openid-connect/certs",
+        packs_dir=tmp_path,
+        enabled_packs=["ae-abu-dhabi"],
     )
     async with client_for(app) as http:
         assert (await http.get("/docs")).status_code == 404

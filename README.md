@@ -8,7 +8,7 @@
 
 <br/>
 
-![Status: early build](https://img.shields.io/badge/status-early%20build%20%C2%B7%20phase%201-F4B740?style=for-the-badge)
+![Status: early build](https://img.shields.io/badge/status-early%20build%20%C2%B7%20phase%203-F4B740?style=for-the-badge)
 ![Prototype due 20 Nov 2026](https://img.shields.io/badge/prototype%20due-20%20Nov%202026-2F5BEA?style=for-the-badge)
 ![Synthetic data only](https://img.shields.io/badge/data-synthetic%20only-14A89B?style=for-the-badge)
 ![Global by design](https://img.shields.io/badge/scope-global%20by%20design-0E7C72?style=for-the-badge)
@@ -534,7 +534,9 @@ gantt
 | Phase plan and verification checks | Written |
 | Folder and file skeleton | Created, with documentation-only stubs |
 | Backend foundation: API security, database, audit trail, local stack | **Built and tested** |
-| Risk engine, privacy flows, AI, pathway, frontend | **Not started** |
+| Risk engine, encryption, lab report ingestion, synthetic data, country packs | **Built and tested**, on placeholder gene values with no clinical review. Reachable through the API, with no screens yet |
+| Consent ledger, couple match, family invitations, access log, break-glass, redaction | **Built and tested** through the API, with no screens yet |
+| AI, full care pathway, frontend | **Not started** |
 | Clinical review | **Not started**: no reviewer yet |
 | Evaluation and user testing | **Not started** |
 
@@ -550,7 +552,7 @@ All planned, per [docs/backend.md](docs/backend.md) and [docs/frontend.md](docs/
 | **Data** | PostgreSQL 16 with pgvector, SQLAlchemy 2, Alembic, Redis, Celery | One store for relational data and vectors, plus background jobs |
 | **Identity and access** | Keycloak (OIDC), OpenFGA | Standard login, and relationship-based rules that fit family data |
 | **AI** | LangGraph, an OpenAI-compatible LLM (Azure OpenAI or Jais), BGE-M3 embeddings | Explicit, testable pipeline with strong Arabic options |
-| **Privacy and security** | AES-256-GCM, Vault or Key Vault, Presidio, optional OpenMined PSI | Envelope encryption, PII redaction, private matching between institutions |
+| **Privacy and security** | AES-256-GCM, Vault or Key Vault, OpenFGA, word-list redaction | Envelope encryption, relationship checks that deny on any failure, and only listed words reaching an LLM. Private set intersection between institutions is a possible later step, and isn't built |
 | **Interoperability** | FHIR R4 | Common language of health-system integration |
 | **Note** | The challenge is technology-neutral, so these are our choices, not requirements | |
 | **Frontend** | Next.js 15, TypeScript, Tailwind, shadcn/ui, next-intl | Fast multi-page build with accessible components and right-to-left support |

@@ -1,7 +1,4 @@
-# FILE: backend/packs/_template/strata.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Added for the global design, docs/07.
-# PURPOSE: Equity strata and SLAs. Copy this folder to add a country.
-# PLANNED LOGIC: Regions, age bands and priority time targets.
-# PHASE: 2.6 | SPEC: docs/07
-# CLOSE THESE ISSUES (docs/04): G6
+# Equity groups and time targets in hours.
+regions: []
+age_bands: []
+genders: []

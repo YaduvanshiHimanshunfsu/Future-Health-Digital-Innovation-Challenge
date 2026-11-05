@@ -3,7 +3,7 @@ import json
 import logging
 import time
 from collections.abc import Awaitable, Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from http import HTTPStatus
 from typing import Any
 
@@ -39,6 +39,8 @@ class Principal:
     sub: str
     roles: frozenset[str]
     token_id: str | None = None
+    # Only ever read from a verified token. Left out of repr so it can't reach a log by accident.
+    national_id: str | None = field(default=None, repr=False)
 
 
 class JwksUnavailable(Exception):
@@ -164,7 +166,13 @@ class TokenVerifier:
         realm_access = claims.get("realm_access")
         raw_roles = realm_access.get("roles", []) if isinstance(realm_access, dict) else []
         roles = frozenset(role for role in raw_roles if role in KNOWN_ROLES)
-        return Principal(sub=subject, roles=roles, token_id=claims.get("jti"))
+        national_id = claims.get("national_id")
+        return Principal(
+            sub=subject,
+            roles=roles,
+            token_id=claims.get("jti"),
+            national_id=national_id if isinstance(national_id, str) and national_id else None,
+        )
 
 
 async def get_principal(

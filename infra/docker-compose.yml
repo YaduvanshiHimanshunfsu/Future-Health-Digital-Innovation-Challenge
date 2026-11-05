@@ -18,6 +18,7 @@ x-backend: &backend
     OIDC_ISSUER: http://localhost:8080/realms/samvid
     OIDC_JWKS_URL: http://keycloak:8080/realms/samvid/protocol/openid-connect/certs
     OPENFGA_API_URL: http://openfga:8080
+    OPENFGA_TOKEN: ${OPENFGA_PRESHARED_KEY:?run scripts/generate_env.py}
     KMS_PROVIDER: local
     LOCAL_KEK_B64: ${LOCAL_KEK_B64:?run scripts/generate_env.py}
     AUDIT_HMAC_KEY: ${AUDIT_HMAC_KEY:?run scripts/generate_env.py}
@@ -100,6 +101,8 @@ services:
     environment:
       <<: *openfga-env
       OPENFGA_PLAYGROUND_ENABLED: "false"
+      OPENFGA_AUTHN_METHOD: preshared
+      OPENFGA_AUTHN_PRESHARED_KEYS: ${OPENFGA_PRESHARED_KEY:?run scripts/generate_env.py}
     depends_on:
       openfga-migrate: {condition: service_completed_successfully}
     ports: ["127.0.0.1:8081:8080"]
@@ -118,6 +121,12 @@ services:
     depends_on:
       postgres: {condition: service_healthy}
 
+  openfga-bootstrap:
+    <<: *backend
+    command: ["python", "-m", "app.ops.bootstrap_openfga"]
+    depends_on:
+      openfga: {condition: service_healthy}
+
   api:
     <<: *backend
     environment:
@@ -129,7 +138,7 @@ services:
       migrate: {condition: service_completed_successfully}
       redis: {condition: service_healthy}
       keycloak: {condition: service_healthy}
-      openfga: {condition: service_healthy}
+      openfga-bootstrap: {condition: service_completed_successfully}
     ports: ["127.0.0.1:8000:8000"]
     healthcheck:
       test:

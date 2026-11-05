@@ -4,7 +4,7 @@ Loads and validates the active country pack from `backend/packs/`. See [docs/07]
 
 **Rules:** core code reads country-specific values only through this package.
 
-**Status:** stubs only. No code until requested.
+**Status:** built and tested in Phase 2.
 
 | File | Purpose | Phase | Issues |
 |---|---|---|---|

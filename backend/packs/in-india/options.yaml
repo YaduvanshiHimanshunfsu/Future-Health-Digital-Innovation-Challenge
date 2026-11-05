@@ -1,7 +1,24 @@
-# FILE: backend/packs/in-india/options.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Added for the India pack and Hindi, docs/07.
-# PURPOSE: Reproductive options available here. India pack, labelled illustrative. Not reviewed.
-# PLANNED LOGIC: A local reviewer confirms each option and source. Start from the ART Regulation Act 2021. No ranking.
-# PHASE: 2.6 | SPEC: docs/07
-# CLOSE THESE ISSUES (docs/04): S5, G3
+# Illustrative and unreviewed. A local reviewer must confirm each one.
+options:
+  - key: adoption
+    title: Adoption
+    source: To be confirmed by local review
+  - key: donor
+    title: Donor options
+    source: To be confirmed against the ART Regulation Act 2021
+  - key: ivf_pgt
+    title: IVF with embryo testing
+    source: To be confirmed by local review
+    note: Availability and cost vary widely.
+  - key: more_testing
+    title: More testing
+    source: General
+  - key: natural
+    title: Natural pregnancy
+    source: General
+  - key: prenatal
+    title: Prenatal testing
+    source: Wording pending clinician review. The PCPNDT Act restricts sex determination.
+  - key: time
+    title: Take time to decide
+    source: General

@@ -4,7 +4,7 @@ Database queries.
 
 **Rules:** Owner scoped: the person ID comes from the token.
 
-**Status:** stubs only. No code until requested.
+**Status:** `genetic.py` is built (Phase 2). The rest are stubs until later phases.
 
 ## Files
 

@@ -8,5 +8,4 @@
 .coverage
 __pycache__
 tests
-synthetic/out
-packs
+synthetic

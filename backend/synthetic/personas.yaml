@@ -1,7 +1,42 @@
-# FILE: backend/synthetic/personas.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Not in the original file list; added by docs/04 review.
-# PURPOSE: Named demo personas.
-# PLANNED LOGIC: At-risk couple, X-linked carrier, VUS, hemizygous male, compound finding, cousins with one carrier, no findings. Personas for both the Abu Dhabi and India packs.
-# PHASE: 2.2 | SPEC: docs/phases 2.2
-# CLOSE THESE ISSUES (docs/04): C3, C4
+# SYNTHETIC: fictional people for the demo, not based on anyone real.
+# Every ID uses an all-zero block, so it can't belong to anyone.
+# Each pack has a person for each clinical situation the risk rules treat differently.
+ae-abu-dhabi:
+  panel: demo-panel-v1
+  people:
+    fatima:        {id: 784-0000-0000001-1, sex: F, findings: [[HBB, P, het, c.20A>T]]}
+    khalid:        {id: 784-0000-0000002-1, sex: M, findings: [[HBB, LP, het, c.92G>C]]}
+    x_carrier:     {id: 784-0000-0000003-1, sex: F, findings: [[DMD, P, het, c.100del]]}
+    x_man:         {id: 784-0000-0000004-1, sex: M, findings: [[DMD, P, hemi, c.100del]]}
+    g6pd_man:      {id: 784-0000-0000005-1, sex: M, findings: [[G6PD, P, hemi, c.563C>T]]}
+    uncertain:     {id: 784-0000-0000006-1, sex: F, findings: [[CYP21A2, VUS, het, c.293A>G]]}
+    two_variants:  {id: 784-0000-0000007-1, sex: F, findings: [[HBB, P, het, c.20A>T], [HBB, P, het, c.92G>C]]}
+    two_copies:    {id: 784-0000-0000008-1, sex: M, findings: [[SMN1, P, hom, c.840C>T]]}
+    no_findings:   {id: 784-0000-0000009-1, sex: M, findings: [], benign: [[HBB, c.9C>T]]}
+    no_findings_f: {id: 784-0000-0000014-1, sex: F, findings: []}
+    alpha_one:     {id: 784-0000-0000010-1, sex: F, findings: [[HBA1, P, het, c.95A>G]]}
+    alpha_two:     {id: 784-0000-0000011-1, sex: M, findings: [[HBA2, P, het, c.427T>C]]}
+    gene_not_in_pack: {id: 784-0000-0000012-1, sex: F, findings: [[USH2A, P, het, c.2299del]]}
+    x_two_copies:  {id: 784-0000-0000013-1, sex: F, findings: [[DMD, P, hom, c.100del]]}
+  couples:
+    at_risk:            {a: fatima, b: khalid, relationship: first_cousins}
+    cousins_one_carrier: {a: fatima, b: no_findings, relationship: first_cousins}
+    alpha_pair:         {a: alpha_one, b: alpha_two, relationship: unrelated}
+    x_couple:           {a: x_carrier, b: x_man, relationship: unrelated}
+    uncertain_shared:   {a: uncertain, b: no_findings, relationship: second_cousins}
+    partner_not_tested: {a: fatima, b: no_findings, relationship: unrelated, b_tested: false}
+    x_father_only:      {a: no_findings_f, b: x_man, relationship: unrelated}
+
+in-india:
+  panel: demo-panel-in-v1
+  people:
+    priya:         {id: 00-0000-0000-0001, sex: F, findings: [[HBB, P, het, c.92+5G>C]]}
+    rohan:         {id: 00-0000-0000-0002, sex: M, findings: [[HBB, P, het, c.92+5G>C]]}
+    x_carrier_in:  {id: 00-0000-0000-0003, sex: F, findings: [[DMD, P, het, c.100del]]}
+    g6pd_man_in:   {id: 00-0000-0000-0004, sex: M, findings: [[G6PD, P, hemi, c.563C>T]]}
+    uncertain_in:  {id: 00-0000-0000-0005, sex: F, findings: [[SMN1, VUS, het, c.293A>G]]}
+    no_findings_in: {id: 00-0000-0000-0006, sex: M, findings: []}
+    gene_not_in_pack_in: {id: 00-0000-0000-0007, sex: F, findings: [[ABCA4, P, het, c.5882G>A]]}
+  couples:
+    at_risk_in:         {a: priya, b: rohan, relationship: unrelated}
+    relatives_in:       {a: priya, b: no_findings_in, relationship: first_cousins}

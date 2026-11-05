@@ -1,7 +1,21 @@
-# FILE: backend/packs/ae-abu-dhabi/options.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Added for the global design, docs/07.
-# PURPOSE: Reproductive options available here. Abu Dhabi reference pack. Pending clinical and legal review.
-# PLANNED LOGIC: Each option has a source and reviewer. Same fields for all; no ranking.
-# PHASE: 2.6 | SPEC: docs/07
-# CLOSE THESE ISSUES (docs/04): S5, G3
+# See docs/clinical/options_by_jurisdiction.md for the reasoning. No clinician has reviewed these.
+options:
+  - key: fostering
+    title: Fostering (kafala)
+    source: https://u.ae/en/information-and-services/social-affairs/children/fostering-and-sponsoring-children-of-unknown-parentage
+  - key: ivf_pgt
+    title: IVF with embryo testing
+    source: Federal Decree-Law 49/2023, Art. 11
+    note: Funding may be available. Ask your counsellor.
+  - key: more_testing
+    title: More testing
+    source: General
+  - key: natural
+    title: Natural pregnancy
+    source: General
+  - key: prenatal
+    title: Prenatal testing
+    source: Wording pending clinician review
+  - key: time
+    title: Take time to decide
+    source: General

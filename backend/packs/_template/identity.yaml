@@ -1,7 +1,4 @@
-# FILE: backend/packs/_template/identity.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Added for the global design, docs/07.
-# PURPOSE: Identity and records. Copy this folder to add a country.
-# PLANNED LOGIC: National ID and phone formats, sign-in provider, health records adapter, hosting region.
-# PHASE: 2.6 | SPEC: docs/07
-# CLOSE THESE ISSUES (docs/04): G2, G5
+# national_id_pattern is also used to scrub logs.
+national_id_label: National ID
+national_id_pattern: 'CHANGE-ME'
+national_id_fhir_system: urn:samvid:xx:national-id

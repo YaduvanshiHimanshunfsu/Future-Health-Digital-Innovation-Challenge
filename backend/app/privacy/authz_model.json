@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.1",
+  "type_definitions": [
+    {"type": "user", "relations": {}},
+    {
+      "type": "grant",
+      "relations": {"holder": {"this": {}}},
+      "metadata": {
+        "relations": {
+          "holder": {"directly_related_user_types": [{"type": "user", "condition": "not_expired"}]}
+        }
+      }
+    },
+    {
+      "type": "report",
+      "relations": {
+        "summary_grant": {"this": {}},
+        "full_grant": {"this": {}},
+        "can_view_summary": {
+          "union": {
+            "child": [
+              {"computedUserset": {"relation": "summary_grant"}},
+              {"computedUserset": {"relation": "full_grant"}}
+            ]
+          }
+        },
+        "can_view_full": {"computedUserset": {"relation": "full_grant"}}
+      },
+      "metadata": {
+        "relations": {
+          "summary_grant": {"directly_related_user_types": [{"type": "grant", "relation": "holder"}]},
+          "full_grant": {"directly_related_user_types": [{"type": "grant", "relation": "holder"}]}
+        }
+      }
+    },
+    {
+      "type": "couple",
+      "relations": {"member": {"this": {}}},
+      "metadata": {"relations": {"member": {"directly_related_user_types": [{"type": "user"}]}}}
+    },
+    {
+      "type": "care_case",
+      "relations": {
+        "assigned": {"this": {}},
+        "emergency": {"this": {}},
+        "can_view": {
+          "union": {
+            "child": [
+              {"computedUserset": {"relation": "assigned"}},
+              {"computedUserset": {"relation": "emergency"}}
+            ]
+          }
+        }
+      },
+      "metadata": {
+        "relations": {
+          "assigned": {"directly_related_user_types": [{"type": "user"}]},
+          "emergency": {"directly_related_user_types": [{"type": "grant", "relation": "holder"}]}
+        }
+      }
+    }
+  ],
+  "conditions": {
+    "not_expired": {
+      "name": "not_expired",
+      "expression": "current_time < expires_at",
+      "parameters": {
+        "current_time": {"type_name": "TYPE_NAME_TIMESTAMP"},
+        "expires_at": {"type_name": "TYPE_NAME_TIMESTAMP"}
+      }
+    }
+  }
+}

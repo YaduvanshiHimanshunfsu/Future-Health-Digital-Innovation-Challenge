@@ -13,6 +13,11 @@ def production(**overrides: Any) -> dict[str, Any]:
         "env": "prod",
         "kms_provider": "vault",
         "local_kek_b64": None,
+        "vault_addr": "https://vault.samvid.example",
+        "vault_token": "t",
+        "lab_attestation": "verified",
+        "openfga_api_url": "https://fga.samvid.example",
+        "openfga_token": "t",
         "allowed_hosts": ["api.samvid.example"],
         "cors_origins": ["https://samvid.example"],
         "oidc_issuer": "https://idp.samvid.example/realms/samvid",
@@ -90,3 +95,22 @@ def test_secrets_do_not_appear_in_repr() -> None:
 
 def _key() -> str:
     return base64.b64encode(secrets.token_bytes(32)).decode()
+
+
+def test_production_refuses_demo_attestation() -> None:
+    with pytest.raises(ValidationError, match="attestation"):
+        settings_for_tests(**production(lab_attestation="demo"))
+
+
+@pytest.mark.parametrize(
+    "overrides",
+    [{"vault_addr": None}, {"vault_addr": "http://vault.samvid.example"}, {"vault_token": None}],
+)
+def test_production_needs_vault_over_https(overrides: dict[str, Any]) -> None:
+    with pytest.raises(ValidationError, match="VAULT_ADDR"):
+        settings_for_tests(**production(**overrides))
+
+
+def test_default_pack_must_be_enabled() -> None:
+    with pytest.raises(ValidationError, match="default_pack"):
+        settings_for_tests(enabled_packs=["in-india"], default_pack="ae-abu-dhabi")

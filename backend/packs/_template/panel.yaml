@@ -1,7 +1,4 @@
-# FILE: backend/packs/_template/panel.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Added for the global design, docs/07.
-# PURPOSE: Screening panel and gene data. Copy this folder to add a country.
-# PLANNED LOGIC: Panel versions, carrier frequencies, detection rates, inheritance, risk groups. PLACEHOLDER values until reviewed.
-# PHASE: 2.6 | SPEC: docs/07
-# CLOSE THESE ISSUES (docs/04): G3, H2, H3
+# Mark values placeholder until a reviewer confirms them. A gene missing here gives no number, and goes to a person.
+values_status: placeholder
+panels: {}
+genes: {}

@@ -1,7 +1,7 @@
-# FILE: backend/packs/ae-abu-dhabi/pack.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Added for the global design, docs/07.
-# PURPOSE: Pack identity. Abu Dhabi reference pack. Pending clinical and legal review.
-# PLANNED LOGIC: Name, country, status (reference, illustrative or draft), languages, default language, version, reviewers.
-# PHASE: 2.6 | SPEC: docs/07
-# CLOSE THESE ISSUES (docs/04): G1, S9
+# Abu Dhabi reference pack. Not yet reviewed by a local clinician or lawyer.
+code: ae-abu-dhabi
+name: Abu Dhabi
+status: reference
+reviewers: []
+languages: [ar, en]
+default_language: en

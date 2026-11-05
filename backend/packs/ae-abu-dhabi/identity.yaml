@@ -1,7 +1,8 @@
-# FILE: backend/packs/ae-abu-dhabi/identity.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Added for the global design, docs/07.
-# PURPOSE: Identity and records. Abu Dhabi reference pack. Pending clinical and legal review.
-# PLANNED LOGIC: National ID and phone formats, sign-in provider, health records adapter, hosting region.
-# PHASE: 2.6 | SPEC: docs/07
-# CLOSE THESE ISSUES (docs/04): G2, G5
+# Demo adapters only. Real sign-in and records would plug in here.
+national_id_label: Emirates ID
+national_id_pattern: '784-?\d{4}-?\d{7}-?\d'
+national_id_fhir_system: urn:samvid:ae:emirates-id
+national_id_ignore: "- "
+phone_pattern: '(?:\+971|00971|0)[\s-]?5\d(?:[\s-]?\d){7}'
+sign_in_adapter: demo
+records_adapter: none

@@ -1,7 +1,8 @@
-# FILE: backend/packs/_template/pack.yaml
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Added for the global design, docs/07.
-# PURPOSE: Pack identity. Copy this folder to add a country.
-# PLANNED LOGIC: Name, country, status (reference, illustrative or draft), languages, default language, version, reviewers.
-# PHASE: 2.6 | SPEC: docs/07
-# CLOSE THESE ISSUES (docs/04): G1, S9
+# Copy this folder to add a country. See docs/07_Global_Design_and_Country_Packs.md.
+# status: reviewed | reference | illustrative | draft. Production only runs reviewed packs with named reviewers.
+code: xx-your-country
+name: Your country
+status: draft
+reviewers: []
+languages: [en]
+default_language: en

@@ -39,7 +39,7 @@ Where `q` is carrier frequency, `d` is detection rate, and `r` is the coefficien
 
 ## Questions for a clinician
 
-1. **Rule 5:** which conditions need P1 and which don't? G6PD could make about 8% of men "urgent", on placeholder frequencies.
+1. **Rule 5:** which conditions need P1 and which don't? G6PD could make about 8% of men "urgent", on placeholder frequencies. **For now**, the packs mark G6PD `routine_when_hemizygous`, which gives P3. This is an engineering default awaiting a clinician's decision.
 2. **Rule 4:** is "possibly affected" the right wording when the phase of two variants is unknown?
 3. **Rule 14:** what can honestly be said about added risk after a negative panel, and for double first cousins?
 4. **Rule 11:** which other gene groups need this treatment?

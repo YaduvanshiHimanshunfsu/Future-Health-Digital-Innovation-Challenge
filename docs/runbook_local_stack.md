@@ -31,6 +31,20 @@ docker compose exec api python -m app.ops.check_services
 
 The second command checks Postgres, Redis, Keycloak and OpenFGA from inside the API container, then fetches a real token and verifies it the way the API would.
 
+Then check the whole flow, using real tokens and a real database dump:
+
+```bash
+cd backend
+uv run python -m synthetic.generate
+uv run python ../scripts/smoke_stack.py
+```
+
+It's safe to repeat. It posts synthetic reports, signs in through the real browser flow as two temporary users, reads their results, tries to claim someone else's national ID, and searches a `pg_dump` for gene names. It removes the users afterwards. The synthetic reports stay, because the audit trail is append-only. Use `docker compose down -v` for a clean database.
+
+On Windows, call the API at `127.0.0.1` from scripts and server-side code. `localhost` tries IPv6 first, and the ports only listen on IPv4, which adds about 2 s to every new connection. This measured 2.16 s for a revoke by name and 0.09 s by address. Keycloak has to stay on `localhost`, because that's the issuer its tokens carry.
+
+Keycloak only reads `infra/keycloak/realm-samvid.json` when its container starts fresh. After changing that file, run `docker compose up -d --force-recreate keycloak`.
+
 ## Run the tests
 
 ```bash

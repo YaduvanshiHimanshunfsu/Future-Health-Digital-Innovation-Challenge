@@ -2,7 +2,7 @@
 
 **Generated on 5 Nov 2026 from the phase files**, then checked by script. If you change a phase, update this document too.
 
-**Status:** updated 5 Nov 2026. The audit below covers the **plan**. Results exist for Phase 1 only, in the evidence table further down.
+**Status:** updated 5 Nov 2026. The audit below covers the **plan**. Results exist for Phases 1 and 2, in the evidence table further down.
 
 ## Audit result
 
@@ -238,7 +238,7 @@ Each objective is written out in its phase file.
 
 ## Checks with evidence so far
 
-Phase 1 only. All later checks are open.
+Phases 1 and 2. All later checks are open.
 
 | Check | Status | Evidence |
 |---|---|---|
@@ -263,7 +263,7 @@ Phase 1 only. All later checks are open.
 | V1.3.5 | Partly | Works on this Windows machine. Other team machines unknown |
 | V1.4.1 | **Done** | `tests/api/test_auth.py` |
 | V1.4.2 | **Done** | `tests/api/test_http_hardening.py` |
-| V1.4.3 | **Done** | `tests/unit/test_logging.py`. Packs plug in during 2.6 |
+| V1.4.3 | **Done** | `tests/unit/test_logging.py`, and pack formats in `test_country_packs.py` |
 | V1.4.4 | **Done** | `test_http_hardening.py` |
 | V1.4.5 | **Done** | `tests/unit/test_config.py` |
 | V1.4.6 | **Done** | `test_http_hardening.py` |
@@ -271,12 +271,45 @@ Phase 1 only. All later checks are open.
 | V1.5.2 | **Done** | `tests/unit/test_audit_chain.py` |
 | V1.5.3 | **Done** | Same, for every column, deleted rows and forged hashes |
 | V1.5.4 | **Done** | `tests/api/test_denied_audit.py` |
-| V1.5.5 | Partly | Every column classified and enforced by a test. Reviewer missing, encryption arrives in 2.1 |
+| V1.5.5 | Partly | Every column classified and enforced by a test, and encryption built in 2.1. Reviewer missing |
 | V1.5.6 | **Done** | `test_schema.py`, and the realm and code use the same roles |
-| V1.5.7 | Open | Ingestion arrives in 2.3. The rule is written on `AuditTrail.append` |
+| V1.5.7 | **Done** | `tests/api/test_ingestion.py`: ingestion writes its audit row last, and the chain verifies with concurrent deliveries |
 | V1.6.1 | **Done** | Calculated table in `frontend/README.md` |
 | V1.6.2 | Partly | Removed from the Stitch prompts. Screens not generated yet |
 | V1.6.3 to V1.6.5 | Open | Waiting on Stitch screens from the team |
+
+### Phase 2 evidence
+
+**Last full test run: 453 passed, 1 failed, with 92% coverage overall and 100% branch coverage on the risk engine.** It took 21.5 minutes, against the usual 2 to 3. The failure was `test_malformed_input_gets_422_and_stores_nothing[no_entries]`, which then passed alone and with its group of 25. **So the suite has not yet had a fully clean run, and that intermittent failure is unexplained.** `scripts/smoke_stack.py` passes against the real stack.
+
+**Mutation check:** 44 safety rules were broken on purpose, one at a time, in a throwaway copy. The tests caught 42 straight away. The other two exposed real gaps, both now fixed and re-checked:
+- **The database dump search was blind.** `pg_dump` writes binary columns as hex, so it passed even with encryption switched off. It now decodes those columns, and a test confirms it still can.
+- **Nothing tested that the "yes or no" view hides a person's private facts.** The code was right, and now a test protects it.
+
+| Check | Status | Evidence |
+|---|---|---|
+| V2.1.1 to V2.1.3 | **Done** | `tests/unit/test_crypto.py`. The Vault provider ran only against a simulated Vault |
+| V2.1.4 | **Done** | `test_raw_database_holds_no_genetic_or_identity_details`, and on the real stack `scripts/smoke_stack.py`: 120 binary values decoded, no gene names or IDs |
+| V2.2.1 | **Done** | `test_same_seed_gives_identical_output`, and two real runs with matching hashes |
+| V2.2.2 | **Done** | All 13 scenarios appear in the Abu Dhabi personas: `test_synthetic.py` and `summary.json` |
+| V2.2.3 | Partly | IDs use an all-zero block, files and bundles are labelled, and a test checks this. Reviewer missing |
+| V2.2.4 | **Done** | `test_observed_carrier_rates_are_close_to_the_table`, within four standard errors |
+| V2.2.5 | Partly | Every gene marked placeholder, and listed conditions covered. Reviewer missing |
+| V2.2.6 | Partly | Every input listed in `data_sources.md`. LOINC, HL7 terminology and gene symbol terms **not confirmed**: a person must read them |
+| V2.2.7 | **Done** | `test_personas_exist_for_both_packs` |
+| V2.3.1 to V2.3.4, V2.3.6, V2.3.7 | **Done** | `tests/api/test_ingestion.py`, `tests/api/test_results.py`, and the smoke script |
+| V2.3.5 | Partly | Demo attestation is recorded and readable as trusted. The link to matching comes with V3.3.1 |
+| V2.4.1 to V2.4.11, V2.4.13, V2.4.15 | **Done** | `tests/unit/test_risk_engine.py`, `test_engine_boundaries.py`, coverage report. Hand-worked answers are the author's own, and `risk_rules_review.md` asks for a second person |
+| V2.4.12 | Open | Needs a clinician. A stated limitation until then |
+| V2.4.14 | Partly | No empiric figure is shown at all, which is stricter than the check asks. Clinician wording still needed |
+| V2.5.1 | **Done, differently** | Personal routes take no person ID, so there's nothing to tamper with: `tests/api/test_bola.py`. Shared data gets its own check in V3.2.1 |
+| V2.5.2 | **Done** | `tests/unit/test_visuals.py` |
+| V2.5.3 | Partly | Unit tests pass. Screenshot waits on Stitch screens |
+| V2.5.4, V2.5.6 | Open | Need the screens and a non-technical reader |
+| V2.5.5 | **Done** | `test_reading_results_creates_an_audit_row` |
+| V2.6.1 | Partly | Options, languages, ID format, services and genes change with the pack. Crisis contacts are still empty in both packs, on purpose, until verified (V1.2.4) |
+| V2.6.2 to V2.6.5, V2.6.7, V2.6.8 | **Done** | `tests/unit/test_country_packs.py`, `tests/api/test_ingestion.py` |
+| V2.6.6 | Partly | The pack states "none" and nothing substitutes for it. Showing that on screen waits on Stitch |
 
 ## Issues to sub-phases and checks
 

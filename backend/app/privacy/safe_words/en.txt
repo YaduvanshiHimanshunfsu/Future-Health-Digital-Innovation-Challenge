@@ -1,0 +1,29 @@
+# Words allowed through to an LLM in English. Keep people's names off this list, including ones that
+# are also everyday words, such as hope, rose, grace, faith, joy, mark, bill and will.
+a about above across after again against all almost alone along already also although always am among an and another any anyone anything are area aren't around as ask asked asking at away
+back be became because become been before being below best better between both but by
+call called came can can't cannot come comes could couldn't
+day days did didn't different do does doesn't doing don't done down during
+each early either else enough even ever every everyone everything explain
+far feel feeling few find first for found from full further
+get getting give given go goes going good got great
+had hadn't happen happens has hasn't have haven't having he hear help her here hers high him his how however
+i i'd i'll i'm i've if important in instead into is isn't it it's its itself
+just keep kind know known knowing
+last later learn least less let like likely little long look lot low
+made make many may maybe me mean means meaning might mine more most much must my myself
+near need needed needs never new next no nor not nothing now
+of off often okay ok old on once one only open or other others our ours out over own
+part people perhaps person place please possible probably
+question questions quite rather read really reason right
+said same say says see seem should shouldn't show since small so some someone something sometimes soon still such sure
+take talk tell than thank thanks that that's the their theirs them then there these they they're thing things think this those though through time to today together told too tried true try trying two
+under understand understanding until up upon us use used using usually
+very want wanted wants was wasn't way we we're well went were weren't what what's when where whether which while who whom whose why with within without won't work worried worry would wouldn't
+year years yes yet you you're your yours yourself
+# Family and life
+adult adults age aunt aunts baby babies birth brother brothers child children couple couples cousin cousins dad daughter daughters engaged family families father fathers fiance fiancee future girl girls grandfather grandmother husband husbands kids man marriage married marry men mom mother mothers mum nephew niece parent parents partner partners pregnancy pregnant relative relatives sibling siblings sister sisters son sons spouse uncle uncles wedding wife wives woman women
+# Health and genetics
+abnormal affected allele alleles alpha anaemia anemia ancestry appointment beta biopsy blood cah carrier carriers cell cells check chance chances chromosome chromosomes clinic clinical condition conditions confirm confirmatory consanguineous consanguinity counsellor counsellors counselor counselors counselling counseling cvs cystic diagnosis disease diseases dna doctor doctors dominant duchenne embryo embryos embryonic fibrosis finding findings g6pd gene genes genetic genetics genome hemoglobin haemoglobin health healthy hereditary hospital illness inherit inherited inheritance inheriting ivf linked medical medicine muscular mutation mutations negative nurse pass passed passing pathogenic percent percentage pgt positive prenatal recessive report reports result results retinal risk risks safe sample scan screen screened screening sickle sma spinal symptom symptoms test tested testing tests thalassaemia thalassemia trait treatment treatments uncertain variant variants vus x-linked
+# Feelings and support
+afraid angry anxious ashamed confused decide decision decisions depressed hard hurt nervous option options pressure private privacy sad scared secret share shared sharing stress stressed support upset
