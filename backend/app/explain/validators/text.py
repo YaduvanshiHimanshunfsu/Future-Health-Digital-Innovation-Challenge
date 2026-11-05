@@ -7,9 +7,14 @@ _REPEATS = re.compile(r"(.)\1+")
 _SENTENCE_END = re.compile(r"(?<=[.!?\u0964])\s+")
 
 
+_NUKTA = "\u093c"
+
+
 def normalise(text: str) -> str:
-    text = unicodedata.normalize("NFKC", text).casefold()
-    text = "".join(c for c in unicodedata.normalize("NFD", text) if unicodedata.category(c) != "Mn" or _keep(c))
+    text = unicodedata.normalize("NFKC", text).casefold().replace(_NUKTA, "")
+    text = "".join(
+        c for c in unicodedata.normalize("NFD", text) if unicodedata.category(c) != "Mn" or _keep(c)
+    )
     return unicodedata.normalize("NFC", text)
 
 
@@ -28,4 +33,7 @@ def sentences(text: str) -> list[str]:
 
 
 def has_arabic_script(text: str) -> bool:
-    return any("\u0600" <= c <= "\u06ff" or "\u0750" <= c <= "\u077f" or "\ufb50" <= c <= "\ufeff" for c in text)
+    return any(
+        "\u0600" <= c <= "\u06ff" or "\u0750" <= c <= "\u077f" or "\ufb50" <= c <= "\ufeff"
+        for c in text
+    )

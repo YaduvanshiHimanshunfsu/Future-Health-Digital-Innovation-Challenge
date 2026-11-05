@@ -1,21 +1,8 @@
-# Knowledge-base content
+# Knowledge base content
 
-`<condition>/<lang>_<level>.md`, each with front matter.
+Short, original explanations, one file per topic per language, all at the Simple level for now.
+Every file is a **draft** until a clinician reviews it, and says so in its front matter.
 
-**Rules:** Stubs have `status: stub`. Start with `general` and T1 conditions at Simple level. Don't describe a file as reviewed unless someone did.
-
-**Status:** stubs only. No code until requested.
-
-## Sub-folders
-
-- `alpha_thal/`
-- `beta_thal/`
-- `cah/`
-- `cystic_fibrosis/`
-- `g6pd_def/`
-- `general/`
-- `glaucoma/`
-- `inherited_retinal/`
-- `pcd/`
-- `sickle_cell/`
-- `sma/`
+Rules, enforced by `tests/unit/test_kb.py`: complete front matter, no directive or certain
+wording, and no figures except the approved general facts (`1 in 4`, `1 in 2`).
+Arabic content waits on approval and a reviewer.

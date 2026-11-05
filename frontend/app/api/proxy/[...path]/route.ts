@@ -16,6 +16,9 @@ const ALLOWED_ROOTS = new Set([
   "invitations",
   "cases",
   "break-glass",
+  "chat",
+  "options",
+  "values",
 ]);
 const SAFE_SEGMENT = /^[A-Za-z0-9_-]+$/;
 const MAX_BODY_BYTES = 64 * 1024;

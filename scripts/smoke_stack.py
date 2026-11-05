@@ -29,7 +29,11 @@ ROOT = Path(__file__).resolve().parents[1]
 ENV_FILE = ROOT / "infra" / ".env"
 COMPOSE_FILE = ROOT / "infra" / "docker-compose.yml"
 PERSONAS = ROOT / "backend" / "synthetic" / "out"
-KEYCLOAK = "http://localhost:8080"
+# Server-to-server calls use the address. On Windows, "localhost" tries IPv6 first and adds about 2 s
+# to every new connection. Tokens still name localhost as their issuer, because Keycloak's hostname is fixed.
+KEYCLOAK = "http://127.0.0.1:8080"
+# The browser sign-in page stays on localhost: its cookies and redirects are set for that name.
+BROWSER_REALM = "http://localhost:8080/realms/samvid"
 # By address: on Windows, "localhost" tries IPv6 first and adds about 2 s to every new connection.
 API = "http://127.0.0.1:8000"
 REALM = f"{KEYCLOAK}/realms/samvid"
@@ -135,7 +139,7 @@ def sign_in(username: str, password: str) -> str:
         }
     )
     with httpx.Client() as client:
-        page = client.get(f"{REALM}/protocol/openid-connect/auth?{query}")
+        page = client.get(f"{BROWSER_REALM}/protocol/openid-connect/auth?{query}")
         page.raise_for_status()
         # Keycloak's cookies are marked Secure. Browsers treat localhost as secure and Python's
         # cookie jar doesn't, so they're passed on by hand.
@@ -254,14 +258,14 @@ def check_id_lock(
 ) -> None:
     """Nobody can give themselves another person's national ID through their own account."""
     headers = {**bearer(sign_in(username, password)), "Accept": "application/json"}
-    profile = httpx.get(f"{REALM}/account/", headers=headers)
+    profile = httpx.get(f"{BROWSER_REALM}/account/", headers=headers)
     results.check("the user can't see the field", "national_id" not in profile.text)
     changed = {**profile.json(), "firstName": "Changed"}
-    plain = httpx.post(f"{REALM}/account/", headers=headers, json=changed)
+    plain = httpx.post(f"{BROWSER_REALM}/account/", headers=headers, json=changed)
     # Proves the refusal below is about the field, and not just a badly formed request.
     results.check("an ordinary profile edit works", plain.status_code == 204, plain.status_code)
     attempt = httpx.post(
-        f"{REALM}/account/",
+        f"{BROWSER_REALM}/account/",
         headers=headers,
         json={**changed, "attributes": {"national_id": [target]}},
     )

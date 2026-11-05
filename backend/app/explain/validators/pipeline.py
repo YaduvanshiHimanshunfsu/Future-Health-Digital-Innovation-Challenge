@@ -4,7 +4,9 @@ from app.explain.validators import rules
 from app.explain.validators.text import has_arabic_script
 
 # These stop an answer. Readability only notes a problem for the safety dashboard.
-BLOCKING = frozenset({"directive", "certainty", "stigma", "number", "binding", "unknown_fact", "unreadable_script"})
+BLOCKING = frozenset(
+    {"directive", "certainty", "stigma", "number", "binding", "unknown_fact", "unreadable_script"}
+)
 
 
 @dataclass(frozen=True, slots=True)

@@ -413,3 +413,18 @@ Bugs found by testing, and fixed: error handlers read global settings; FastAPI t
 - 625 backend tests pass, with no failures.
 - The launcher passes ruff and mypy in strict mode. Its live view was checked against the real stack (see #016, or the next entry).
 
+## #016 · 2026-11-06 · Checked Run_Samvid.py for real, and fixed what that showed
+**What:** Ran `python Run_Samvid.py` against the real stack, signed in as a demo person in a real browser, and read what the launcher printed.
+
+**What the check showed:**
+- **Start-up works.** Every service came up, and the launcher reported the web app, API and sign-in ready, then printed the demo accounts.
+- **The live view works.** It shows each page opened, each call the browser makes through the web app, and each API request with its status and time. An invitation link appears only as `/en/i/:token`, and the API shows its route pattern.
+- **Seeding took 3 minutes, which was a bug.** Every Keycloak call went to `localhost`, and on Windows each one cost about 2 s while IPv6 was tried first. Server-to-server calls now use `127.0.0.1`, which tokens accept because Keycloak's hostname is fixed. Browser sign-in stays on `localhost`. Seeding now takes 14 s.
+- **Next.js prefetches cluttered the view.** They're hidden now, since they aren't visits.
+
+### Verification
+- Seeding ran in 13.9 s.
+- The smoke script passes all 65 checks after the change, including the browser sign-in.
+- 36 browser tests pass against the rebuilt container.
+- The launcher passes ruff, and mypy in strict mode.
+

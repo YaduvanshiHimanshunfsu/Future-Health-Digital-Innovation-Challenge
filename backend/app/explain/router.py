@@ -14,47 +14,111 @@ _ORDER = [Boundary.DISTRESS, Boundary.COERCION, Boundary.CLINICAL_ADVICE, Bounda
 
 
 def _rules(table: dict[str, list[str]]) -> dict[str, list[re.Pattern[str]]]:
-    return {lang: [re.compile(p, re.IGNORECASE) for p in items] for lang, items in table.items()}
+    # Patterns go through the same normal form as the text, or Hindi letters could fail to match.
+    return {
+        lang: [re.compile(normalise(p), re.IGNORECASE) for p in items]
+        for lang, items in table.items()
+    }
 
 
 # English and Hindi by the team, awaiting native review. Arabic in Roman letters only, with meanings.
 DISTRESS = _rules(
     {
-        "en": [r"\b(kill|hurt|harm) (myself|me)\b", r"\bsuicid", r"\bend (my|it all|my life)\b", r"\bwant to die\b",
-               r"\bcan'?t (go on|cope|take (it|this) any ?more)\b", r"\bno (reason|point) (to|in) (live|living)\b", r"\bhopeless\b"],
-        "hi": [r"आत्महत्या", r"(मर|मरना) (जाना|चाहता|चाहती)", r"जीना नहीं", r"\b(khudkushi|aatmahatya)\b", r"\bmarna chah"],
+        "en": [
+            r"\b(kill|hurt|harm) (myself|me)\b",
+            r"\bsuicid",
+            r"\bend (my|it all|my life)\b",
+            r"\bwant to die\b",
+            r"\bcan'?t (go on|cope|take (it|this) any ?more)\b",
+            r"\bno (reason|point) (to|in) (live|living)\b",
+            r"\bhopeless\b",
+        ],
+        "hi": [
+            r"आत्महत्या",
+            r"(मर|मरना) (जाना|चाहता|चाहती)",
+            r"जीना नहीं",
+            r"\b(khudkushi|aatmahatya)\b",
+            r"\bmarna chah",
+        ],
         # abi amoot (I want to die), antahir (kill myself), ta3ban wa ma aqdar (exhausted and can't cope).
         "ar": [r"\babi\s?amot\b", r"\bantahir\b", r"\bma\s?aqdar\s?akamil\b"],
     }
 )
 COERCION = _rules(
     {
-        "en": [r"\b(forc|pressur)(e|es|ed|ing) me\b", r"\b(making|make|made) me (marry|test|share|get)\b",
-               r"\bthreaten", r"\bwon'?t let me\b", r"\b(my|the) (family|parents|husband|wife|partner|in-?laws) (insist|demand)",
-               r"\bshow (them|him|her) my result", r"\bagainst my will\b"],
-        "hi": [r"ज़?ज़बरदस्ती|जबरदस्ती", r"दबाव", r"मजबूर", r"धमकी", r"\b(zabardasti|majboor|dabav|dhamki)\b"],
+        "en": [
+            r"\b(forc|pressur)(e|es|ed|ing) me\b",
+            r"\b(making|make|made) me (marry|test|share|get)\b",
+            r"\bthreaten",
+            r"\bwon'?t let me\b",
+            r"\b(my|the) (family|parents|husband|wife|partner|in-?laws) (insist|demand)",
+            r"\bshow (them|him|her) my result",
+            r"\bagainst my will\b",
+        ],
+        "hi": [
+            r"ज़?ज़बरदस्ती|जबरदस्ती",
+            r"दबाव",
+            r"मजबूर",
+            r"धमकी",
+            r"\b(zabardasti|majboor|dabav|dhamki)\b",
+        ],
         # ghasban 3anni (against my will), yijburni (he forces me), yhaddidni (he threatens me).
         "ar": [r"\bghasban\b", r"\byijburn", r"\byhad+idn", r"\bdaght\b"],
     }
 )
 CLINICAL = _rules(
     {
-        "en": [r"\bpregnan", r"\b\d+\s*(weeks?|months?)\s*(pregnant|along|gone)\b", r"\bmiscarr", r"\bsymptoms?\b",
-               r"\btreat(ment|ed|ing)?\b", r"\bmedic(ine|ation)s?\b", r"\bdos(e|age)\b", r"\bdiagnos",
-               r"\b(abortion|terminat|ultrasound|scan|bleeding|fever|pain)\b", r"\bis (my|the) (baby|child|son|daughter) (sick|ill|ok|okay|healthy)\b",
-               r"\bam i (sick|ill|affected)\b", r"\bwhat (test|dose)\b"],
-        "hi": [r"गर्भवती", r"गर्भ में", r"(महीने|हफ्ते) (की|का|से)", r"लक्षण", r"इलाज", r"दवा", r"बीमार", r"गर्भपात",
-               r"\b(garbhvati|pregnant|ilaaj|dawa|bimaar)\b"],
+        "en": [
+            r"\bpregnan",
+            r"\b\d+\s*(weeks?|months?)\s*(pregnant|along|gone)\b",
+            r"\bmiscarr",
+            r"\bsymptoms?\b",
+            r"\btreat(ment|ed|ing)?\b",
+            r"\bmedic(ine|ation)s?\b",
+            r"\bdos(e|age)\b",
+            r"\bdiagnos",
+            r"\b(abortion|terminat|ultrasound|scan|bleeding|fever|pain)\b",
+            r"\bis (my|the) (baby|child|son|daughter) (sick|ill|ok|okay|healthy)\b",
+            r"\bam i (sick|ill|affected)\b",
+            r"\bwhat (test|dose)\b",
+        ],
+        "hi": [
+            r"गर्भवती",
+            r"गर्भ में",
+            r"(महीने|हफ्ते) (की|का|से)",
+            r"लक्षण",
+            r"इलाज",
+            r"दवा",
+            r"बीमार",
+            r"गर्भपात",
+            r"\b(garbhvati|pregnant|ilaaj|dawa|bimaar)\b",
+        ],
         # ana hamil fi al-shahr (I'm pregnant in the month...), janin (foetus), usbu' (week), dawa (medicine),
         # 3ilaj (treatment), marid (sick).
-        "ar": [r"\bjanin\b", r"\b(shahr|ashhur|usbu|asabi)\b", r"\b(dawa|3ilaj|ilaj)\b", r"\bmarid\b"],
+        "ar": [
+            r"\bjanin\b",
+            r"\b(shahr|ashhur|usbu|asabi)\b",
+            r"\b(dawa|3ilaj|ilaj)\b",
+            r"\bmarid\b",
+        ],
     }
 )
 DECISION = _rules(
     {
-        "en": [r"\b(what are|tell me) (my|our) options\b", r"\b(should|can) (we|i) (still )?(marry|have (children|kids|a baby))\b",
-               r"\b(ivf|embryo|pgt|adopt|fostering|kafala|donor)\b", r"\bwhat (can|could) we do\b", r"\bdecide\b|\bdecision\b"],
-        "hi": [r"विकल्प", r"(शादी|विवाह) (कर|करें|करना)", r"बच्चे (पैदा|हो)", r"\b(vikalp|shaadi)\b", r"निर्णय|फैसला"],
+        "en": [
+            r"\b(what are|tell me) (my|our) options\b",
+            r"\b(should|can) (we|i) (still )?(marry|have (children|kids|a baby))\b",
+            r"\b(ivf|embryo|pgt|adopt|fostering|kafala|donor)\b",
+            r"\bwhat (can|could) we do\b",
+            r"\bdecide\b|\bdecision\b",
+        ],
+        "hi": [
+            r"विकल्प",
+            r"(शादी|विवाह) (कर|करें|करना)",
+            r"बच्चे (पैदा|हो)",
+            r"\b(vikalp|shaadi)\b",
+            r"निर्णय|फैसला",
+        ],
         # khiyarat (options), nitazawaj (we marry), atfal (children), qarar (decision).
         "ar": [r"\bkhiyar", r"\bnitazawaj\b", r"\bqarar\b"],
     }
@@ -62,8 +126,12 @@ DECISION = _rules(
 
 # "hamil" means both "pregnant" and "carrier" in Arabic. Only a carrier context makes it education.
 _HAMIL = re.compile(r"\bhamil(a|ah)?\b")
-_CARRIER_CONTEXT = re.compile(r"\bhamil(a|ah)?\s?(li|lil|l|al|bil)[\s-]?(jin|jeen|marad|sifa|tafra|gene)|\b(naqil|naqila)\b|\bcarrier\b")
-_PREGNANCY_CONTEXT = re.compile(r"\b(ana|anti|inti|hiya|zawjti)\s?hamil|\bhamil\s?(fi|bi|min)\b|\bshahr|\busbu|\bjanin")
+_CARRIER_CONTEXT = re.compile(
+    r"\bhamil(a|ah)?\s?(li|lil|l|al|bil)[\s-]?(jin|jeen|marad|sifa|tafra|gene)|\b(naqil|naqila)\b|\bcarrier\b"
+)
+# "ana hamil" alone could be either, so it isn't a marker here. Without a clear carrier context it's
+# still read as pregnancy below, which is the safer reading.
+_PREGNANCY_CONTEXT = re.compile(r"\bhamil(a|ah)?\s?(fi|bi|min)\b|\bshahr|\busbu|\bjanin")
 
 
 @dataclass(frozen=True, slots=True)
@@ -93,11 +161,12 @@ def route(question: str, language: str) -> Route:
     if _matches(COERCION, text, roman, language):
         found[Boundary.COERCION] = "coercion"
     pregnant = False
-    if _HAMIL.search(roman):
-        if _PREGNANCY_CONTEXT.search(roman) or not _CARRIER_CONTEXT.search(roman):
-            # Without a clear carrier context, "hamil" is read as pregnancy, the safer of the two.
-            found[Boundary.CLINICAL_ADVICE] = "pregnancy"
-            pregnant = True
+    # Without a clear carrier context, "hamil" is read as pregnancy, the safer of the two.
+    if _HAMIL.search(roman) and (
+        _PREGNANCY_CONTEXT.search(roman) or not _CARRIER_CONTEXT.search(roman)
+    ):
+        found[Boundary.CLINICAL_ADVICE] = "pregnancy"
+        pregnant = True
     if _matches(CLINICAL, text, roman, language):
         found.setdefault(Boundary.CLINICAL_ADVICE, "clinical")
         pregnant = pregnant or bool(re.search(r"pregnan|गर्भवती|garbhvati|janin", text + roman))

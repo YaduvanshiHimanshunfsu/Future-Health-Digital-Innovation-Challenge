@@ -26,7 +26,7 @@ test("signed-in pages have no WCAG AA problems, on desktop and at phone width", 
   await signInAndAgree(page, await freshPerson({ persona: "x_carrier" }));
   for (const width of [1280, 390]) {
     await page.setViewportSize({ width, height: 900 });
-    for (const path of ["/en/app", "/en/app/result", "/en/app/partner", "/en/app/family", "/en/app/privacy", "/hi/app/result"]) {
+    for (const path of ["/en/app", "/en/app/result", "/en/app/partner", "/en/app/family", "/en/app/privacy", "/hi/app/result", "/en/app/ask", "/en/app/options", "/hi/app/options"]) {
       await page.goto(path);
       await clean(page, `${path} at ${width}`);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);

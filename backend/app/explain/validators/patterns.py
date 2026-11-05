@@ -8,11 +8,17 @@ these checks: see `ValidationResult` in pipeline.py.
 
 import re
 
+from app.explain.validators.text import normalise
+
 Patterns = dict[str, list[re.Pattern[str]]]
 
 
 def _compile(table: dict[str, list[str]]) -> Patterns:
-    return {lang: [re.compile(item, re.IGNORECASE) for item in items] for lang, items in table.items()}
+    # Patterns go through the same normal form as the text they're matched against.
+    return {
+        lang: [re.compile(normalise(item), re.IGNORECASE) for item in items]
+        for lang, items in table.items()
+    }
 
 
 # Telling someone what to decide. Options are theirs to weigh.
@@ -37,7 +43,14 @@ DIRECTIVE = _compile(
         ],
         # lazim (must), yajib (it is obligatory), ahsan lak (better for you), la tatazawaj (don't marry),
         # ansahak (I advise you), mafrood (supposed to).
-        "ar": [r"\blazim\b", r"\byajib\b", r"\bahsan\s?lak\b", r"\bla\s?tatazawaj", r"\bansahak\b", r"\bmafrood\b"],
+        "ar": [
+            r"\blazim\b",
+            r"\byajib\b",
+            r"\bahsan\s?lak\b",
+            r"\bla\s?tatazawaj",
+            r"\bansahak\b",
+            r"\bmafrood\b",
+        ],
     }
 )
 
@@ -48,7 +61,8 @@ CERTAINTY = _compile(
             r"\byou('?re| are) (healthy|fine|safe|normal|ok|okay|in the clear)\b",
             r"\b(there is|there'?s|you have|you are at) no risk\b",
             r"\bnothing to worry about\b",
-            r"\b(guarantee[ds]?|definitely|certainly|100 ?%)\b",
+            r"\b(guarantee[ds]?|definitely|certainly)\b",
+            r"\b100 ?(%|per ?cent)",
             r"\byour (child|baby|children|kids) (will|would) (have|be|get|develop)\b",
             r"\byou (have|suffer from|are suffering from) (the )?(disease|condition|illness|thalass\w*|sickle cell)\b",
         ],
@@ -70,6 +84,7 @@ STIGMA = _compile(
     {
         "en": [
             r"\b(defective|faulty|bad|abnormal|broken) (gene|genes|dna|blood|child|children)\b",
+            r"\b(genes?|dna|blood) (is|are) (defective|faulty|bad|broken|abnormal)\b",
             r"\bincompatible\b",
             r"\b(suffers?|suffering) from\b",
             r"\bvictims?\b",
@@ -86,7 +101,10 @@ STIGMA = _compile(
 NUMBER_WORDS = _compile(
     {
         "en": [
-            r"\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|hundred|thousand)\b(?!\s+(changed\s+)?(cop(y|ies)|gene|parent|partner|of (you|them)))",
+            # Counting copies, genes or chromosomes describes biology, not a chance, so it's allowed.
+            r"\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|hundred|thousand)\b"
+            r"(?!\s+((changed|working|altered|extra)\s+)?(cop(y|ies)|genes?|parents?|partners?"
+            r"|x\b|x chromosomes?|chromosomes?|from each|of (you|them|the|your)))",
             r"\b(half|quarter|third|most|majority|all) of (your|the|their) (children|kids|babies|pregnancies)\b",
             r"\bper ?cent\b",
         ],
@@ -100,7 +118,7 @@ NUMBER_WORDS = _compile(
 LABEL_WORDS = {
     "en": {
         "two_copies": r"\b(two copies|both copies|two changed copies|inherits? two)\b",
-        "carrier": r"\b(carrier|one copy|one changed copy)\b",
+        "carrier": r"\b(carriers?|one copy|one changed copy)\b",
         "neither": r"\b(neither|no changed cop|not inherit)\w*",
         "son_affected": r"\bsons?\b",
         "daughter_carrier": r"\bdaughters?\b",

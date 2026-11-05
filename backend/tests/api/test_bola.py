@@ -38,6 +38,13 @@ EXPECTED = {
     "/v1/cases/{case_id}/break-glass",
     "/v1/break-glass",
     "/v1/break-glass/{event_id}/review",
+    "/v1/chat",
+    "/v1/options",
+    "/v1/values",
+    "/v1/values/{note_id}/share",
+    "/v1/cases",
+    "/v1/cases/{case_id}/claim",
+    "/v1/cases/{case_id}/assign",
 }
 HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
 ANY_ID = "00000000-0000-0000-0000-000000000000"

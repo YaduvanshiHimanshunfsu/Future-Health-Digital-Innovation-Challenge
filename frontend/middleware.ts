@@ -99,7 +99,9 @@ export async function middleware(request: NextRequest) {
   }
 
   const response = NextResponse.next({ request: { headers } });
-  if (!isApi) {
+  // Next.js fetches linked pages ahead of time. Those aren't visits, so they'd only add noise.
+  const prefetch = request.headers.has("next-router-prefetch") || request.headers.get("purpose") === "prefetch";
+  if (!isApi && !prefetch) {
     logEvent("page", {
       method: request.method,
       path: pathPattern(pathname),

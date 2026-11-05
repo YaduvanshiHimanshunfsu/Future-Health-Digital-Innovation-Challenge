@@ -20,7 +20,9 @@ import httpx
 ROOT = Path(__file__).resolve().parents[1]
 ENV_FILE = ROOT / "infra" / ".env"
 PERSONAS = ROOT / "backend" / "synthetic" / "out"
-KEYCLOAK = "http://localhost:8080"
+# Server-to-server calls use the address. On Windows, "localhost" tries IPv6 first and adds about 2 s
+# to every new connection. Tokens still name localhost as their issuer, because Keycloak's hostname is fixed.
+KEYCLOAK = "http://127.0.0.1:8080"
 # By address: on Windows, "localhost" tries IPv6 first and adds about 2 s to every new connection.
 API = "http://127.0.0.1:8000"
 ADMIN_API = f"{KEYCLOAK}/admin/realms/samvid"

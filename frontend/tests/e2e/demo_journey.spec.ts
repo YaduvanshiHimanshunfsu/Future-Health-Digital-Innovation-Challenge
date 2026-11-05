@@ -276,7 +276,7 @@ test("Hindi and the right-to-left layout both work", async ({ page }) => {
 test("the parts not built yet say so and show nothing simulated", async ({ browser }) => {
   const page = await newPage(browser);
   await signInAndAgree(page, await freshPerson());
-  for (const path of ["/en/app/ask", "/en/app/options", "/en/app/check"]) {
+  for (const path of ["/en/app/check", "/en/app/journey"]) {
     await page.goto(path);
     await expect(page.getByRole("heading", { name: "This part isn't built yet" })).toBeVisible();
   }

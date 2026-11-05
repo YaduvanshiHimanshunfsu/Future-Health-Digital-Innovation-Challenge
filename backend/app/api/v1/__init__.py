@@ -4,15 +4,18 @@ from app.api.v1 import (
     access_log,
     break_glass,
     cases,
+    chat,
     consents,
     couples,
     health,
     invitations,
     me,
+    options,
     packs,
     reports,
     results,
     shared,
+    values,
 )
 
 api_v1 = APIRouter()
@@ -29,5 +32,8 @@ for module in (
     invitations,
     cases,
     break_glass,
+    chat,
+    options,
+    values,
 ):
     api_v1.include_router(module.router)

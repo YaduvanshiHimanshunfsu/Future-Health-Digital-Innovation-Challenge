@@ -13,6 +13,8 @@ export default async function AppLayout({ children, params }: { children: ReactN
   const links = [
     { href: `/${locale}/app`, label: t("nav.dashboard") },
     { href: `/${locale}/app/result`, label: t("nav.result") },
+    { href: `/${locale}/app/ask`, label: t("nav.ask") },
+    { href: `/${locale}/app/options`, label: t("nav.options") },
     { href: `/${locale}/app/partner`, label: t("nav.partner") },
     { href: `/${locale}/app/family`, label: t("nav.family") },
     { href: `/${locale}/app/privacy`, label: t("nav.my_privacy") },

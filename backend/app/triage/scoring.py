@@ -19,6 +19,8 @@ def score(
     teach_back_failures: int = 0,
     asked_for_human: bool = False,
     asked_about_extended_testing: bool = False,
+    coercion: bool = False,
+    clinical_question: bool = False,
 ) -> TriageResult | None:
     """Transparent rules. The highest matching priority wins, and each case records why."""
     collected = list(facts)
@@ -38,6 +40,8 @@ def score(
         return TriageResult(Priority.P1, tuple(urgent))
 
     high: list[str] = []
+    if coercion:
+        high.append("coercion")
     if shared_genes:
         high.append("shared_finding")
     if len(shared_genes) >= 2:
@@ -52,6 +56,8 @@ def score(
         return TriageResult(Priority.P2, tuple(high))
 
     standard: list[str] = []
+    if clinical_question:
+        standard.append("clinical_question")
     if Flag.VUS in flags:
         standard.append("uncertain_finding")
     if Flag.UNKNOWN_GENE in flags or Flag.INCONSISTENT_DATA in flags:

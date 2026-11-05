@@ -105,9 +105,10 @@ def fail(text: str) -> int:
 
 def run(command: list[str], *, quiet: bool = False, cwd: Path = ROOT) -> int:
     if quiet:
-        done = subprocess.run(
+        # Fixed commands from this file only, never user input.
+        done = subprocess.run(  # noqa: S603
             command, cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace"
-        )  # noqa: S603
+        )
         if done.returncode != 0:
             say(done.stdout[-2000:] + done.stderr[-2000:])
         return done.returncode
@@ -193,7 +194,7 @@ def start(build: bool) -> bool:
     for name, url in (
         ("web app", f"{WEB}/en"),
         ("API", f"{API}/v1/ready"),
-        ("sign-in", f"{KEYCLOAK}/realms/samvid"),
+        ("sign-in", "http://127.0.0.1:8080/realms/samvid"),
     ):
         status = get(url)
         note(

@@ -526,6 +526,14 @@ gantt
 | **5** | Care pathway, measurement, integration | Full demo journey works in both languages, with traceable metrics | [Phase 5](docs/phases/PHASE_5_Care_Pathway_Measurement_Integration.md) |
 | **6** | Evaluation, hardening, submission | Honest safety report and limitations, and submitted with confirmation saved | [Phase 6](docs/phases/PHASE_6_Evaluation_and_Submission.md) |
 
+### Run it
+
+```bash
+python Run_Samvid.py
+```
+
+This starts everything (database, sign-in, authorisation, backend, background workers and the web app), creates demo accounts with synthetic lab reports, prints where to go and how to sign in, and then shows live activity from the web app and the API in the terminal. It needs Docker Desktop, plus [uv](https://docs.astral.sh/uv/) for the demo data. Run `python Run_Samvid.py --help` for the other options, such as `--status`, `--stop`, `--check` and `--reset`.
+
 ### Current status
 
 | Area | State |

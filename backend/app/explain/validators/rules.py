@@ -1,10 +1,11 @@
-from dataclasses import dataclass
 import re
+from dataclasses import dataclass
 
 from app.explain.validators import patterns
 from app.explain.validators.text import loose, normalise, sentences
 
 _DIGITS = re.compile(r"\d")
+_GENE_SYMBOL = re.compile(r"\b[A-Z][A-Z0-9-]*\d[A-Z0-9-]*\b")
 PLACEHOLDER = re.compile(r"\{fact:([A-Za-z0-9_:\-]+)\}")
 
 
@@ -43,7 +44,8 @@ def free_numbers(text: str, language: str) -> list[Flag]:
 
     Code fills the placeholders from the risk engine afterwards, so a model can never state a figure.
     """
-    without = PLACEHOLDER.sub(" ", text)
+    # Gene symbols such as CYP21A2 hold digits, and they aren't figures.
+    without = _GENE_SYMBOL.sub(" ", PLACEHOLDER.sub(" ", text))
     found = [Flag("number", "digit")] if _DIGITS.search(without) else []
     return found + _scan(without, patterns.NUMBER_WORDS, language, "number")
 
@@ -75,8 +77,15 @@ def bindings(text: str, language: str, labels: dict[str, str]) -> list[Flag]:
 
 
 def _only_shared_words(label: str, others: list[str]) -> bool:
-    # "Daughter" fits all three daughter labels, so naming a daughter isn't a contradiction.
-    return label.startswith("daughter") and all(other.startswith("daughter") for other in others)
+    """Words that fit this label too, so using them isn't a contradiction.
+
+    "Daughter" fits all three daughter labels, and a daughter's carrier figure is naturally worded
+    with "carrier". A daughter's figure beside "two copies" for a carrier label still fails.
+    """
+    if not label.startswith("daughter"):
+        return False
+    outcome = label.removeprefix("daughter_")
+    return all(other.startswith("daughter") or other == outcome for other in others)
 
 
 def readability(text: str, level: str) -> list[Flag]:

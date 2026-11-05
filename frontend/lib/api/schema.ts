@@ -453,6 +453,60 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/cases": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Queue
+         * @description The unassigned pool, or this counsellor's own cases. Most urgent first, then soonest due.
+         */
+        get: operations["queue_v1_cases_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/cases/{case_id}/claim": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Claim Case */
+        post: operations["claim_case_v1_cases__case_id__claim_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/cases/{case_id}/assign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Assign Case */
+        post: operations["assign_case_v1_cases__case_id__assign_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/cases/{case_id}/break-glass": {
         parameters: {
             query?: never;
@@ -504,6 +558,82 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/chat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Chat */
+        post: operations["chat_v1_chat_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Options */
+        get: operations["list_options_v1_options_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/values": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Values */
+        get: operations["read_values_v1_values_get"];
+        put?: never;
+        /**
+         * Save Values
+         * @description Each save is a new note. Earlier ones stay private, and are never shared by this.
+         */
+        post: operations["save_values_v1_values_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/values/{note_id}/share": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Share Values
+         * @description Only with the person's own case, and only when they ask.
+         */
+        post: operations["share_values_v1_values__note_id__share_post"];
+        /** Unshare Values */
+        delete: operations["unshare_values_v1_values__note_id__share_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -530,6 +660,14 @@ export interface components {
         AccessLogOut: {
             /** Entries */
             entries: components["schemas"]["AccessEntryOut"][];
+        };
+        /** AssignIn */
+        AssignIn: {
+            /**
+             * Counsellor Id
+             * Format: uuid
+             */
+            counsellor_id: string;
         };
         /** BreakGlassEventOut */
         BreakGlassEventOut: {
@@ -621,6 +759,45 @@ export interface components {
             reasons: string[];
             /** Through Break Glass */
             through_break_glass: boolean;
+            summary?: components["schemas"]["CaseSummaryOut"] | null;
+        };
+        /** CaseSummaryOut */
+        CaseSummaryOut: {
+            /** Facts */
+            facts: components["schemas"]["app__schemas__cases__SummaryFactOut"][];
+            /** Values */
+            values: {
+                [key: string]: string;
+            } | null;
+            /** Verify Before Use */
+            verify_before_use: boolean;
+        };
+        /** ChatIn */
+        ChatIn: {
+            /** Message */
+            message: string;
+            /** Conversation Id */
+            conversation_id?: string | null;
+        };
+        /** ChatOut */
+        ChatOut: {
+            /**
+             * Conversation Id
+             * Format: uuid
+             */
+            conversation_id: string;
+            /** Answer */
+            answer: string;
+            /** Boundary */
+            boundary: string;
+            /** Source */
+            source: string;
+            /** Fact Ids */
+            fact_ids: string[];
+            /** Escalated */
+            escalated: boolean;
+            /** Contacts */
+            contacts: components["schemas"]["ContactOut"][];
         };
         /** ConsentListOut */
         ConsentListOut: {
@@ -653,6 +830,15 @@ export interface components {
             created_at: string;
             /** Active */
             active: boolean;
+        };
+        /** ContactOut */
+        ContactOut: {
+            /** Service */
+            service: string;
+            /** Contact */
+            contact: string;
+            /** Hours */
+            hours: string;
         };
         /** CoupleCreateIn */
         CoupleCreateIn: {
@@ -895,6 +1081,29 @@ export interface components {
              */
             human_contact_required: boolean;
         };
+        /** OptionOut */
+        OptionOut: {
+            /** Key */
+            key: string;
+            /** Title */
+            title: string;
+            /** Source */
+            source: string;
+            /** Note */
+            note: string | null;
+            /** Reviewed */
+            reviewed: boolean;
+        };
+        /** OptionsOut */
+        OptionsOut: {
+            /** Options */
+            options: components["schemas"]["OptionOut"][];
+            /**
+             * Order Is Not A Ranking
+             * @default true
+             */
+            order_is_not_a_ranking: boolean;
+        };
         /** PackInfo */
         PackInfo: {
             /** Code */
@@ -963,6 +1172,30 @@ export interface components {
             pack_code?: string | null;
         };
         /**
+         * QueueItemOut
+         * @description No identity, and no genetic detail, until a counsellor takes the case on.
+         */
+        QueueItemOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Priority */
+            priority: string;
+            /** State */
+            state: string;
+            /**
+             * Step Due
+             * Format: date-time
+             */
+            step_due: string;
+            /** Reasons */
+            reasons: string[];
+            /** Assigned To Me */
+            assigned_to_me: boolean;
+        };
+        /**
          * ReadingLevel
          * @enum {string}
          */
@@ -996,6 +1229,14 @@ export interface components {
             /** Accepted */
             accepted: boolean;
         };
+        /** ShareValuesIn */
+        ShareValuesIn: {
+            /**
+             * Case Id
+             * Format: uuid
+             */
+            case_id: string;
+        };
         /** SharedFullOut */
         SharedFullOut: {
             /**
@@ -1025,15 +1266,8 @@ export interface components {
             /** Has Report */
             has_report: boolean;
             /** Facts */
-            facts: components["schemas"]["SummaryFactOut"][];
+            facts: components["schemas"]["app__schemas__consent__SummaryFactOut"][];
             pack: components["schemas"]["PackInfo"];
-        };
-        /** SummaryFactOut */
-        SummaryFactOut: {
-            /** Gene */
-            gene: string | null;
-            /** Label */
-            label: string;
         };
         /** ValidationError */
         ValidationError: {
@@ -1047,6 +1281,66 @@ export interface components {
             input?: unknown;
             /** Context */
             ctx?: Record<string, never>;
+        };
+        /** ValuesIn */
+        ValuesIn: {
+            /**
+             * What Matters
+             * @default
+             */
+            what_matters: string;
+            /**
+             * Worries
+             * @default
+             */
+            worries: string;
+            /**
+             * Who To Involve
+             * @default
+             */
+            who_to_involve: string;
+            /**
+             * Timing
+             * @default
+             */
+            timing: string;
+        };
+        /** ValuesOut */
+        ValuesOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Answers */
+            answers: {
+                [key: string]: string;
+            };
+            /** Shared With Case */
+            shared_with_case: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** SummaryFactOut */
+        app__schemas__cases__SummaryFactOut: {
+            /** Scenario */
+            scenario: string;
+            /** Gene */
+            gene: string | null;
+            /** Label */
+            label: string;
+            /** Percent */
+            percent: string | null;
+        };
+        /** SummaryFactOut */
+        app__schemas__consent__SummaryFactOut: {
+            /** Gene */
+            gene: string | null;
+            /** Label */
+            label: string;
         };
     };
     responses: never;
@@ -1865,6 +2159,101 @@ export interface operations {
             };
         };
     };
+    queue_v1_cases_get: {
+        parameters: {
+            query?: {
+                view?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QueueItemOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    claim_case_v1_cases__case_id__claim_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QueueItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    assign_case_v1_cases__case_id__assign_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssignIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     open_break_glass_v1_cases__case_id__break_glass_post: {
         parameters: {
             query?: never;
@@ -1926,6 +2315,176 @@ export interface operations {
             header?: never;
             path: {
                 event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    chat_v1_chat_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChatIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_options_v1_options_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OptionsOut"];
+                };
+            };
+        };
+    };
+    read_values_v1_values_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValuesOut"] | null;
+                };
+            };
+        };
+    };
+    save_values_v1_values_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ValuesIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValuesOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    share_values_v1_values__note_id__share_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                note_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ShareValuesIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValuesOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unshare_values_v1_values__note_id__share_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                note_id: string;
             };
             cookie?: never;
         };

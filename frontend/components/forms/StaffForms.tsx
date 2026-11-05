@@ -21,6 +21,26 @@ export function CaseOpener() {
   );
 }
 
+export function ClaimButton({ caseId }: { caseId: string }) {
+  const { t, locale } = useI18n();
+  const router = useRouter();
+  const [failed, setFailed] = useState(false);
+  async function claim() {
+    const done = await callApi(`cases/${caseId}/claim`, { method: "POST" });
+    if (done.ok) router.push(`/${locale}/counsellor/case/${caseId}`);
+    else {
+      setFailed(true);
+      router.refresh();
+    }
+  }
+  return (
+    <div>
+      {failed ? <div className="mb-2"><Notice tone="problem">{t("error.not_found_t")}</Notice></div> : null}
+      <button type="button" onClick={claim} className="pill-primary">{t("queue.claim")}</button>
+    </div>
+  );
+}
+
 export function BreakGlassForm({ caseId }: { caseId: string }) {
   const { t } = useI18n();
   const router = useRouter();

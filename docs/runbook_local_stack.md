@@ -2,6 +2,14 @@
 
 Needs Docker Desktop, Python 3, and [uv](https://docs.astral.sh/uv/) for running tests. These commands work in Git Bash, PowerShell or a Linux shell.
 
+## The quick way
+
+```bash
+python Run_Samvid.py
+```
+
+This does everything below in one step: it creates `infra/.env`, builds and starts the stack, creates the demo accounts, and shows live activity. Ctrl+C stops it. The rest of this page is for doing each step by hand.
+
 ## Start
 
 ```bash

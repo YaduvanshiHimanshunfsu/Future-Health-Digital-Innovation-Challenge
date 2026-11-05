@@ -18,6 +18,10 @@ export type SharedSummary = Schemas["SharedSummaryOut"];
 export type InvitePage = Schemas["InvitePageOut"];
 export type CaseView = Schemas["CaseOut"];
 export type BreakGlassEvent = Schemas["BreakGlassEventOut"];
+export type ChatReply = Schemas["ChatOut"];
+export type Options = Schemas["OptionsOut"];
+export type Values = Schemas["ValuesOut"];
+export type QueueItem = Schemas["QueueItemOut"];
 
 export type IconArrayVisual = {
   type: "icon_array";

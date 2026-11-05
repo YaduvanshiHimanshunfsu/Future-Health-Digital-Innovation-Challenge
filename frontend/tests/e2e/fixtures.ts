@@ -11,7 +11,8 @@ const env = Object.fromEntries(
     .map((line) => [line.slice(0, line.indexOf("=")), line.slice(line.indexOf("=") + 1)]),
 ) as Record<string, string>;
 
-const KEYCLOAK = "http://localhost:8080";
+// Server-side calls by address: on Windows, "localhost" adds about 2 s to each new connection.
+const KEYCLOAK = "http://127.0.0.1:8080";
 const API = "http://127.0.0.1:8000";
 const ABU_DHABI = "ae-abu-dhabi";
 

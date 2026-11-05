@@ -35,9 +35,30 @@ export default async function CasePage({ params }: { params: Promise<{ locale: s
             <dt className="font-semibold">{t("staff.priority")}</dt><dd data-testid="case-priority">{item.priority}</dd>
             <dt className="font-semibold">{t("staff.state")}</dt><dd>{t(`care.${item.state}`)}</dd>
             <dt className="font-semibold">{t("staff.due")}</dt><dd>{formatDateTime(item.step_due, locale)}</dd>
-            <dt className="font-semibold">{t("staff.reasons")}</dt><dd>{item.reasons.join(", ")}</dd>
+            <dt className="font-semibold">{t("staff.reasons")}</dt><dd>{item.reasons.map((reason) => t(`reason.${reason}`)).join(", ")}</dd>
           </dl>
         </ClayCard>
+        {item.summary ? (
+          <ClayCard title={t("summary.title")} accent={3}>
+            <Notice tone="care">{t("summary.verify")}</Notice>
+            <ul className="mt-3 grid gap-1.5" data-testid="case-summary">
+              {item.summary.facts.map((fact, index) => (
+                <li key={index}>
+                  <strong>{fact.gene ?? "-"}</strong> {fact.label.replace(/_/g, " ")}
+                  {fact.percent ? ` ${fact.percent}%` : ""}
+                </li>
+              ))}
+            </ul>
+            <h3 className="mt-4 font-medium">{t("summary.values")}</h3>
+            {item.summary.values ? (
+              <dl className="mt-1 grid gap-1 text-sm">
+                {Object.entries(item.summary.values).filter(([, value]) => value).map(([key, value]) => (
+                  <div key={key}><dt className="font-semibold">{t(`values.${key}`)}</dt><dd>{value}</dd></div>
+                ))}
+              </dl>
+            ) : <p className="muted">{t("summary.none")}</p>}
+          </ClayCard>
+        ) : null}
       </div>
     </>
   );
