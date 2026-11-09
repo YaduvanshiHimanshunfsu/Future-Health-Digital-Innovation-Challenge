@@ -6,6 +6,10 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev
 
 FROM python:3.12-slim
+# Security updates for the base image's system packages (Trivy found zlib1g behind its fix).
+RUN apt-get update \
+    && apt-get upgrade -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 RUN useradd --uid 10001 --no-create-home --shell /usr/sbin/nologin samvid
 WORKDIR /srv
 COPY --from=build /opt/venv /opt/venv

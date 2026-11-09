@@ -77,3 +77,18 @@ test("no screen calculates a chance", () => {
     assert.doesNotMatch(text, /(percent|one_in)\s*[*/+-]\s*\d|\d\s*[*/+-]\s*(fact|child)\.(percent|one_in)|Math\.(round|floor|ceil)\([^)]*percent/, path);
   }
 });
+
+test("chances never animate, and charts never carry genetic results", () => {
+  // A rolling number adds drama to a figure someone should read calmly, so counting motion is kept
+  // away from anything that shows a chance. Charts show counts of things, never a person's result.
+  const risk = filesUnder(join(ROOT, "components/risk")).concat(filesUnder(join(ROOT, "lib/risk")));
+  for (const path of risk) assert.doesNotMatch(readFileSync(path, "utf-8"), /CountUp/, path);
+  for (const path of filesUnder(join(ROOT, "components/charts"))) {
+    assert.doesNotMatch(readFileSync(path, "utf-8"), /(Fact|MyRisk|IconArrayVisual|percent|one_in)/, path);
+  }
+});
+
+test("speech uses only voices on this device", () => {
+  const text = readFileSync(join(ROOT, "components/layout/ListenButton.tsx"), "utf-8");
+  assert.match(text, /voice\.localService/);
+});

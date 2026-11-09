@@ -1,0 +1,5 @@
+
+samvid-web:dev (alpine 3.24.4)
+==============================
+Total: 0 (HIGH: 0, CRITICAL: 0)
+

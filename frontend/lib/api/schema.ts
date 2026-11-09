@@ -634,6 +634,330 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/me/journey": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * My Journey
+         * @description Holds no genetic detail, so it works whatever someone has chosen about seeing results.
+         */
+        get: operations["my_journey_v1_me_journey_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/journey/{case_id}/steps": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Take Step
+         * @description Asking for counselling, or stepping back. Both are always the person's to choose.
+         */
+        post: operations["take_step_v1_journey__case_id__steps_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/reminders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reminders */
+        patch: operations["reminders_v1_me_reminders_patch"];
+        trace?: never;
+    };
+    "/v1/cases/{case_id}/advance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Advance Case
+         * @description Only the counsellor the case is assigned to. Anyone else gets what looks like nothing there.
+         */
+        post: operations["advance_case_v1_cases__case_id__advance_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/booking/slots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Slots */
+        get: operations["list_slots_v1_booking_slots_get"];
+        put?: never;
+        /** Publish Slot */
+        post: operations["publish_slot_v1_booking_slots_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/booking/slots/{slot_id}/book": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Book Slot */
+        post: operations["book_slot_v1_booking_slots__slot_id__book_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/booking/mine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Appointments */
+        get: operations["my_appointments_v1_booking_mine_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/booking/appointments/{appointment_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel Appointment
+         * @description The person who booked it can cancel it, and so can the counsellor running it.
+         */
+        post: operations["cancel_appointment_v1_booking_appointments__appointment_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/booking/schedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Schedule */
+        get: operations["my_schedule_v1_booking_schedule_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/booking/appointments/{appointment_id}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Complete Appointment */
+        post: operations["complete_appointment_v1_booking_appointments__appointment_id__complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/cases/{case_id}/referrals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Referrals */
+        get: operations["list_referrals_v1_cases__case_id__referrals_get"];
+        put?: never;
+        /** Create Referral */
+        post: operations["create_referral_v1_cases__case_id__referrals_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/referrals/{referral_id}/send": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Referral Send */
+        post: operations["referral_send_v1_referrals__referral_id__send_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/referrals/{referral_id}/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Referral Accept */
+        post: operations["referral_accept_v1_referrals__referral_id__accept_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/referrals/{referral_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Referral Cancel */
+        post: operations["referral_cancel_v1_referrals__referral_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/centres": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Centres */
+        get: operations["centres_v1_centres_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/assessments/mine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Scores */
+        get: operations["my_scores_v1_assessments_mine_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/assessments/{instrument}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Questions
+         * @description The questions without the answers.
+         */
+        get: operations["questions_v1_assessments__instrument__get"];
+        put?: never;
+        /** Answer */
+        post: operations["answer_v1_assessments__instrument__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/analytics/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Programme Overview */
+        get: operations["programme_overview_v1_analytics_overview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -661,6 +985,87 @@ export interface components {
             /** Entries */
             entries: components["schemas"]["AccessEntryOut"][];
         };
+        /** AiOut */
+        AiOut: {
+            /** Answers */
+            answers: number | null;
+            /** Model Written */
+            model_written: number | null;
+            /** Template */
+            template: number | null;
+            /** Drafts Blocked */
+            drafts_blocked: number | null;
+        };
+        /** AnalyticsOut */
+        AnalyticsOut: {
+            /** Synthetic */
+            synthetic: boolean;
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /** Min Cell */
+            min_cell: number;
+            /** Funnel */
+            funnel: components["schemas"]["CountOut"][];
+            /** Time To Counselling */
+            time_to_counselling: components["schemas"]["DurationOut"][];
+            time_to_referral: components["schemas"]["DurationOut"];
+            comprehension: components["schemas"]["ComprehensionOut"];
+            /** Boundaries */
+            boundaries: components["schemas"]["CountOut"][];
+            ai: components["schemas"]["AiOut"];
+            privacy: components["schemas"]["PrivacyOut"];
+            /** Equity */
+            equity: components["schemas"]["EquityOut"][];
+            /** Heatmap */
+            heatmap: components["schemas"]["HeatCellOut"][];
+            /** Sources */
+            sources: {
+                [key: string]: string;
+            };
+        };
+        /** AnswersIn */
+        AnswersIn: {
+            phase: components["schemas"]["AssessmentPhase"];
+            /** Answers */
+            answers: number[];
+        };
+        /**
+         * AppointmentMode
+         * @enum {string}
+         */
+        AppointmentMode: "in_person" | "video";
+        /** AppointmentOut */
+        AppointmentOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Starts At
+             * Format: date-time
+             */
+            starts_at: string;
+            /**
+             * Ends At
+             * Format: date-time
+             */
+            ends_at: string;
+            /** Mode */
+            mode: string;
+            /** Lang */
+            lang: string;
+            /** Status */
+            status: string;
+        };
+        /**
+         * AssessmentPhase
+         * @enum {string}
+         */
+        AssessmentPhase: "pre" | "post";
         /** AssignIn */
         AssignIn: {
             /**
@@ -668,6 +1073,14 @@ export interface components {
              * Format: uuid
              */
             counsellor_id: string;
+        };
+        /** BookIn */
+        BookIn: {
+            /**
+             * Case Id
+             * Format: uuid
+             */
+            case_id: string;
         };
         /** BreakGlassEventOut */
         BreakGlassEventOut: {
@@ -757,10 +1170,22 @@ export interface components {
             step_due: string;
             /** Reasons */
             reasons: string[];
+            /** Window Hours */
+            window_hours: number;
             /** Through Break Glass */
             through_break_glass: boolean;
+            /**
+             * Next Steps
+             * @default []
+             */
+            next_steps: string[];
             summary?: components["schemas"]["CaseSummaryOut"] | null;
         };
+        /**
+         * CaseState
+         * @enum {string}
+         */
+        CaseState: "RESULT_RELEASED" | "EDUCATION_VIEWED" | "COMPREHENSION_CHECKED" | "COUNSELLING_REQUESTED" | "COUNSELLING_BOOKED" | "COUNSELLING_DONE" | "CONFIRMATORY_TEST_ORDERED" | "CONFIRMED" | "NOT_CONFIRMED" | "REPRO_GENOMICS_REFERRED" | "REFERRAL_ACCEPTED" | "DECLINED_BY_USER" | "LOST_TO_FOLLOW_UP" | "CLOSED";
         /** CaseSummaryOut */
         CaseSummaryOut: {
             /** Facts */
@@ -771,6 +1196,36 @@ export interface components {
             } | null;
             /** Verify Before Use */
             verify_before_use: boolean;
+        };
+        /** CentreOut */
+        CentreOut: {
+            /** Name */
+            name: string;
+            /** Region */
+            region: string;
+            /** Services */
+            services: string;
+            /** Contact */
+            contact: string | null;
+            /** Source Url */
+            source_url: string;
+            /** Checked On */
+            checked_on: string;
+        };
+        /** CentresOut */
+        CentresOut: {
+            /** Pack */
+            pack: string;
+            /** Pack Reviewed */
+            pack_reviewed: boolean;
+            /** Qualified Human */
+            qualified_human: string;
+            /** Centres */
+            centres: components["schemas"]["CentreOut"][];
+            /** Funding Notes */
+            funding_notes: string[];
+            /** As Of */
+            as_of: string | null;
         };
         /** ChatIn */
         ChatIn: {
@@ -798,6 +1253,17 @@ export interface components {
             escalated: boolean;
             /** Contacts */
             contacts: components["schemas"]["ContactOut"][];
+        };
+        /** ComprehensionOut */
+        ComprehensionOut: {
+            /** Pairs */
+            pairs: number | null;
+            /** Pre Mean */
+            pre_mean: number | null;
+            /** Post Mean */
+            post_mean: number | null;
+            /** Change */
+            change: number | null;
         };
         /** ConsentListOut */
         ConsentListOut: {
@@ -839,6 +1305,13 @@ export interface components {
             contact: string;
             /** Hours */
             hours: string;
+        };
+        /** CountOut */
+        CountOut: {
+            /** Key */
+            key: string;
+            /** Value */
+            value: number | null;
         };
         /** CoupleCreateIn */
         CoupleCreateIn: {
@@ -883,6 +1356,32 @@ export interface components {
             /** What A Result Reveals */
             what_a_result_reveals: string;
             follow_up: components["schemas"]["FollowUpOut"] | null;
+        };
+        /** DurationOut */
+        DurationOut: {
+            /** Key */
+            key: string;
+            /** Median Hours */
+            median_hours: number | null;
+            /** Cases */
+            cases: number | null;
+            /** Sla Hours */
+            sla_hours: number | null;
+        };
+        /** EquityOut */
+        EquityOut: {
+            /** Measure */
+            measure: string;
+            /** Dimension */
+            dimension: string;
+            /** Groups */
+            groups: components["schemas"]["GroupOut"][];
+            /** Gap Pp */
+            gap_pp: number | null;
+            /** Threshold Pp */
+            threshold_pp: number;
+            /** Alert */
+            alert: boolean;
         };
         /** FactOut */
         FactOut: {
@@ -956,10 +1455,46 @@ export interface components {
             /** Access Ready */
             access_ready: boolean;
         };
+        /** GroupOut */
+        GroupOut: {
+            /** Group */
+            group: string;
+            /** N */
+            n: number | null;
+            /** Rate */
+            rate: number | null;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** HeatCellOut */
+        HeatCellOut: {
+            /** Row */
+            row: string;
+            /** Column */
+            column: string;
+            /** Value */
+            value: number | null;
+        };
+        /**
+         * Instrument
+         * @enum {string}
+         */
+        Instrument: "teach_back" | "mmic_adapted" | "sure" | "gcos";
+        /** InstrumentOut */
+        InstrumentOut: {
+            /** Instrument */
+            instrument: string;
+            /** Status */
+            status: string;
+            /** Citation */
+            citation: string;
+            /** Language Used */
+            language_used: string;
+            /** Items */
+            items: components["schemas"]["ItemOut"][];
         };
         /** InviteIn */
         InviteIn: {
@@ -985,6 +1520,53 @@ export interface components {
             content_key: string;
             /** From Relation */
             from_relation: string | null;
+        };
+        /** ItemOut */
+        ItemOut: {
+            /** Id */
+            id: string;
+            /** Text */
+            text: string;
+            /** Options */
+            options: string[];
+        };
+        /** JourneyOut */
+        JourneyOut: {
+            /**
+             * Case Id
+             * Format: uuid
+             */
+            case_id: string;
+            /** State */
+            state: string;
+            /**
+             * Step Due
+             * Format: date-time
+             */
+            step_due: string;
+            /** With Partner */
+            with_partner: boolean;
+            /** Steps */
+            steps: components["schemas"]["JourneyStepOut"][];
+            /** Next Steps */
+            next_steps: string[];
+            /** Reminders Off */
+            reminders_off: boolean;
+        };
+        /** JourneyStepOut */
+        JourneyStepOut: {
+            /** State */
+            state: string;
+            /**
+             * At
+             * Format: date-time
+             */
+            at: string;
+            /**
+             * By
+             * @enum {string}
+             */
+            by: "you" | "care_team" | "system";
         };
         /** MatchConsentIn */
         MatchConsentIn: {
@@ -1081,6 +1663,19 @@ export interface components {
              */
             human_contact_required: boolean;
         };
+        /** MyScoresOut */
+        MyScoresOut: {
+            /** Instrument */
+            instrument: string;
+            /** Pre */
+            pre: number | null;
+            /** Post */
+            post: number | null;
+            /** Change */
+            change: number | null;
+            /** Last At */
+            last_at: string | null;
+        };
         /** OptionOut */
         OptionOut: {
             /** Key */
@@ -1127,6 +1722,15 @@ export interface components {
             status: string;
             /** Reviewed */
             reviewed: boolean;
+        };
+        /** PrivacyOut */
+        PrivacyOut: {
+            /** Revocations */
+            revocations: number | null;
+            /** P95 Revoke Ms */
+            p95_revoke_ms: number | null;
+            /** Denied Access */
+            denied_access: number | null;
         };
         /** ProfileOut */
         ProfileOut: {
@@ -1192,6 +1796,8 @@ export interface components {
             step_due: string;
             /** Reasons */
             reasons: string[];
+            /** Window Hours */
+            window_hours: number;
             /** Assigned To Me */
             assigned_to_me: boolean;
         };
@@ -1210,17 +1816,78 @@ export interface components {
              */
             expires_at: string;
         };
+        /** ReferralIn */
+        ReferralIn: {
+            kind: components["schemas"]["ReferralKind"];
+            /** Destination */
+            destination: string;
+        };
+        /**
+         * ReferralKind
+         * @enum {string}
+         */
+        ReferralKind: "confirmatory_lab" | "reproductive_genomics";
+        /** ReferralOut */
+        ReferralOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Case Id
+             * Format: uuid
+             */
+            case_id: string;
+            /** Kind */
+            kind: string;
+            /** Destination */
+            destination: string;
+            /** Status */
+            status: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Service Request */
+            service_request: {
+                [key: string]: unknown;
+            };
+            /** Task */
+            task: {
+                [key: string]: unknown;
+            };
+        };
         /**
          * Relationship
          * @enum {string}
          */
         Relationship: "double_first_cousins" | "first_cousins" | "first_cousins_once_removed" | "second_cousins" | "unrelated" | "unknown";
+        /** RemindersIn */
+        RemindersIn: {
+            /** Opt Out */
+            opt_out: boolean;
+        };
         /** ResultsPreferenceIn */
         ResultsPreferenceIn: {
             /** Withhold */
             withhold: boolean;
             /** Terms Version */
             terms_version: string;
+        };
+        /** ScoreOut */
+        ScoreOut: {
+            /** Instrument */
+            instrument: string;
+            /** Phase */
+            phase: string;
+            /** Score */
+            score: number;
+            /** Passed */
+            passed: boolean;
+            /** Support Offered */
+            support_offered: boolean;
         };
         /** ServiceConsentIn */
         ServiceConsentIn: {
@@ -1268,6 +1935,82 @@ export interface components {
             /** Facts */
             facts: components["schemas"]["app__schemas__consent__SummaryFactOut"][];
             pack: components["schemas"]["PackInfo"];
+        };
+        /** SlotIn */
+        SlotIn: {
+            /**
+             * Starts At
+             * Format: date-time
+             */
+            starts_at: string;
+            /**
+             * Minutes
+             * @default 30
+             * @enum {integer}
+             */
+            minutes: 30 | 45 | 60;
+            /** @default video */
+            mode: components["schemas"]["AppointmentMode"];
+            /**
+             * Lang
+             * @default en
+             */
+            lang: string;
+        };
+        /**
+         * SlotOut
+         * @description What a person sees: when and how. Not who, until they've booked and met.
+         */
+        SlotOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Starts At
+             * Format: date-time
+             */
+            starts_at: string;
+            /**
+             * Ends At
+             * Format: date-time
+             */
+            ends_at: string;
+            /** Mode */
+            mode: string;
+            /** Lang */
+            lang: string;
+        };
+        /** StaffAppointmentOut */
+        StaffAppointmentOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Starts At
+             * Format: date-time
+             */
+            starts_at: string;
+            /**
+             * Ends At
+             * Format: date-time
+             */
+            ends_at: string;
+            /** Mode */
+            mode: string;
+            /** Lang */
+            lang: string;
+            /** Status */
+            status: string;
+            /** Case Id */
+            case_id: string | null;
+        };
+        /** StepIn */
+        StepIn: {
+            to_state: components["schemas"]["CaseState"];
         };
         /** ValidationError */
         ValidationError: {
@@ -2504,6 +3247,621 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_journey_v1_me_journey_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JourneyOut"][];
+                };
+            };
+        };
+    };
+    take_step_v1_journey__case_id__steps_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StepIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reminders_v1_me_reminders_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RemindersIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    advance_case_v1_cases__case_id__advance_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StepIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_slots_v1_booking_slots_get: {
+        parameters: {
+            query: {
+                case_id: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SlotOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    publish_slot_v1_booking_slots_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SlotIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SlotOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    book_slot_v1_booking_slots__slot_id__book_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BookIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_appointments_v1_booking_mine_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentOut"][];
+                };
+            };
+        };
+    };
+    cancel_appointment_v1_booking_appointments__appointment_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                appointment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_schedule_v1_booking_schedule_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffAppointmentOut"][];
+                };
+            };
+        };
+    };
+    complete_appointment_v1_booking_appointments__appointment_id__complete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                appointment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_referrals_v1_cases__case_id__referrals_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_referral_v1_cases__case_id__referrals_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReferralIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    referral_send_v1_referrals__referral_id__send_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referral_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    referral_accept_v1_referrals__referral_id__accept_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referral_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    referral_cancel_v1_referrals__referral_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referral_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    centres_v1_centres_get: {
+        parameters: {
+            query?: {
+                pack?: string | null;
+                region?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CentresOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_scores_v1_assessments_mine_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyScoresOut"][];
+                };
+            };
+        };
+    };
+    questions_v1_assessments__instrument__get: {
+        parameters: {
+            query?: {
+                lang?: string;
+            };
+            header?: never;
+            path: {
+                instrument: components["schemas"]["Instrument"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InstrumentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    answer_v1_assessments__instrument__post: {
+        parameters: {
+            query?: {
+                lang?: string;
+            };
+            header?: never;
+            path: {
+                instrument: components["schemas"]["Instrument"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnswersIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScoreOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    programme_overview_v1_analytics_overview_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalyticsOut"];
                 };
             };
         };

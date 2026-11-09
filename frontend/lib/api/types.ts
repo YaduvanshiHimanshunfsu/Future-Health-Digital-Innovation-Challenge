@@ -22,6 +22,16 @@ export type ChatReply = Schemas["ChatOut"];
 export type Options = Schemas["OptionsOut"];
 export type Values = Schemas["ValuesOut"];
 export type QueueItem = Schemas["QueueItemOut"];
+export type Journey = Schemas["JourneyOut"];
+export type Slot = Schemas["SlotOut"];
+export type Appointment = Schemas["AppointmentOut"];
+export type StaffAppointment = Schemas["StaffAppointmentOut"];
+export type Referral = Schemas["ReferralOut"];
+export type Centres = Schemas["CentresOut"];
+export type InstrumentQuestions = Schemas["InstrumentOut"];
+export type Score = Schemas["ScoreOut"];
+export type MyScores = Schemas["MyScoresOut"];
+export type Analytics = Schemas["AnalyticsOut"];
 
 export type IconArrayVisual = {
   type: "icon_array";

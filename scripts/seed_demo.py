@@ -42,6 +42,7 @@ PEOPLE = [
     ("demo-counsellor", None, ABU_DHABI, "counsellor"),
     ("demo-doctor", None, ABU_DHABI, "physician"),
     ("demo-auditor", None, ABU_DHABI, "auditor"),
+    ("demo-coordinator", None, ABU_DHABI, "program_admin"),
 ]
 
 

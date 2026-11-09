@@ -14,6 +14,8 @@ PUBLIC = {
     # Recipients of an invitation have no account. Tests in test_invitations.py cover these.
     "/v1/invitations/{token}",
     "/v1/invitations/{token}/redeem",
+    # Finding a centre needs no account (V5.2.6).
+    "/v1/centres",
 }
 EXPECTED = {
     "/v1/reports:ingest",
@@ -45,6 +47,23 @@ EXPECTED = {
     "/v1/cases",
     "/v1/cases/{case_id}/claim",
     "/v1/cases/{case_id}/assign",
+    "/v1/me/journey",
+    "/v1/me/reminders",
+    "/v1/journey/{case_id}/steps",
+    "/v1/cases/{case_id}/advance",
+    "/v1/booking/slots",
+    "/v1/booking/slots/{slot_id}/book",
+    "/v1/booking/mine",
+    "/v1/booking/schedule",
+    "/v1/booking/appointments/{appointment_id}/cancel",
+    "/v1/booking/appointments/{appointment_id}/complete",
+    "/v1/cases/{case_id}/referrals",
+    "/v1/referrals/{referral_id}/send",
+    "/v1/referrals/{referral_id}/accept",
+    "/v1/referrals/{referral_id}/cancel",
+    "/v1/assessments/mine",
+    "/v1/assessments/{instrument}",
+    "/v1/analytics/overview",
 }
 HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
 ANY_ID = "00000000-0000-0000-0000-000000000000"

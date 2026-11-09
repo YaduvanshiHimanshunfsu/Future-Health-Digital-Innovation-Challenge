@@ -16,3 +16,6 @@ naam batao bataiye batana poochna jaanna samajhna samajh chahta chahti chahiye s
 parivar bachcha bachche bachchi maa pita papa bhai behen pati patni rishtedar shaadi vivah garbh garbhvati
 swasthya bimari rog jeen vahak jaanch parinaam report khatra jokhim sambhavna pratishat doctor aspatal ilaaj thalassemia sickle khoon
 dar chinta pareshan dabav nirnay faisla vikalp
+# सुरक्षा शब्द, ताकि राउटर की दोबारा जाँच करने वाला मॉडल ज़रूरी बात देख सके। आम शब्द, नाम नहीं।
+जीना जीने मरना मरने मौत जान आत्महत्या गोलियाँ गोली नुकसान चोट खत्म ज़िंदगी जिंदगी मतलब बेकार बोझ डर डरती डरता धमकी धमकाते दबाव ज़बरदस्ती मजबूर तलाक छोड़ पति पत्नी भाई बहन माँ पिता सास ससुर ससुराल परिवार सगाई शादी
+पीरियड संक्रमण थकी थकान दर्द खून विटामिन दवा अकेली अकेला रोना कोई बिना बेहतर सोच रही रहा स्वार्थ सही गलत

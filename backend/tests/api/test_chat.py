@@ -3,8 +3,10 @@ from typing import Any
 import pytest
 from sqlalchemy import select, text
 
+from app.explain.llm import LlmUnavailable
 from app.models.case import CareCase
 from app.models.conversation import Message
+from app.models.enums import Boundary
 from app.privacy.redaction import LlmRequest
 from tests.api.helpers import Stack, bundle_for
 
@@ -120,6 +122,11 @@ async def test_no_transaction_is_open_while_the_answer_is_drafted(stack: Stack) 
     seen: list[int] = []
 
     class Watching:
+        name = "watching"
+
+        async def classify(self, question: str, language: str) -> Boundary:
+            raise LlmUnavailable("not asked here")
+
         async def draft(self, request: LlmRequest, passages: list[str], language: str) -> str:
             async with stack.factory() as session:
                 found = await session.scalar(

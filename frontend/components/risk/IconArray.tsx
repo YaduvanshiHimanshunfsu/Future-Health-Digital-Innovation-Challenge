@@ -4,7 +4,7 @@ import { useI18n } from "@/components/layout/I18nProvider";
 import type { IconArrayVisual } from "@/lib/api/types";
 
 /** Counts come straight from the API. Each outcome has a pattern and a label, never colour alone. */
-export function IconArray({ visual }: { visual: IconArrayVisual }) {
+export function IconArray({ visual, openTable = false }: { visual: IconArrayVisual; openTable?: boolean }) {
   const { t } = useI18n();
   const icons = visual.groups.flatMap((group) => Array.from({ length: group.count }, () => group.key));
   const columns = visual.total > 100 ? 40 : 10;
@@ -39,7 +39,7 @@ export function IconArray({ visual }: { visual: IconArrayVisual }) {
           </li>
         ))}
       </ul>
-      <details className="mt-3 text-sm">
+      <details className="mt-3 text-sm" open={openTable}>
         <summary className="cursor-pointer font-semibold text-lapis">{t("visual.icon_table")}</summary>
         <table className="mt-2 w-full max-w-sm border-collapse text-start">
           <thead>

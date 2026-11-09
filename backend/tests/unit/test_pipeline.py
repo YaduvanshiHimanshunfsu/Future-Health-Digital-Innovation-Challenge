@@ -6,7 +6,7 @@ import pytest
 from app.core.config import DEFAULT_PACKS_DIR
 from app.country_packs.loader import load_pack
 from app.explain.graph import answer
-from app.explain.llm import TemplateOnly
+from app.explain.llm import LlmUnavailable, TemplateOnly
 from app.models.enums import AnswerSource, Boundary
 from app.privacy.redaction import LlmRequest
 from app.risk_engine.engine import _fact
@@ -23,14 +23,23 @@ SHARED = [
 class Scripted:
     """Stands in for a model, returning a fixed draft and recording what it was given."""
 
-    def __init__(self, draft: str = "", delay: float = 0.0) -> None:
-        self.text, self.delay = draft, delay
+    name = "scripted"
+
+    def __init__(self, draft: str = "", delay: float = 0.0, label: Boundary | None = None) -> None:
+        self.text, self.delay, self.label = draft, delay, label
         self.requests: list[LlmRequest] = []
+        self.classified: list[str] = []
 
     async def draft(self, request: LlmRequest, passages: list[str], language: str) -> str:
         self.requests.append(request)
         await asyncio.sleep(self.delay)
         return self.text
+
+    async def classify(self, question: str, language: str) -> Boundary:
+        self.classified.append(question)
+        if self.label is None:
+            raise LlmUnavailable("no opinion scripted")
+        return self.label
 
 
 async def test_template_mode_answers_with_no_model() -> None:
@@ -157,3 +166,16 @@ async def test_arabic_gets_english_and_says_why() -> None:
     assert result.boundary is Boundary.EDUCATION
     assert result.language_used == "en"
     assert result.text.startswith("Answers in Arabic are waiting for review")
+
+
+async def test_a_message_the_router_cannot_place_goes_to_a_person_with_support_shown() -> None:
+    """Education is never the fallback. A statement naming no topic could be distress in words the
+    rules don't know, so a person reads it, and the safety line is shown as for distress."""
+    model = Scripted("anything")
+    result = await answer("Nobody would notice if I was gone", "en", "simple", CARRIER, PACK, model)
+    assert result.boundary is Boundary.CLINICAL_ADVICE
+    assert result.route.reasons == ("unclear",)
+    assert model.requests == []
+    # This pack has no verified contacts, so the emergency-services line is shown, and no number.
+    assert "local emergency services" in result.text
+    assert not any(ch.isdigit() for ch in result.text)

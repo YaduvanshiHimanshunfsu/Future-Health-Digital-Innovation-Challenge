@@ -41,7 +41,10 @@
 | **I**nformation disclosure | A partner's private findings leaking through the match or chat | Partner-safe view holding only the intersection | Built, with a scan for a marker gene across responses, logs, audit rows and AI context: `test_matching.py` (C7) |
 | **I**nformation disclosure | Health data in logs or errors | Scrubbing, exception type only, route templates, no input echo | Built: `tests/unit/test_logging.py` |
 | **I**nformation disclosure | Stolen database | Sensitive fields encrypted; see [data classification](data_classification.md) | Built: a test and `scripts/smoke_stack.py` search a real `pg_dump` for gene names and IDs |
-| **I**nformation disclosure | Personal data sent to an LLM | Only listed words and fields pass, and any failure means no call | Built: `tests/unit/test_redaction.py`. Chat arrives in Phase 4 (H6) |
+| **I**nformation disclosure | Personal data sent to an LLM | Only listed words and fields pass, and any failure means no call | Built: `tests/unit/test_redaction.py`. Chat runs in template mode, so no model is called at all yet (H6) |
+| **E**levation of privilege | A message slipping past the router to an automatic answer, such as distress in unfamiliar words | Education is never the fallback: only a message naming a known topic is answered automatically, and anything unplaced goes to a person with the support line shown | Built, but **rules only**: on new phrasing, 10 of 59 questions meant for a person still got an automatic answer. `docs/evaluation/router_early_eval.md` |
+| **I**nformation disclosure | Read-aloud sending a result to a cloud speech service | Only voices that run on the device are used; with none, the button isn't shown | Built: `experience.spec.ts`, `copy.test.mjs` |
+| **I**nformation disclosure | A small group exposed through a dashboard chart | The chart kit takes suppressed counts as null and draws "<10", never zero. The server must suppress before sending | Kit built; the Phase 5 endpoints aren't |
 | **D**enial of service | Huge request bodies | Declared and actual size limits | Built |
 | **D**enial of service | Random `kid` values hammering Keycloak | Refresh cooldown | Built |
 | **D**enial of service | Flooding sensitive actions | Redis limits that close if Redis is down | Built; applied to routes as they arrive |

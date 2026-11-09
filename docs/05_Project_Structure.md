@@ -81,9 +81,9 @@ Future Health/
 
 | File | Purpose | Phase | Req | Issues |
 |---|---|---|---|---|
-| `events.py` | Event emission. | 5.4 | R6 | H11 |
-| `fairness.py` | Equity gaps. | 5.4 | R6 | H11 |
-| `metrics.py` | KPIs. | 5.4 | R6 | H10, H11, M9 |
+| `events.py` | Allow-listed events with a pseudonym and reporting groups, no free text. **Built.** | 5.4 | R6 | H11 |
+| `fairness.py` | Gaps per dimension, with small and protecting cells withheld. **Built.** | 5.4 | R6 | H11 |
+| `metrics.py` | Programme measures, each from named source rows. **Built.** | 5.4 | R6 | H10, H11, M9 |
 
 ## `backend/app/api/`
 
@@ -121,8 +121,8 @@ Future Health/
 
 | File | Purpose | Phase | Req | Issues |
 |---|---|---|---|---|
-| `instruments.py` | Quiz definitions. | 5.3 | R6 | S7 |
-| `scoring.py` | Scores. | 5.3 | R6 | H11 |
+| `instruments.py` | Teach-back (draft) and adapted SURE, honestly labelled. **Built.** | 5.3 | R6 | S7 |
+| `scoring.py` | Server-side scores and paired change. **Built.** | 5.3 | R6 | H11 |
 
 ## `backend/app/booking/`
 
@@ -251,8 +251,8 @@ Future Health/
 
 | File | Purpose | Phase | Req | Issues |
 |---|---|---|---|---|
-| `fhir_mapper.py` | FHIR resources. | 5.2 | R5 |  |
-| `scheduler.py` | SLA scan. | 5.1 | R5 | H10, H15 |
+| `fhir_mapper.py` | FHIR R5 ServiceRequest and Task, minimum necessary. **Built.** | 5.2 | R5 |  |
+| `scheduler.py` | Overdue scan: stalled flag, one reminder, lost to follow-up. **Built.** | 5.1 | R5 | H10, H15 |
 | `state_machine.py` | Pathway transitions. | 5.1 | R5 | H10 |
 
 ## `backend/app/privacy/`
@@ -620,43 +620,49 @@ The folders below are the original plan. Building the frontend changed these fil
 
 | File | Purpose | Phase | Req | Issues |
 |---|---|---|---|---|
-| `BoundaryDonut.tsx` | Boundary labels donut. | 5.4 |  |  |
-| `ComprehensionLine.tsx` | Comprehension chart. | 5.4 |  |  |
-| `EquityBars.tsx` | Equity bars with gap badge. | 5.4 |  | H11 |
-| `PathwayFunnel.tsx` | Pathway funnel. | 5.4 |  |  |
-| `RegionAgeHeatmap.tsx` | Region and age heatmap. | 5.4 |  | M9 |
-| `SlaRing.tsx` | SLA ring. | 4.5 |  |  |
-| `TimeToCounselling.tsx` | Time-to-counselling bars. | 5.4 |  |  |
-| `ceramicTheme.ts` | Chart theme. | 5.4 |  | M5 |
+| `ceramicTheme.ts` | Chart theme: palette, Western digits, suppressed counts as null and shown as "<10". **Built.** | 5.4 |  | M5, M9 |
+| `ChartFrame.tsx` | Title, a sentence saying what the chart shows, and the same numbers as a table. **Built.** | 5.4 |  |  |
+| `BarChart.tsx` | HTML bars that grow from the reading side, with an optional reference line. **Built.** | 5.4 |  |  |
+| `DonutChart.tsx` | Parts of a whole, total in the middle. **Built.** | 5.4 |  |  |
+| `LineChart.tsx` | A trend; suppressed points break the line. **Built.** | 5.4 |  |  |
+| `Heatmap.tsx` | A real table with shaded cells; suppressed cells hatched. **Built.** | 5.4 |  | M9 |
+| `SlaRing.tsx` | Time left in a step, as a meter. Used on the queue and case pages. **Built.** | 4.5 |  |  |
+| `BoundaryDonut.tsx` | Boundary labels donut. Stub: builds on `DonutChart` once the analytics endpoint exists. | 5.4 |  |  |
+| `ComprehensionLine.tsx` | Comprehension chart. Stub: builds on `LineChart`. | 5.4 |  |  |
+| `EquityBars.tsx` | Equity bars with gap badge. Stub: builds on `BarChart`. | 5.4 |  | H11 |
+| `PathwayFunnel.tsx` | Pathway funnel. Stub: builds on `BarChart`. | 5.4 |  |  |
+| `RegionAgeHeatmap.tsx` | Region and age heatmap. Stub: builds on `Heatmap`. | 5.4 |  | M9 |
+| `TimeToCounselling.tsx` | Time-to-counselling bars. Stub: builds on `BarChart` with the SLA line. | 5.4 |  |  |
 
 ## `frontend/components/layout/`
 
 | File | Purpose | Phase | Req | Issues |
 |---|---|---|---|---|
 | `LanguageSwitch.tsx` | Language switch. | 1.6 |  |  |
-| `ListenButton.tsx` | Listen button. Tier 3, hide if voice is cut. | T3 |  | H14 |
-| `LiteracyToggle.tsx` | Literacy toggle. | 1.6 |  |  |
-| `MosaicDivider.tsx` | Mosaic divider. | 1.6 |  |  |
-| `PrivacyBadge.tsx` | Privacy badge. | 1.6 |  |  |
-| `TilePattern.tsx` | Decorative tile pattern. | 1.6 |  |  |
+| `ListenButton.tsx` | Reads an explanation aloud, with on-device voices only; absent where none exists. **Built.** | T3 |  | H14 |
+| `LiteracyToggle.tsx` | Simple, Standard or Detailed, saved to the profile. **Built.** | 1.6 |  |  |
+| `MosaicDivider.tsx` | Mosaic divider that settles in once. **Built.** | 1.6 |  |  |
+| `PrivacyBadge.tsx` | Lock chip to the privacy centre; names a place, claims nothing. **Built.** | 1.6 |  |  |
+| `TilePattern.tsx` | Sand band with the 8-point star tile. **Built.** | 1.6 |  |  |
 
 ## `frontend/components/motion/`
 
 | File | Purpose | Phase | Req | Issues |
 |---|---|---|---|---|
-| `CountUp.tsx` | Count-up number. | 1.6 |  |  |
-| `PathDraw.tsx` | Path drawing. | 1.6 |  |  |
-| `PulseCurrent.tsx` | Current-step pulse. | 1.6 |  |  |
-| `RiseIn.tsx` | Rise-in animation. | 1.6 |  |  |
-| `TileFlip.tsx` | Tile flip. | 1.6 |  |  |
+| `CountUp.tsx` | Count-up for counts of things, never for a chance (a test enforces it). **Built.** | 1.6 |  |  |
+| `PageTransition.tsx` | Fade and short rise on every navigation. **Built.** | 1.6 |  |  |
+| `PathDraw.tsx` | An SVG line that draws itself once when seen. **Built.** | 1.6 |  |  |
+| `PulseCurrent.tsx` | Three pulses, then rest. **Built.** | 1.6 |  |  |
+| `RiseIn.tsx` | Below-the-fold content rises in once; visible without script. **Built.** | 1.6 |  |  |
+| `TileFlip.tsx` | Question and answer tile on a real button; both sides readable without script. **Built.** | 1.6 |  |  |
 
 ## `frontend/components/risk/`
 
 | File | Purpose | Phase | Req | Issues |
 |---|---|---|---|---|
-| `CoupleMatchBox.tsx` | Couple-match animation. | 3.3 |  |  |
+| `CoupleMatchBox.tsx` | Two partner tiles slide together; the same motion for every outcome. **Built.** | 3.3 |  |  |
 | `IconArray.tsx` | Icon array. | 2.5 |  | H5 |
-| `PregnancyStrip.tsx` | Per-pregnancy strip. | 2.5 |  |  |
+| `PregnancyStrip.tsx` | The engine's same figure drawn for four pregnancies. **Built.** | 2.5 |  |  |
 | `PunnettSquare.tsx` | Punnett square. | 2.5 |  | H5 |
 | `XLinkedDiagram.tsx` | X-linked inheritance visual. | 2.5 |  | H5 |
 

@@ -26,10 +26,11 @@ celery_app.conf.update(
     task_time_limit=90,
     broker_connection_retry_on_startup=True,
     worker_hijack_root_logger=False,
-    # The SLA scan joins these in sub-phase 5.1.
     beat_schedule={
         "apply-authz-outbox": {"task": "samvid.apply_authz_outbox", "schedule": 30.0},
         "reconcile-authz": {"task": "samvid.reconcile_authz", "schedule": 900.0},
+        # Overdue steps, reminders and lost-to-follow-up. Every five minutes is ample for SLAs in hours.
+        "scan-pathway": {"task": "samvid.scan_pathway", "schedule": 300.0},
     },
 )
 

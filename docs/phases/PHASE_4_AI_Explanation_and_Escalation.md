@@ -172,11 +172,13 @@
 
 ## Phase 4 exit gate
 
-- [ ] Arabic "carrier" question gets an education answer on screen
-- [ ] Clinical question gets a refusal and booking offer, in all three languages
-- [ ] Chat works with the LLM switched off
-- [ ] P2 case reaches a counsellor's screen
-- [ ] Early eval run done, with failures logged
-- [ ] `brain.md` is up to date
+- [x] Arabic "carrier" question gets an education answer on screen (`phase4.spec.ts`)
+- [x] Clinical question gets a refusal and booking offer, in all three languages (`phase4.spec.ts`)
+- [x] Chat works with the LLM switched off (template mode is the default; `test_chat_works_with_no_model`)
+- [x] P2 case reaches a counsellor's screen (`phase4.spec.ts`, `experience.spec.ts`)
+- [x] Early eval run done, with failures logged (`docs/evaluation/router_early_eval.md`). It found a serious gap, now narrowed but **not closed**: see brain.md #017
+- [x] `brain.md` is up to date (#017)
+
+**Status, 9 Nov 2026:** shipped in template mode, as the line below allows. No model provider is connected; that decision is the user's.
 
 **If behind:** ship with templates only and say so. That's safer and still demonstrates the architecture.

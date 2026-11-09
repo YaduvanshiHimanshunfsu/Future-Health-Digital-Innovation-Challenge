@@ -115,6 +115,11 @@ test("the full couple journey shows only what's shared", async ({ browser }) => 
   expect(text).toContain("25% chance (1 in 4)");
   await expect(second.locator("figure").first()).toBeVisible();
   await expect(second.getByRole("img").first()).toHaveAttribute("aria-label", /25 \/ 100/);
+  // The two tiles settle on the outcome, and each pregnancy shows the engine's same figure.
+  await expect(second.locator(".match-box")).toHaveAttribute("data-state", "shared");
+  const strip = second.getByTestId("pregnancy-strip");
+  await expect(strip.locator("li")).toHaveCount(4);
+  for (const item of await strip.locator("li").all()) await expect(item).toContainText("25% chance of two copies");
   await expect(second.getByText("A counsellor has been asked to follow this up")).toBeVisible();
 
   // The partner who didn't run it still gets care, and can see what happened.

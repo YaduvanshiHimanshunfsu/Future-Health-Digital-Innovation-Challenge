@@ -3,6 +3,9 @@ import { localeOf } from "@/lib/i18n/server";
 import { Chip } from "@/components/ui/Chip";
 import { ClayCard, Notice } from "@/components/ui/ClayCard";
 import { InheritanceArt } from "@/components/layout/InheritanceArt";
+import { MosaicDivider } from "@/components/layout/MosaicDivider";
+import { TilePattern } from "@/components/layout/TilePattern";
+import { RiseIn } from "@/components/motion/RiseIn";
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale, t } = await localeOf(params);
@@ -33,29 +36,39 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         </div>
       </section>
 
-      <section className="mt-14">
-        <h2 className="mb-5 text-2xl font-medium">{t("home.does_title")}</h2>
-        <div className="stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {([1, 2, 3, 4] as const).map((n) => (
-            <ClayCard key={n} title={t(`home.does_${n}_t`)} headingLevel={3} accent={n}>
-              <p className="muted">{t(`home.does_${n}_b`)}</p>
-            </ClayCard>
-          ))}
-        </div>
-      </section>
+      <MosaicDivider className="mt-12" />
+
+      <TilePattern className="mt-10 p-5 md:p-8">
+        <section>
+          <h2 className="mb-5 text-2xl font-medium">{t("home.does_title")}</h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {([1, 2, 3, 4] as const).map((n, index) => (
+              <RiseIn key={n} delay={index * 80} className="grid">
+                <ClayCard title={t(`home.does_${n}_t`)} headingLevel={3} accent={n}>
+                  <p className="muted">{t(`home.does_${n}_b`)}</p>
+                </ClayCard>
+              </RiseIn>
+            ))}
+          </div>
+        </section>
+      </TilePattern>
 
       <section className="mt-14">
         <h2 className="mb-5 text-2xl font-medium">{t("home.facts_title")}</h2>
-        <div className="stagger grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-3">
           {([2, 3, 1] as const).map((n, index) => (
-            <ClayCard key={n} title={t(`home.fact_${index + 1}_t`)} headingLevel={3} accent={n}>
-              <p className="muted">{t(`home.fact_${index + 1}_b`)}</p>
-            </ClayCard>
+            <RiseIn key={n} delay={index * 80} className="grid">
+              <ClayCard title={t(`home.fact_${index + 1}_t`)} headingLevel={3} accent={n}>
+                <p className="muted">{t(`home.fact_${index + 1}_b`)}</p>
+              </ClayCard>
+            </RiseIn>
           ))}
         </div>
       </section>
 
-      <section className="mt-14">
+      <MosaicDivider className="mt-12" />
+
+      <section className="mt-10">
         <Notice title={t("home.honest_title")}>
           <p>{t("home.honest_body")}</p>
           <Link href={`/${locale}/privacy`} className="mt-2 inline-block font-semibold text-lapis-dark underline">{t("nav.privacy")}</Link>

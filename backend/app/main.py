@@ -19,7 +19,7 @@ from app.core.middleware import (
 from app.core.security import JwksCache, TokenVerifier
 from app.country_packs.loader import load_registry
 from app.db.session import build_engine, build_session_factory
-from app.explain.llm import TemplateOnly
+from app.explain.providers import build_llm
 from app.privacy.audit import AuditTrail
 from app.privacy.authz import Authz
 from app.privacy.crypto import FieldCipher
@@ -31,6 +31,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     yield
     await app.state.redis.aclose()
     await app.state.authz.aclose()
+    await app.state.llm_http.aclose()
     await app.state.engine.dispose()
 
 
@@ -73,8 +74,9 @@ def create_app(
     )
 
     app.state.authz = Authz.from_settings(settings)
-    # No AI provider yet: answers come from reviewed templates. See app/explain/llm.py.
-    app.state.llm = TemplateOnly()
+    # The configured model, or TemplateOnly. See app/explain/providers.py.
+    app.state.llm_http = httpx.AsyncClient(follow_redirects=False)
+    app.state.llm = build_llm(settings, app.state.llm_http)
     app.state.cipher = FieldCipher(build_kek(settings))
     app.state.packs = load_registry(
         settings.packs_dir,

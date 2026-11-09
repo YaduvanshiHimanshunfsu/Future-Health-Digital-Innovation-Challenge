@@ -49,20 +49,27 @@ PHASES = [
     ("2", "Risk engine, encryption, lab reports, country packs, synthetic data", "done"),
     ("3", "Consent, couple check, family invitations, access log, emergency access", "done"),
     ("UI", "Web app from the Stitch design, in English and Hindi, wired to the backend", "done"),
-    ("4", "AI explanations with safety checks, options, counsellor queue", "in progress"),
-    ("5", "Care pathway, booking, measurement, dashboards", "planned"),
+    (
+        "UI+",
+        "Motion library, chart kit, reading levels, listen, couple and pregnancy visuals",
+        "done",
+    ),
+    ("4", "Explanations by Gemini or local Ollama, checked, with templates as the fallback", "done"),
+    ("5", "Care pathway, booking, measurement, dashboards", "in progress"),
     ("6", "Evaluation, hardening, submission", "planned"),
 ]
 
 DEMO_ACCOUNTS = [
-    ("demo-fatima", "A carrier. Link with demo-khalid on the Partner page"),
+    ("demo-fatima", "A carrier. Link with demo-khalid on the Partner page, then try Ask Samvid"),
     ("demo-khalid", "Shares a finding with demo-fatima"),
-    ("demo-x-carrier", "An X-linked result, with its own picture"),
+    ("demo-x-carrier", "An X-linked result, with its own picture, and the Options page"),
     ("demo-uncertain", "An uncertain finding, with no number"),
     ("demo-no-report", "No report yet, which is never shown as a result"),
     ("demo-priya", "The India pack, in Hindi"),
+    ("demo-counsellor", "Takes cases from the queue, with time-left rings and a priority chart"),
     ("demo-doctor", "Emergency access to a case"),
     ("demo-auditor", "Reviews emergency access"),
+    ("demo-coordinator", "Programme metrics and equity, aggregates only (synthetic)"),
 ]
 
 COLOURS = {
@@ -208,6 +215,67 @@ def start(build: bool) -> bool:
     return True
 
 
+def setting(name: str, default: str = "") -> str:
+    """Your environment first, then infra/.env, the same order Docker Compose uses."""
+    return os.environ.get(name) or read_env().get(name, "") or default
+
+
+def models() -> None:
+    """Says which model will answer, and why not, before anyone asks a question. Prints no key."""
+    providers = [
+        p.strip() for p in setting("LLM_PROVIDER", "gemini,ollama").split(",") if p.strip()
+    ]
+    note(f"AI models, tried in this order: {', '.join(providers)}, then the reviewed templates")
+    for provider in providers:
+        if provider == "gemini":
+            key = setting("GEMINI_API_KEY")
+            if not key:
+                note(f"  gemini    {YELLOW}no GEMINI_API_KEY set, so it's skipped{RESET}")
+                continue
+            request = urllib.request.Request(
+                "https://generativelanguage.googleapis.com/v1beta/models?pageSize=1",
+                headers={"x-goog-api-key": key},
+            )
+            try:
+                with urllib.request.urlopen(request, timeout=8) as response:  # noqa: S310 - fixed https URL
+                    code = int(response.status)
+            except urllib.error.HTTPError as exc:
+                code = int(exc.code)
+            except OSError:
+                code = 0
+            if code == 200:
+                note(
+                    f"  gemini    {GREEN}key accepted{RESET}, model {setting('GEMINI_MODEL', 'gemini-2.5-flash')}"
+                )
+            elif code in (400, 401, 403):
+                note(
+                    f"  gemini    {RED}Google rejected the key (status {code}){RESET}. "
+                    "Make one at aistudio.google.com/apikey (it starts with AIza). Until then the next model answers."
+                )
+            else:
+                note(f"  gemini    {YELLOW}not reachable from here (status {code}){RESET}")
+        elif provider == "ollama":
+            tag = setting("OLLAMA_MODEL", "qwen2.5:3b")
+            try:
+                with urllib.request.urlopen(
+                    "http://127.0.0.1:11434/api/tags", timeout=3
+                ) as response:  # noqa: S310 - local only
+                    names = [m.get("name") for m in json.load(response).get("models", [])]
+            except (OSError, ValueError):
+                note(
+                    f"  ollama    {YELLOW}not running on this machine. Start the Ollama app.{RESET}"
+                )
+                continue
+            if tag in names:
+                note(f"  ollama    {GREEN}ready{RESET}, model {tag}, on this machine only")
+            else:
+                note(
+                    f"  ollama    {YELLOW}running, but {tag} isn't pulled. Run: ollama pull {tag}{RESET}"
+                )
+        elif provider != "template":
+            note(f"  {provider:<9} configured in infra/.env")
+
+
 def seed(show_password: bool) -> None:
     uv = shutil.which("uv")
     if uv is None:
@@ -241,6 +309,9 @@ def seed(show_password: bool) -> None:
     ):
         note(f"{YELLOW}Demo accounts couldn't be created. The app still runs.{RESET}")
         return
+    note("Adding synthetic programme activity, so the metrics dashboard has something to show...")
+    if run([*COMPOSE, "exec", "-T", "api", "python", "-m", "app.ops.seed_metrics"], quiet=True) != 0:
+        note(f"{YELLOW}The synthetic metrics couldn't be added. The dashboard will show mostly '<10'.{RESET}")
     password = read_env().get("DEMO_PASSWORD", "")
     say()
     say(f'  {BOLD}Open {WEB}{RESET} and choose "Start privately". Demo accounts:')
@@ -370,6 +441,7 @@ def main() -> int:
     ensure_env()
 
     if args.status:
+        models()
         return status()
     if args.stop:
         note("Stopping everything. Your data is kept.")
@@ -386,6 +458,7 @@ def main() -> int:
         return fail(
             "Something didn't start. The messages above say which. Try --verbose, or see docs/runbook_local_stack.md."
         )
+    models()
     if not args.no_seed:
         seed(args.show_password)
     if args.check:

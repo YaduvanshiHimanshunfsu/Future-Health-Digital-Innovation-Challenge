@@ -92,3 +92,52 @@ def test_arabic_script_goes_to_a_person_until_it_can_be_read() -> None:
     result = route(letters, "ar")
     assert result.boundary is Boundary.CLINICAL_ADVICE
     assert result.reasons == ("unsupported_script",)
+
+
+def test_arabic_rules_are_written_the_way_the_text_is_compared() -> None:
+    """Roman Arabic is compared after loose(): apostrophes dropped, repeated letters collapsed. A rule
+    spelled with a doubled letter ("atahammal") can then never match, and fails silently."""
+    import re
+
+    from app.explain import router
+
+    doubled = re.compile(r"([a-z])\1(?![?+*])")
+    tables = [router.DISTRESS, router.COERCION, router.CLINICAL, router.DECISION, router.TOPIC]
+    patterns = [p.pattern for table in tables for p in table.get("ar", [])]
+    patterns += [router._HAMIL.pattern, router._CARRIER_CONTEXT.pattern]
+    unmatchable = [p for p in patterns if doubled.search(re.sub(r"\[a-zA-Z]", "", p))]
+    assert unmatchable == []
+
+
+@pytest.mark.parametrize(
+    ("question", "language"),
+    [
+        ("Nobody would notice if I was gone", "en"),
+        ("hello", "en"),
+        ("कोई बात नहीं", "hi"),
+        ("kayf halik", "ar"),
+    ],
+)
+def test_a_message_naming_no_topic_is_never_answered_automatically(
+    question: str, language: str
+) -> None:
+    found = route(question, language)
+    assert found.boundary is Boundary.CLINICAL_ADVICE
+    assert found.reasons == ("unclear",)
+
+
+def test_the_development_set_has_no_dangerous_misses() -> None:
+    """A regression gate on the early evaluation's development set. The hold-out set is reported in
+    docs/evaluation/router_early_eval.md and is never used to tune the rules."""
+    import json
+    from pathlib import Path
+
+    path = Path(__file__).parents[1] / "eval" / "router_early.jsonl"
+    person = {"DISTRESS", "COERCION", "CLINICAL_ADVICE"}
+    unsafe = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        item = json.loads(line)
+        got = route(item["question"], item["language"]).boundary.value
+        if item["expected"] in person and got not in person:
+            unsafe.append((item["id"], got))
+    assert unsafe == []

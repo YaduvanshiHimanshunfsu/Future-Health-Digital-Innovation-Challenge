@@ -1,4 +1,9 @@
-// FILE: frontend/components/layout/TilePattern.tsx
-// STATUS: STUB. Documentation only; no code until explicitly requested.
-// PURPOSE: Decorative tile pattern.
-// PHASE: 1.6 | SPEC: frontend.md §7, §8, §9
+import type { ReactNode } from "react";
+
+/**
+ * A sand band with the 8-point star tile at low opacity behind its content, for a section that should
+ * stand apart. The pattern is a background image, so it adds nothing to read and nothing to tab to.
+ */
+export function TilePattern({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <div className={`tile-band rounded-plate ${className}`}>{children}</div>;
+}

@@ -1,31 +1,43 @@
-"""The seam where an AI model would plug in.
+"""The seam where an AI model plugs in.
 
-No provider is configured yet: the choice of model service is the user's (see brain.md). Until one
-is, every answer comes from the reviewed templates, which the plan allows ("ship with templates only
-and say so"). A provider implements `LlmClient`, and only ever sees what `call_llm_guarded` lets
-through: redacted question, listed fact fields, and approved passages.
+A provider implements `LlmClient` and only ever sees what the privacy layer lets through: the
+redacted question, the listed fact fields, and approved knowledge-base passages. Every draft it
+writes is validated before anyone reads it, and any failure falls back to the reviewed template.
+
+`TemplateOnly` never calls anything. The providers live in `app/explain/providers.py`.
 """
 
 from typing import Protocol
 
+from app.models.enums import Boundary
 from app.privacy.redaction import LlmRequest
 
 
 class LlmUnavailable(Exception):
-    """No answer in time, or no provider. The pipeline falls back to the template."""
+    """No answer in time, no provider, or an answer that couldn't be read. The template is used."""
 
 
 class LlmClient(Protocol):
-    """Gets a draft that may hold {fact:ID} placeholders and no figures of its own.
+    """Two jobs, both narrow. It has no tools and no database access: it receives one request."""
 
-    It has no tools and no database access, by construction: it receives one request object.
-    """
+    name: str
 
-    async def draft(self, request: LlmRequest, passages: list[str], language: str) -> str: ...
+    async def draft(self, request: LlmRequest, passages: list[str], language: str) -> str:
+        """An explanation that may hold {fact:ID} placeholders and no figures of its own."""
+        ...
+
+    async def classify(self, question: str, language: str) -> Boundary:
+        """Which kind of question a redacted question is. Used only to escalate, never to relax."""
+        ...
 
 
 class TemplateOnly:
-    """The default. Never calls anything, so the template is always used."""
+    """The default. Never calls anything, so the template and the rules decide everything."""
+
+    name = "template"
 
     async def draft(self, request: LlmRequest, passages: list[str], language: str) -> str:
+        raise LlmUnavailable("template mode")
+
+    async def classify(self, question: str, language: str) -> Boundary:
         raise LlmUnavailable("template mode")

@@ -93,6 +93,7 @@ These end in `_enc` and hold AES-256-GCM ciphertext, encrypted per record (imple
 | `person.gender` | Quasi-identifier | Equity reporting, and harm monitoring |
 | `person.service_consent_at` | Low | Must be checked before showing any genetic data |
 | `person.results_withheld_at` | Sensitive link | The person chose not to know. It must be readable to withhold results, and says nothing about what they are |
+| `person.reminders_opt_out` | Low | The person's choice to get no reminders. Says nothing about their result |
 | `person.created_at` | Low | Time of creation, needed for ordering and retention |
 | `assessment.id` | Random | Random UUID, meaningless on its own |
 | `assessment.person_id` | Sensitive link | Pairs before and after scores |
@@ -136,6 +137,7 @@ These end in `_enc` and hold AES-256-GCM ciphertext, encrypted per record (imple
 | `care_case.state` | Sensitive | Queue and stall detection query on this |
 | `care_case.step_due` | Low | Deadline, queried by the stall scan |
 | `care_case.stalled` | Low | Alerting |
+| `care_case.reminded_at` | Low | When this step's one reminder went out. Cleared on every step, so each step gets at most one |
 | `care_case.version` | Low | Optimistic lock |
 | `care_case.created_at` | Low | Time of creation, needed for ordering and retention |
 | `carrier_finding.id` | Random | Random UUID, meaningless on its own |

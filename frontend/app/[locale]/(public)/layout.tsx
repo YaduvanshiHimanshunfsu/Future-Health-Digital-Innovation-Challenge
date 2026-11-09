@@ -11,6 +11,7 @@ export default async function PublicLayout({ children, params }: { children: Rea
     { href: `/${locale}/learn/inheritance`, label: t("nav.inheritance") },
     { href: `/${locale}/learn/cousin-marriage`, label: t("nav.cousins") },
     { href: `/${locale}/privacy`, label: t("nav.privacy") },
+    { href: `/${locale}/centres`, label: t("nav.centres") },
     { href: signedIn ? `/${locale}/app` : `/${locale}/start`, label: signedIn ? t("nav.dashboard") : t("nav.start") },
   ];
   return (

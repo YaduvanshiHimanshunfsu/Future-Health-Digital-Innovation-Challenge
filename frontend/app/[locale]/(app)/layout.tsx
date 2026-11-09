@@ -4,6 +4,8 @@ import { api } from "@/lib/api/server";
 import type { Profile } from "@/lib/api/types";
 import { currentPath, localeOf } from "@/lib/i18n/server";
 import { SiteShell } from "@/components/layout/SiteShell";
+import { LiteracyToggle } from "@/components/layout/LiteracyToggle";
+import { PrivacyBadge } from "@/components/layout/PrivacyBadge";
 
 export default async function AppLayout({ children, params }: { children: ReactNode; params: Promise<{ locale: string }> }) {
   const { locale, t } = await localeOf(params);
@@ -13,6 +15,8 @@ export default async function AppLayout({ children, params }: { children: ReactN
   const links = [
     { href: `/${locale}/app`, label: t("nav.dashboard") },
     { href: `/${locale}/app/result`, label: t("nav.result") },
+    { href: `/${locale}/app/journey`, label: t("nav.journey") },
+    { href: `/${locale}/app/check`, label: t("nav.check") },
     { href: `/${locale}/app/ask`, label: t("nav.ask") },
     { href: `/${locale}/app/options`, label: t("nav.options") },
     { href: `/${locale}/app/partner`, label: t("nav.partner") },
@@ -20,7 +24,20 @@ export default async function AppLayout({ children, params }: { children: ReactN
     { href: `/${locale}/app/privacy`, label: t("nav.my_privacy") },
   ];
   return (
-    <SiteShell locale={locale} path={await currentPath()} links={links} signedIn demoChip>
+    <SiteShell
+      locale={locale}
+      path={await currentPath()}
+      links={links}
+      signedIn
+      demoChip
+      reading={profile.data.literacy_level}
+      toolbar={
+        <>
+          <PrivacyBadge href={`/${locale}/app/privacy`} label={t("badge.privacy")} />
+          <LiteracyToggle level={profile.data.literacy_level} />
+        </>
+      }
+    >
       {children}
     </SiteShell>
   );

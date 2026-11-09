@@ -134,6 +134,15 @@ services:
       # Only used by `python -m app.ops.check_services` to prove a real token verifies.
       LAB_CLIENT_ID: samvid-lab
       LAB_CLIENT_SECRET: ${LAB_CLIENT_SECRET}
+      # Models, tried in order. The Gemini key comes from your own environment or infra/.env, never
+      # from this file. Ollama runs on the host, which containers reach as host.docker.internal.
+      LLM_PROVIDER: ${LLM_PROVIDER:-gemini,ollama}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5:3b}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       migrate: {condition: service_completed_successfully}
       redis: {condition: service_healthy}

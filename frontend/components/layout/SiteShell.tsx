@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { hasOwnText, type Locale } from "@/lib/i18n/config";
 import { getT } from "@/lib/i18n/translate";
 import { Chip } from "@/components/ui/Chip";
+import { PageTransition } from "@/components/motion/PageTransition";
 import { LanguageSwitch } from "./LanguageSwitch";
 import { SignOutButton } from "./SignOutButton";
 
@@ -23,6 +24,8 @@ export function SiteShell({
   links,
   signedIn = false,
   demoChip = false,
+  toolbar,
+  reading,
   children,
 }: {
   locale: Locale;
@@ -30,6 +33,10 @@ export function SiteShell({
   links: NavLink[];
   signedIn?: boolean;
   demoChip?: boolean;
+  /** Controls kept in reach on every page of a section, such as the reading level. */
+  toolbar?: ReactNode;
+  /** The person's reading level, which sets text size and spacing for the whole page. */
+  reading?: string;
   children: ReactNode;
 }) {
   const t = getT(locale);
@@ -65,8 +72,9 @@ export function SiteShell({
       {hasOwnText(locale) ? null : (
         <p className="bg-saffron-tint px-4 py-2 text-center text-sm text-ink">{t("lang.ar_pending")}</p>
       )}
-      <main id="content" className="mx-auto w-full max-w-page flex-1 px-4 py-8 md:px-10">
-        {children}
+      <main id="content" data-reading={reading} className="mx-auto w-full max-w-page flex-1 px-4 py-8 md:px-10">
+        {toolbar ? <div className="mb-6 flex flex-wrap items-center justify-end gap-2">{toolbar}</div> : null}
+        <PageTransition>{children}</PageTransition>
       </main>
       <footer className="border-t border-line px-4 py-6 text-center text-xs text-slate md:px-10">
         {t("footer.note")}

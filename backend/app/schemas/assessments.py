@@ -1,6 +1,43 @@
-# FILE: backend/app/schemas/assessments.py
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Not in the original file list; added by docs/04 review.
-# PURPOSE: Assessment contracts.
-# PLANNED LOGIC: *In models reject extras; *Out models list explicit fields.
-# PHASE: 5.3 | REQ: R6 | SPEC: backend.md 11.14
+from datetime import datetime
+
+from pydantic import Field
+
+from app.models.enums import AssessmentPhase
+from app.schemas.common import Out, StrictIn
+
+
+class ItemOut(Out):
+    id: str
+    text: str
+    options: list[str]
+
+
+class InstrumentOut(Out):
+    instrument: str
+    # Shown on screen next to the questions, so nobody mistakes a draft for a validated tool.
+    status: str
+    citation: str
+    language_used: str
+    items: list[ItemOut]
+
+
+class AnswersIn(StrictIn):
+    phase: AssessmentPhase
+    answers: list[int] = Field(min_length=1, max_length=20)
+
+
+class ScoreOut(Out):
+    instrument: str
+    phase: str
+    score: float
+    passed: bool
+    # True after a second missed check: a counsellor has been asked to help.
+    support_offered: bool
+
+
+class MyScoresOut(Out):
+    instrument: str
+    pre: float | None
+    post: float | None
+    change: float | None
+    last_at: datetime | None

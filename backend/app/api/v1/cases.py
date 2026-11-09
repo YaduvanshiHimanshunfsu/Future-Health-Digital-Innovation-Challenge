@@ -24,6 +24,7 @@ from app.models.case import CareCase
 from app.models.enums import CaseState
 from app.models.person import Person
 from app.models.values_note import ValuesNote
+from app.pathway.service import STAFF_MAY, can_move
 from app.privacy.audit import AuditTrail
 from app.privacy.authz import Authz
 from app.privacy.crypto import FieldCipher
@@ -31,7 +32,7 @@ from app.privacy.outbox import drain_quietly
 from app.schemas.cases import AssignIn, CaseOut, CaseSummaryOut, QueueItemOut, SummaryFactOut
 from app.triage import assignment
 from app.triage.copilot import summarise
-from app.triage.service import reasons_aad
+from app.triage.service import reasons_aad, sla_hours
 
 router = APIRouter(prefix="/cases", tags=["cases"])
 
@@ -82,7 +83,9 @@ async def read_case(
         state=case.state,
         step_due=case.step_due,
         reasons=reasons,
+        window_hours=_window(packs, subject.pack_code if subject else None, case),
         through_break_glass=not assigned,
+        next_steps=sorted(s.value for s in STAFF_MAY if can_move(case, s)) if assigned else [],
         summary=CaseSummaryOut(
             facts=[SummaryFactOut(**vars_of(f)) for f in summary.facts],
             values=summary.values,
@@ -90,6 +93,25 @@ async def read_case(
         )
         if summary
         else None,
+    )
+
+
+def _window(packs: PackRegistry, pack_code: str | None, case: CareCase) -> int:
+    pack = packs.get(pack_code) if pack_code else None
+    return sla_hours(pack or packs.default, case.priority)
+
+
+async def _queue_item(
+    cipher: FieldCipher, packs: PackRegistry, case: CareCase, pack_code: str | None, me: Person
+) -> QueueItemOut:
+    return QueueItemOut(
+        id=case.id,
+        priority=case.priority,
+        state=case.state,
+        step_due=case.step_due,
+        reasons=await cipher.decrypt_json(case.reasons_enc, aad=reasons_aad(case)),
+        window_hours=_window(packs, pack_code, case),
+        assigned_to_me=case.counsellor_id == me.id,
     )
 
 
@@ -126,6 +148,7 @@ async def queue(
     person: Person = Depends(current_person),
     db: AsyncSession = Depends(get_db),
     cipher: FieldCipher = Depends(get_cipher),
+    packs: PackRegistry = Depends(get_packs),
 ) -> list[QueueItemOut]:
     """The unassigned pool, or this counsellor's own cases. Most urgent first, then soonest due."""
     owner = (
@@ -139,16 +162,20 @@ async def queue(
             .limit(200)
         )
     ).all()
-    return [
-        QueueItemOut(
-            id=case.id,
-            priority=case.priority,
-            state=case.state,
-            step_due=case.step_due,
-            reasons=await cipher.decrypt_json(case.reasons_enc, aad=reasons_aad(case)),
-            assigned_to_me=case.counsellor_id == person.id,
+    # One lookup for every case's country rules, rather than one query per case.
+    codes = dict(
+        (
+            await db.execute(
+                select(Person.id, Person.pack_code).where(
+                    Person.id.in_({case.subject_id for case in cases})
+                )
+            )
         )
-        for case in cases
+        .tuples()
+        .all()
+    )
+    return [
+        await _queue_item(cipher, packs, case, codes.get(case.subject_id), person) for case in cases
     ]
 
 
@@ -162,19 +189,14 @@ async def claim_case(
     cipher: FieldCipher = Depends(get_cipher),
     audit: AuditTrail = Depends(get_audit),
     authz: Authz = Depends(get_authz),
+    packs: PackRegistry = Depends(get_packs),
 ) -> QueueItemOut:
     case = await db.get(CareCase, case_id, with_for_update=True)
     if case is None:
         await deny(audit, principal.sub, f"case:{case_id}", meta={"actor_kind": "counsellor"})
     await assignment.claim(db, audit, actor=principal.sub, case=case, counsellor_id=person.id)
-    item = QueueItemOut(
-        id=case.id,
-        priority=case.priority,
-        state=case.state,
-        step_due=case.step_due,
-        reasons=await cipher.decrypt_json(case.reasons_enc, aad=reasons_aad(case)),
-        assigned_to_me=True,
-    )
+    subject = await db.get(Person, case.subject_id)
+    item = await _queue_item(cipher, packs, case, subject.pack_code if subject else None, person)
     await db.commit()
     await drain_quietly(request.app.state.session_factory, authz)
     return item

@@ -1,3 +1,5 @@
+import { PathDraw } from "@/components/motion/PathDraw";
+
 /** A decorative picture of two parents and a child. It shows no result and no real data. */
 export function InheritanceArt() {
   return (
@@ -8,7 +10,8 @@ export function InheritanceArt() {
           <rect width="2" height="6" fill="#fff" fillOpacity=".4" />
         </pattern>
       </defs>
-      <path className="draw-path" d="M70 60C70 130 160 110 160 180M250 60C250 130 160 110 160 180" fill="none" stroke="#B9AEF7" strokeWidth="4" strokeLinecap="round" />
+      <PathDraw d="M70 60C70 130 160 110 160 180" fill="none" stroke="#B9AEF7" strokeWidth="4" strokeLinecap="round" />
+      <PathDraw d="M250 60C250 130 160 110 160 180" fill="none" stroke="#B9AEF7" strokeWidth="4" strokeLinecap="round" />
       {[[50, 50, "#14A89B"], [90, 50, "#E9DFCF"], [230, 50, "#14A89B"], [270, 50, "#E9DFCF"]].map(([x, y, fill]) => (
         <circle key={`${x}`} cx={x as number} cy={y as number} r="18" fill={fill as string} stroke="#fff" strokeWidth="3" />
       ))}

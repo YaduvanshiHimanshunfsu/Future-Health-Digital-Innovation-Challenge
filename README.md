@@ -8,7 +8,7 @@
 
 <br/>
 
-![Status: early build](https://img.shields.io/badge/status-early%20build%20%C2%B7%20phase%203-F4B740?style=for-the-badge)
+![Status: early build](https://img.shields.io/badge/status-early%20build%20%C2%B7%20phase%204%2C%20template%20mode-F4B740?style=for-the-badge)
 ![Prototype due 20 Nov 2026](https://img.shields.io/badge/prototype%20due-20%20Nov%202026-2F5BEA?style=for-the-badge)
 ![Synthetic data only](https://img.shields.io/badge/data-synthetic%20only-14A89B?style=for-the-badge)
 ![Global by design](https://img.shields.io/badge/scope-global%20by%20design-0E7C72?style=for-the-badge)

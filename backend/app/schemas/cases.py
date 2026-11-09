@@ -26,7 +26,11 @@ class CaseOut(Out):
     state: str
     step_due: datetime
     reasons: list[str]
+    # The time the country pack allows for this step, so a screen can show how much is left.
+    window_hours: int
     through_break_glass: bool
+    # The moves the care team can make next, from the state machine, so screens never guess.
+    next_steps: list[str] = []
     summary: CaseSummaryOut | None = None
 
 
@@ -38,6 +42,7 @@ class QueueItemOut(Out):
     state: str
     step_due: datetime
     reasons: list[str]
+    window_hours: int
     assigned_to_me: bool
 
 

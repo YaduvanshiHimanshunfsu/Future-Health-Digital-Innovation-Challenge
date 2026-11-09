@@ -14,7 +14,8 @@ _ACTIVE: dict[S, set[S]] = {
     S.EDUCATION_VIEWED: {S.COMPREHENSION_CHECKED, S.COUNSELLING_REQUESTED},
     S.COMPREHENSION_CHECKED: {S.COUNSELLING_REQUESTED, S.CLOSED},
     S.COUNSELLING_REQUESTED: {S.COUNSELLING_BOOKED},
-    S.COUNSELLING_BOOKED: {S.COUNSELLING_DONE},
+    # Back to requested when an appointment is cancelled, so it can be booked again.
+    S.COUNSELLING_BOOKED: {S.COUNSELLING_DONE, S.COUNSELLING_REQUESTED},
     S.COUNSELLING_DONE: {S.CONFIRMATORY_TEST_ORDERED, S.CLOSED},
     S.CONFIRMATORY_TEST_ORDERED: {S.CONFIRMED, S.NOT_CONFIRMED},
     S.CONFIRMED: {S.REPRO_GENOMICS_REFERRED, S.CLOSED},
@@ -39,7 +40,13 @@ async def record_opening(db: AsyncSession, case: CareCase, *, actor: str) -> Non
 
 
 async def transition(
-    db: AsyncSession, case: CareCase, to_state: S, *, actor: str, step_due: datetime
+    db: AsyncSession,
+    case: CareCase,
+    to_state: S,
+    *,
+    actor: str,
+    step_due: datetime,
+    fhir_ref: str | None = None,
 ) -> None:
     """The only place a case changes state, so every change leaves a step behind.
 
@@ -53,6 +60,13 @@ async def transition(
     case.step_due = step_due
     case.stalled = False
     db.add(
-        PathwayStep(case_id=case.id, from_state=current.value, to_state=to_state.value, actor=actor)
+        # Steps are insert-only for the app's database role, so the FHIR reference goes in now.
+        PathwayStep(
+            case_id=case.id,
+            from_state=current.value,
+            to_state=to_state.value,
+            actor=actor,
+            fhir_ref=fhir_ref,
+        )
     )
     await db.flush()

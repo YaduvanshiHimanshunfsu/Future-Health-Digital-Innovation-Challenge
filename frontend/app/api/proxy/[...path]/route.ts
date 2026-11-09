@@ -19,6 +19,12 @@ const ALLOWED_ROOTS = new Set([
   "chat",
   "options",
   "values",
+  "journey",
+  "booking",
+  "referrals",
+  "assessments",
+  "analytics",
+  "centres",
 ]);
 const SAFE_SEGMENT = /^[A-Za-z0-9_-]+$/;
 const MAX_BODY_BYTES = 64 * 1024;
@@ -52,12 +58,16 @@ async function forward(request: NextRequest, segments: string[]) {
   }
 
   const started = Date.now();
-  const upstream = await fetch(`${API_URL()}/v1/${segments.join("/")}`, {
+  // The query goes along as-is; the API validates every parameter. A huge one is refused here.
+  const query = request.nextUrl.search;
+  if (query.length > 512) return NextResponse.json({ code: "not_found" }, { status: 404 });
+  const upstream = await fetch(`${API_URL()}/v1/${segments.join("/")}${query}`, {
     method: request.method,
     headers,
     body,
     cache: "no-store",
-    signal: AbortSignal.timeout(15000),
+    // A chat answer may wait on a model, and the API caps that at about 20 s. Everything else is quick.
+    signal: AbortSignal.timeout(segments[0] === "chat" ? 35_000 : 15_000),
   }).catch(() => null);
   logEvent("api_call", {
     method: request.method,

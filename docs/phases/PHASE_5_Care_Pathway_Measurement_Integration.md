@@ -182,10 +182,12 @@
 
 ## Phase 5 exit gate
 
-- [ ] Demo journey passes in all three languages
-- [ ] Dashboard numbers trace to events
-- [ ] Fairness and time-to-referral tests pass
-- [ ] Rehearsal run done with a recorded backup
-- [ ] `brain.md` is up to date
+- [ ] Demo journey passes in all three languages. **Partly:** it passes in English on screen, and Hindi screens pass the accessibility run. Arabic has no text of its own until its text is approved
+- [x] Dashboard numbers trace to events: each measure names its source rows (`sources` in `/v1/analytics/overview`)
+- [x] Fairness and time-to-referral tests pass (`tests/unit/test_fairness.py`, `tests/api/test_analytics.py`)
+- [ ] Rehearsal run done with a recorded backup. **Not yet:** it needs a person to run and record it
+- [x] `brain.md` is up to date (#018)
+
+**Status, 9 Nov 2026:** built and tested; see `docs/phases/CROSS_VERIFICATION.md`. Booking and the centre finder are real, not mocked. The centre lists are empty until filled from a public source, and the screen says so. Notifications are mocked: nothing is really sent.
 
 **If behind:** mock booking and centre finder and label them. Keep the pathway and metrics real.

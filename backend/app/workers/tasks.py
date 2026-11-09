@@ -38,3 +38,34 @@ def apply_authz_outbox() -> None:
 @celery_app.task(name="samvid.reconcile_authz")  # type: ignore[untyped-decorator]
 def reconcile_authz() -> None:
     asyncio.run(_with_authz(outbox.reconcile))
+
+
+async def _scan_pathway() -> None:
+    from app.core.config import decode_key
+    from app.country_packs.loader import load_registry
+    from app.notifications.service import MockNotifier
+    from app.pathway.scheduler import scan
+
+    settings = get_settings()
+    engine = build_engine(settings.database_url.get_secret_value())
+    packs = load_registry(
+        settings.packs_dir,
+        settings.enabled_packs,
+        settings.default_pack,
+        production=settings.is_production,
+    )
+    try:
+        await scan(
+            build_session_factory(engine),
+            packs,
+            # The prototype sends no real messages: the mock records what would have gone out.
+            MockNotifier(),
+            decode_key(settings.analytics_hmac_key, "ANALYTICS_HMAC_KEY"),
+        )
+    finally:
+        await engine.dispose()
+
+
+@celery_app.task(name="samvid.scan_pathway")  # type: ignore[untyped-decorator]
+def scan_pathway() -> None:
+    asyncio.run(_scan_pathway())

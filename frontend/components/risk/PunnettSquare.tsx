@@ -29,7 +29,8 @@ export function PunnettSquare({ visual }: { visual: PunnettVisual }) {
               {row.map((cell, cellIndex) => {
                 const outcome = visual.legend[cell] ?? "other";
                 return (
-                  <td key={cellIndex} className="rounded-chip border border-line bg-glaze p-2">
+                  // Each cell turns over into place, one after another, like tiles being laid.
+                  <td key={cellIndex} className="tile-in rounded-chip border border-line bg-glaze p-2" style={{ animationDelay: `${(rowIndex * row.length + cellIndex) * 110}ms` }}>
                     <span aria-hidden="true" className={`outcome-${outcome} mx-auto mb-1 block h-5 w-5 rounded-full`} />
                     <span className="font-semibold">{cell}</span>
                     <span className="block text-xs text-slate">{t(`outcome.${outcome}`)}</span>

@@ -5,6 +5,19 @@ import { callApi } from "@/lib/api/client";
 import type { ChatReply } from "@/lib/api/types";
 import { useI18n } from "@/components/layout/I18nProvider";
 import { Notice } from "@/components/ui/ClayCard";
+import { ListenButton } from "@/components/layout/ListenButton";
+
+const SUGGESTIONS = ["ask.suggest_1", "ask.suggest_2", "ask.suggest_3"];
+
+/** Three beads that bounce while an answer is on its way, and only then. */
+function Typing({ label }: { label: string }) {
+  return (
+    <p role="status" className="flex items-center gap-2 text-sm text-slate">
+      <span aria-hidden="true" className="beads"><span /><span /><span /></span>
+      <span className="sr-only">{label}</span>
+    </p>
+  );
+}
 
 type Turn = { question: string; reply: ChatReply | null; failed: boolean };
 
@@ -15,8 +28,8 @@ export function AskSamvid() {
   const [conversation, setConversation] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  async function send() {
-    const asked = question.trim();
+  async function send(text = question) {
+    const asked = text.trim();
     if (!asked || busy) return;
     setBusy(true);
     setQuestion("");
@@ -37,18 +50,32 @@ export function AskSamvid() {
 
   return (
     <div className="plate grid gap-4">
+      {turns.length === 0 ? (
+        <div>
+          <p className="label">{t("ask.suggest_t")}</p>
+          <ul className="flex flex-wrap gap-2">
+            {SUGGESTIONS.map((key) => (
+              <li key={key}>
+                <button type="button" className="chip min-h-11 cursor-pointer hover:border-lapis hover:bg-lapis-tint" disabled={busy} onClick={() => void send(t(key))}>
+                  {t(key)}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
       <ol className="grid gap-3" aria-live="polite" data-testid="chat-log">
         {turns.map((turn, index) => (
           <li key={index} className="grid gap-2">
-            <p className="ms-auto max-w-[85%] rounded-field bg-lapis-tint px-4 py-2">
+            <p className="bubble-in ms-auto max-w-[85%] rounded-field rounded-ee-sm bg-lapis-tint px-4 py-2">
               <span className="sr-only">{t("ask.you")}: </span>
               {turn.question}
             </p>
             {turn.reply ? (
-              <div className="max-w-[85%] rounded-field border border-line bg-porcelain px-4 py-3" data-testid="chat-answer" data-boundary={turn.reply.boundary}>
+              <div className="bubble-in max-w-[85%] rounded-field rounded-es-sm border border-lilac/60 bg-plum-tint/60 px-4 py-3" data-testid="chat-answer" data-boundary={turn.reply.boundary}>
                 <span className="sr-only">{t("ask.samvid")}: </span>
                 {/* Plain text only. Nothing an answer says can become markup or a link. */}
-                <p className="whitespace-pre-line">{turn.reply.answer}</p>
+                <p id={`answer-${index}`} className="whitespace-pre-line">{turn.reply.answer}</p>
                 {turn.reply.contacts.length > 0 ? (
                   <ul className="mt-2 text-sm">
                     <li className="font-semibold">{t("ask.contacts")}</li>
@@ -58,12 +85,15 @@ export function AskSamvid() {
                   </ul>
                 ) : null}
                 {turn.reply.escalated ? <p className="mt-2 font-semibold text-plum-deep">{t("ask.escalated")}</p> : null}
-                <p className="mt-1 text-xs text-slate">{t(turn.reply.source === "llm" ? "ask.from_ai" : "ask.from_template")}</p>
+                <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-xs text-slate">{t(turn.reply.source === "llm" ? "ask.from_ai" : "ask.from_template")}</p>
+                  <ListenButton targetId={`answer-${index}`} />
+                </div>
               </div>
             ) : turn.failed ? (
               <Notice tone="problem">{t("error.generic")}</Notice>
             ) : (
-              <p role="status" className="muted">{t("common.working")}</p>
+              <Typing label={t("common.working")} />
             )}
           </li>
         ))}

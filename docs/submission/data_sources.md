@@ -16,6 +16,17 @@
 | HGVS variant notation | How variants are written | No | A naming convention, with no data taken from it |
 | HGNC-style gene symbols | Naming genes such as HBB | No | **Not confirmed** |
 
+| Synthetic programme activity (`backend/app/ops/seed_metrics.py`) | The metrics dashboard: 360 invented people with invented journeys and scores | No, fully generated, with no account, ID or findings | Own work. No group is given worse odds on purpose, so any gap it shows is noise |
+| SURE test (Légaré et al., Can Fam Physician 2010) | A four-item decision check, in the team's adapted wording | No | **Not confirmed.** The authors make it available with citation; written permission still to be confirmed. Labelled "adapted, not validated in Hindi or Arabic" on screen |
+
+### Services the prototype sends data to
+
+| Service | What it receives | What it never receives | Status |
+|---|---|---|---|
+| Google Gemini API (when `LLM_PROVIDER` includes `gemini` and a key is set) | The **redacted** question (unknown words masked), listed fact fields without any figures, and approved knowledge-base passages | Names, ID numbers, figures, the person's own words outside the word list, the user's email | Hosted model, so a data processor. Production refuses it until `LLM_EXTERNAL_APPROVED=true`, after a data processing agreement. The free tier's terms allow Google to use inputs to improve its products, which is acceptable only because every input here is synthetic |
+| Ollama on the same machine (`LLM_PROVIDER` includes `ollama`) | The same as Gemini | The same | Runs locally: nothing leaves the machine. Model `qwen2.5:3b` (Apache 2.0, per its model card; to confirm) |
+| Browser speech (Listen button) | The text on screen, spoken by an on-device voice | Anything, if no on-device voice exists: then there is no button | On-device only; network voices are filtered out |
+
 **About the variants in the personas:** a few, such as `c.20A>T` in HBB, are written like well-known textbook variants, and others are made up. They're attached only to fictional people. The random population's variants are generated, and don't correspond to anything on purpose.
 
 **LOINC notice:** This material contains content from LOINC (http://loinc.org). LOINC is copyright Regenstrief Institute, Inc. and the Logical Observation Identifiers Names and Codes (LOINC) Committee, and is available at no cost under the license at http://loinc.org/license. LOINC is a registered United States trademark of Regenstrief Institute, Inc. The wording comes from secondary sources, so check it, and the copyright years, against the primary text.

@@ -428,3 +428,69 @@ Bugs found by testing, and fixed: error handlers read global settings; FastAPI t
 - 36 browser tests pass against the rebuilt container.
 - The launcher passes ruff, and mypy in strict mode.
 
+## #017 · 2026-11-09 · Cross-checked Phases 1 to 4, built the frontend's motion and chart layer, and found a router safety gap
+**What:**
+- **Cross-verification.** Re-ran everything on the real stack: the full backend suite (Phases 1 to 4), the smoke script, every browser test, and all the scanners. The user had committed and pushed in the meantime, and no secret files are tracked.
+- **Frontend: 14 design-spec components were still empty stubs.** They are now built and wired to real data:
+  - Motion: rise-in on scroll, count-up for counts, self-drawing lines, a pulse that stops after three, flip tiles, and page transitions. Hooks are in `frontend/lib/motion.ts`.
+  - Layout: the reading-level switch, a read-aloud button, a privacy badge, the mosaic divider and the tile band.
+  - Risk visuals: the couple-match tiles and the per-pregnancy strip.
+  - A chart kit: bars, donut, line, heatmap and a time-left ring.
+- **Where it shows:**
+  - Dashboard: a progress rail and an active-share count.
+  - Chat: starter questions, typing beads and listen buttons.
+  - Related-couples page: myth flip tiles.
+  - Couple check: the match and pregnancy visuals.
+  - Counsellor queue: a priority chart, counts, and a time-left ring per case.
+  - Home: mosaic dividers and scroll reveals.
+  - Detailed reading level: sources and tables open by default.
+- **Backend, for the time-left ring.** Queue and case responses now carry `window_hours`, the step window from the country pack, so the ring has a real basis. Pack codes come from one query for the whole queue, not one query per case.
+- **Phase 4 records:**
+  - The early evaluation: `scripts/eval_router.py`, with two question sets.
+  - The content review log.
+  - The exit gate, threat model, Phase 4 evidence table and project structure.
+  - `Run_Samvid.py`: Phase 4 marked done, in template mode; demo-counsellor added.
+
+**The router gap (the most important finding):**
+- **What the first evaluation showed.** The keyword router recognised only the phrasings it was written from. 28 of 84 questions meant for a person got the automatic education answer, including "I don't want to live anymore". The cause was that education was the fallback for anything unrecognised.
+- **Fix 1, the fallback.** Education is no longer the fallback. Only a message naming a topic Samvid explains gets an automatic answer. Anything else goes to a person, with the support line shown as for distress.
+- **Fix 2, the rules.** They are wider in all three languages.
+- **Fix 3, an Arabic matching bug.** Roman Arabic is compared after repeated letters are collapsed, so every rule spelled with a double letter could never match. That included the old carrier-context rule for the English word "carrier". A test now checks every Arabic rule.
+- **How it was measured honestly.** The 84 questions became the development set, now used as a regression gate. A new hold-out set of 59 questions, never used for tuning, gives the real figure: **10 of 59 questions meant for a person still got the automatic answer, and distress was recognised as distress 0 of 9 times**. Most of those still reached a person, as clinical or unclear.
+- **What's left.** V4.3.3 isn't met. Rules can't recognise distress they haven't seen. Closing the gap needs a classifier that can only escalate a route, never downgrade it (that depends on the model decision), plus native-speaker word lists.
+
+**Why:** the user asked for the phases to be cross-checked and for a dynamic frontend with colour, motion, transitions and room for graphs, with no shortcuts. The evaluation is the Phase 4 exit gate's last item, and it mattered more than any visual.
+
+**Design choices:**
+- **Everything renders visible on the server.** Entrances only hide content that is below the fold once script is running, so nothing depends on JavaScript.
+- **Only the hero background and loading indicators loop.** That is the spec's rule, and a browser test now enforces it on every element. The header strip and the step pulse used to loop forever.
+- **Count-up never touches a chance.** A rolling number adds drama to a figure someone should read calmly, and a test keeps CountUp out of risk components.
+- **Read-aloud uses only on-device voices.** A cloud voice would send the person's result to a speech service, so with no local voice there is no button.
+- **The couple-match motion is the same for every outcome.** Nothing is celebrated and nothing looks alarming.
+- **Charts take suppressed counts as null and draw "<10".** A suppressed count is never drawn as zero.
+
+**Bugs found by testing, all fixed:**
+- The dashboard announced two "current" steps at once.
+- The counsellor's summary showed raw labels such as `two_copies`, in English even on the Hindi page.
+- The Arabic rule bug above.
+
+### Verification
+- 779 (plus 1 added during the run, passing on its own) backend tests pass (90% coverage). The 772 from the start of the session passed too, before any change.
+- 50 browser tests pass against the container. Only the container serves port 3000.
+- Smoke script: 65 of 65 checks pass on the real stack.
+- 16 wording tests pass.
+- ruff, ruff format, mypy strict, bandit, pip-audit and npm audit are clean.
+- **Not verified:**
+  - No native speaker has read the Hindi or the Roman Arabic evaluation questions.
+  - No clinician has reviewed the content.
+  - No counsellor has rated the summary.
+  - The real listen button has only been tested with a stubbed speech engine.
+  - CI hasn't run on these changes, which aren't committed.
+
+### Follow-ups
+- [ ] Decide the model provider. That unblocks an escalate-only classifier for the router gap (user)
+- [ ] Native speakers to write the Phase 6.1 evaluation set and widen the word lists (user)
+- [ ] Hindi review of the new interface text (31 keys, plus 13 counsellor labels) (user)
+- [ ] Clinician for the knowledge base; counsellor for "must inform" and G6PD (user)
+- [ ] Phase 5 analytics endpoints, then wire the six dashboard charts to the kit
+- [ ] Commit and push when asked

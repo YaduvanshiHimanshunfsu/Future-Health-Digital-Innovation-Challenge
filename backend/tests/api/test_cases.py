@@ -28,6 +28,9 @@ async def test_a_p2_case_reaches_the_pool_and_can_be_claimed(stack: Stack) -> No
     assert [item["id"] for item in pool] == [str(case.id)]
     assert pool[0]["priority"] == "P2"
     assert pool[0]["reasons"] == ["x_linked_carrier"]
+    # The Abu Dhabi pack's window for P2, so the screen's time-left ring has a real basis.
+    pack = load_pack(DEFAULT_PACKS_DIR / "ae-abu-dhabi")
+    assert pool[0]["window_hours"] == pack.strata.sla_hours.P2
 
     claimed = await stack.http.post(f"/v1/cases/{case.id}/claim", headers=counsellor)
     assert claimed.status_code == 200
@@ -205,5 +208,29 @@ async def test_queue_items_carry_no_identity(stack: Stack) -> None:
     pool: list[dict[str, Any]] = (
         await stack.http.get("/v1/cases?view=pool", headers=counsellor)
     ).json()
-    assert set(pool[0]) == {"id", "priority", "state", "step_due", "reasons", "assigned_to_me"}
+    assert set(pool[0]) == {
+        "id",
+        "priority",
+        "state",
+        "step_due",
+        "reasons",
+        "window_hours",
+        "assigned_to_me",
+    }
     assert "DMD" not in str(pool)
+
+
+async def test_priority_only_moves_up_on_its_own(stack: Stack) -> None:
+    """V4.5.4. A later, milder trigger never lowers an urgent case, and never pushes its due time out."""
+    await stack.ingest(bundle_for("uncertain"))
+    person = await stack.sign_in("u-login", "uncertain")
+    await stack.http.post("/v1/chat", json={"message": "I can't go on"}, headers=person)
+    urgent = await stack.only_case()
+    assert urgent.priority == "P1"
+
+    await stack.http.post(
+        "/v1/chat", json={"message": "What medicine should I take?"}, headers=person
+    )
+    after = await stack.only_case()
+    assert after.priority == "P1"
+    assert after.step_due <= urgent.step_due

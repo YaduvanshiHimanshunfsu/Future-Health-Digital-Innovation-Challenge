@@ -12,6 +12,7 @@ MIN_KEY_BYTES = 32
 DEFAULT_PACKS_DIR = Path(__file__).resolve().parents[2] / "packs"
 
 CommaList = Annotated[list[str], NoDecode]
+LLM_PROVIDERS = frozenset({"template", "gemini", "ollama", "openai_compat"})
 
 
 def decode_key(value: SecretStr, name: str) -> bytes:
@@ -62,7 +63,20 @@ class Settings(BaseSettings):
     national_id_hmac_key: SecretStr
     analytics_hmac_key: SecretStr
 
-    llm_provider: Literal["template", "azure", "openai_compat"] = "template"
+    # Which models write drafts and double-check the router, tried in order: "gemini,ollama" uses
+    # Ollama whenever Gemini fails. "template" calls nothing.
+    llm_provider: CommaList = ["template"]
+    gemini_model: str = "gemini-2.5-flash"
+    ollama_model: str = "qwen2.5:3b"
+    openai_compat_model: str | None = None
+    llm_timeout_seconds: float = Field(default=15.0, gt=0, le=60)
+    gemini_api_key: SecretStr | None = None
+    ollama_url: AnyHttpUrl = AnyHttpUrl("http://127.0.0.1:11434")
+    openai_compat_url: AnyHttpUrl | None = None
+    openai_compat_api_key: SecretStr | None = None
+    # A hosted model is a data processor. Production refuses one until a data processing agreement
+    # is in place and this is set. Ollama on the same network needs no such step.
+    llm_external_approved: bool = False
 
     packs_dir: Path = DEFAULT_PACKS_DIR
     enabled_packs: CommaList = ["ae-abu-dhabi", "in-india"]
@@ -73,7 +87,12 @@ class Settings(BaseSettings):
     lab_attestation: Literal["demo", "unverified", "verified"] = "demo"
 
     @field_validator(
-        "allowed_hosts", "cors_origins", "supported_languages", "enabled_packs", mode="before"
+        "allowed_hosts",
+        "cors_origins",
+        "supported_languages",
+        "enabled_packs",
+        "llm_provider",
+        mode="before",
     )
     @classmethod
     def _split_commas(cls, value: object) -> object:
@@ -88,6 +107,12 @@ class Settings(BaseSettings):
     def _key_is_strong(cls, value: SecretStr) -> SecretStr:
         decode_key(value, "HMAC key")
         return value
+
+    @field_validator("gemini_api_key", "openai_compat_api_key", mode="before")
+    @classmethod
+    def _blank_is_missing(cls, value: object) -> object:
+        # Compose passes an unset key as an empty string, which means "no key", not a key of "".
+        return None if isinstance(value, str) and not value.strip() else value
 
     @model_validator(mode="after")
     def _consistent(self) -> "Settings":
@@ -108,6 +133,9 @@ class Settings(BaseSettings):
             decode_key(self.local_kek_b64, "LOCAL_KEK_B64")
         if self.default_pack not in self.enabled_packs:
             raise ValueError("default_pack must be one of enabled_packs")
+        unknown = set(self.llm_provider) - LLM_PROVIDERS
+        if unknown or not self.llm_provider:
+            raise ValueError(f"LLM_PROVIDER takes a list of: {', '.join(sorted(LLM_PROVIDERS))}")
         if self.env == "prod":
             self._check_production()
         return self
@@ -127,6 +155,9 @@ class Settings(BaseSettings):
             raise ValueError("production needs VAULT_ADDR over https and VAULT_TOKEN")
         if "*" in self.allowed_hosts or "*" in self.cors_origins:
             raise ValueError("wildcard hosts or origins are not allowed in production")
+        hosted = {"gemini", "openai_compat"} & set(self.llm_provider)
+        if hosted and not self.llm_external_approved:
+            raise ValueError("a hosted model needs LLM_EXTERNAL_APPROVED=true in production")
         for name, url in (("OIDC_ISSUER", self.oidc_issuer), ("OIDC_JWKS_URL", self.oidc_jwks_url)):
             if url.scheme != "https":
                 raise ValueError(f"{name} must use https in production")

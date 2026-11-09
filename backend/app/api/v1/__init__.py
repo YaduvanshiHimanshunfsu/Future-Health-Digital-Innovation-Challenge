@@ -2,8 +2,12 @@ from fastapi import APIRouter
 
 from app.api.v1 import (
     access_log,
+    analytics,
+    assessments,
+    booking,
     break_glass,
     cases,
+    centres,
     chat,
     consents,
     couples,
@@ -12,6 +16,8 @@ from app.api.v1 import (
     me,
     options,
     packs,
+    pathway,
+    referrals,
     reports,
     results,
     shared,
@@ -35,5 +41,11 @@ for module in (
     chat,
     options,
     values,
+    pathway,
+    booking,
+    referrals,
+    centres,
+    assessments,
+    analytics,
 ):
     api_v1.include_router(module.router)

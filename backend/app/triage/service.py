@@ -34,9 +34,14 @@ def reasons_aad(case: CareCase) -> str:
     return f"care_case:{case.id}:reasons"
 
 
-def due_at(pack: CountryPack, priority: str) -> datetime:
+def sla_hours(pack: CountryPack, priority: str) -> int:
+    """How long the pack allows for a step at this priority."""
     hours: int = getattr(pack.strata.sla_hours, priority)
-    return datetime.now(UTC) + timedelta(hours=hours)
+    return hours
+
+
+def due_at(pack: CountryPack, priority: str) -> datetime:
+    return datetime.now(UTC) + timedelta(hours=sla_hours(pack, priority))
 
 
 async def triage_result(

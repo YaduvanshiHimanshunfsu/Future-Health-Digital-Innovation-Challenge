@@ -88,31 +88,134 @@
   /* Icons in an array settle in, a row at a time. The final picture is what counts, never the motion. */
   .icon-settle { animation: settle .45s cubic-bezier(.2,.8,.2,1.2) both; }
 
-  /* The current step in a journey breathes gently. */
-  .breathe { position: relative; }
-  .breathe::before {
-    content: ""; position: absolute; inset: -3px; border-radius: inherit; pointer-events: none;
-    box-shadow: 0 0 0 0 rgba(47,91,234,.45); animation: breathe 2.6s ease-out infinite;
-  }
-
-  /* A strip of glazed tiles under the header, gently shimmering. */
+  /* A strip of glazed tiles under the header. It shimmers across twice as a page opens, then rests:
+     only the home page's idle background may loop. */
   .mosaic-strip {
     height: 4px;
     background: linear-gradient(90deg, #2f5bea, #14a89b, #f4b740, #e58fa8, #7a4fd6, #2f5bea);
-    background-size: 300% 100%; animation: flow 14s linear infinite;
+    background-size: 300% 100%; animation: flow 5s ease-in-out 2 alternate both;
   }
 }
 
-/* Lines of inheritance draw themselves in, once. */
-.draw-path { stroke-dasharray: 360; stroke-dashoffset: 360; animation: draw 1.4s .2s ease-out forwards; }
-@keyframes draw { to { stroke-dashoffset: 0; } }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 @keyframes drift-a { to { transform: translate(8vmax, 6vmax) scale(1.12); } }
 @keyframes drift-b { to { transform: translate(-7vmax, -5vmax) scale(1.08); } }
 @keyframes flow { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
 @keyframes sheen { to { transform: translateX(120%); } }
 @keyframes settle { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
-@keyframes breathe { 0% { box-shadow: 0 0 0 0 rgba(47,91,234,.45); } 70%, 100% { box-shadow: 0 0 0 10px rgba(47,91,234,0); } }
+
+/* The motion library (components/motion) and the visuals built on it. docs/frontend.md section 8.1. */
+:root {
+  --dur-xs: 150ms; --dur-sm: 250ms; --dur-md: 400ms; --dur-lg: 700ms;
+  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* page-transition: each page fades in with a short rise. */
+.page-enter { animation: page-in var(--dur-sm) var(--ease-settle) both; }
+@keyframes page-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* rise-in: content below the fold waits, hidden, until it scrolls into view. See lib/motion.ts. */
+[data-reveal="waiting"] { opacity: 0; transform: translateY(16px); }
+[data-reveal="shown"] { transition: opacity var(--dur-md) var(--ease-settle), transform var(--dur-md) var(--ease-settle); }
+
+/* path-draw: the line is fully drawn unless the page is running and the line hasn't been seen yet. */
+.path-draw { stroke-dasharray: 1; stroke-dashoffset: 0; }
+.path-draw[data-draw="waiting"] { stroke-dashoffset: 1; }
+.path-draw[data-draw="shown"] { animation: draw-in .9s var(--ease-settle) both; }
+@keyframes draw-in { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+/* pulse-current: three pulses, then rest. */
+.pulse-current { animation: pulse 2.4s ease-in-out 3; }
+@keyframes pulse { 0%, 100% { transform: none; box-shadow: 0 0 0 0 rgba(47,91,234,.4); } 50% { transform: scale(1.04); box-shadow: 0 0 0 8px rgba(47,91,234,0); } }
+
+/* tile-flip: rotateY with the back face hidden; the taller face sets the height. */
+.tile-flip { perspective: 1200px; height: 100%; }
+.tile-flip-inner { display: grid; height: 100%; transition: transform .5s var(--ease-settle); transform-style: preserve-3d; }
+.tile-face { grid-area: 1 / 1; display: flex; flex-direction: column; align-items: flex-start; gap: .75rem; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.tile-back { transform: rotateY(180deg); }
+.tile-flip[data-flipped="true"] .tile-flip-inner { transform: rotateY(180deg); }
+/* Laying tiles: Punnett cells turn into place, once. */
+.tile-in { animation: tile-in .5s var(--ease-settle) both; }
+@keyframes tile-in { from { opacity: 0; transform: perspective(400px) rotateY(-90deg); } to { opacity: 1; transform: none; } }
+
+/* Mosaic divider: small glazed tiles that settle in a wave, once. */
+.mosaic-divider { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.mosaic-divider > span { width: 14px; height: 14px; border-radius: 4px; box-shadow: inset 0 1px 0 rgba(255,255,255,.55); animation: settle .45s var(--ease-settle) both; }
+
+/* A sand band with the 8-point star tile at 6% opacity. */
+.tile-band {
+  background-color: #f3ede4;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M24 4l5.5 13.2L42.6 24l-13.1 6.8L24 44l-5.5-13.2L5.4 24l13.1-6.8z' fill='%232F5BEA' fill-opacity='.06'/%3E%3C/svg%3E");
+  border: 1px solid #e6ded2;
+}
+
+/* Progress rail above the journey steps. */
+.progress-rail { height: 6px; border-radius: 999px; background: #e6ded2; overflow: hidden; }
+.progress-rail > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #14a89b, #2f5bea); animation: grow-x var(--dur-lg) var(--ease-settle) both; transform-origin: left; }
+[dir="rtl"] .progress-rail > span { transform-origin: right; }
+@keyframes grow-x { from { transform: scaleX(0); } to { transform: none; } }
+
+/* Reading level control: three joined pills. The radio itself is hidden, so its focus shows on the pill. */
+.segmented { display: inline-flex; border: 1px solid #e6ded2; border-radius: 999px; background: #fff; padding: 3px; gap: 2px; }
+.segmented label { display: inline-flex; align-items: center; min-height: 38px; padding: 0 14px; border-radius: 999px; font-size: .8125rem; font-weight: 600; color: #5b6275; cursor: pointer; transition: background-color var(--dur-sm) ease, color var(--dur-sm) ease; }
+.segmented label:hover { background: #f3ede4; }
+.segmented label[data-checked="true"] { background: #2f5bea; color: #fff; box-shadow: 0 4px 10px -4px rgba(47,91,234,.5); }
+.segmented label:has(input:focus-visible) { outline: 3px solid #2f5bea; outline-offset: 2px; }
+
+/* Reading levels. Simple: larger text with more room. Detailed changes content, not size. */
+main[data-reading="simple"] { font-size: 1.125rem; line-height: 1.75; }
+main[data-reading="simple"] .muted { font-size: 1rem; }
+
+/* glass-match: two partner tiles slide together; the overlap shimmers only while the check runs. */
+.match-box { --dir: 1; display: flex; align-items: center; justify-content: center; padding: 1rem 0; }
+[dir="rtl"] .match-box { --dir: -1; }
+.match-tile { display: grid; place-items: center; width: 7.5rem; height: 5.5rem; border-radius: 20px; color: #1f2433; box-shadow: inset 0 1.5px 0 rgba(255,255,255,.9), 0 10px 24px -8px rgba(31,36,51,.18); }
+.match-you { background: linear-gradient(160deg, #edf1fe, #c9d6fb); animation: slide-in-start .6s var(--ease-settle) both; }
+.match-partner { background: linear-gradient(160deg, #e3f6f4, #b7e6e0); animation: slide-in-end .6s var(--ease-settle) both; }
+.match-overlap { z-index: 1; display: grid; place-items: center; min-width: 5.5rem; max-width: 9rem; min-height: 3.75rem; margin-inline: -1.75rem; padding: .5rem .75rem; text-align: center; border-radius: 16px; background: rgba(255,255,255,.9); border: 1px solid #e6ded2; box-shadow: 0 6px 18px -6px rgba(47,91,234,.35); animation: settle .5s .45s var(--ease-settle) both; }
+.match-box[data-state="checking"] .match-overlap { background: linear-gradient(110deg, #edf1fe 20%, #e3f6f4 50%, #edf1fe 80%); background-size: 220% 100%; animation: settle .5s .45s var(--ease-settle) both, flow 1.6s ease-in-out .9s infinite alternate; }
+@keyframes slide-in-start { from { opacity: 0; transform: translateX(calc(var(--dir) * -48px)); } to { opacity: 1; transform: none; } }
+@keyframes slide-in-end { from { opacity: 0; transform: translateX(calc(var(--dir) * 48px)); } to { opacity: 1; transform: none; } }
+
+/* Per-pregnancy strip: four tiles laid one after another. */
+.strip-tile { animation: rise .5s var(--ease-settle) both; }
+
+/* bead-typing: while an answer is loading, and only then. */
+.beads { display: inline-flex; gap: 4px; }
+.beads > span { width: 7px; height: 7px; border-radius: 999px; background: #7a4fd6; animation: bead .6s ease-in-out infinite alternate; }
+.beads > span:nth-child(2) { animation-delay: .15s; background: #2f5bea; }
+.beads > span:nth-child(3) { animation-delay: .3s; background: #14a89b; }
+@keyframes bead { from { transform: translateY(2px); opacity: .5; } to { transform: translateY(-4px); opacity: 1; } }
+.bubble-in { animation: rise var(--dur-md) var(--ease-settle) both; }
+
+/* Charts. Bars grow from the reading side, once, when seen. */
+.bar-track { position: relative; display: block; height: 14px; border-radius: 999px; background: #f3ede4; }
+.bar { position: absolute; inset-block: 0; inset-inline-start: 0; border-radius: inherit; transform-origin: left; }
+[dir="rtl"] .bar { transform-origin: right; }
+[data-reveal-bars="waiting"] .bar { transform: scaleX(0); }
+[data-reveal-bars="shown"] .bar { animation: grow-x var(--dur-lg) var(--ease-settle) both; }
+.bar-reference { position: absolute; inset-block: -4px; width: 2px; background: #1f2433; border-radius: 1px; }
+/* Suppressed values are hatched, never drawn as zero. */
+.bar-suppressed { background-color: #f3ede4; background-image: repeating-linear-gradient(45deg, #c9bda9 0 2px, transparent 2px 6px); }
+[data-reveal-donut="waiting"] .donut { opacity: 0; }
+[data-reveal-donut="shown"] .donut { animation: donut-in var(--dur-lg) var(--ease-settle) both; }
+@keyframes donut-in { from { opacity: 0; transform: rotate(-150deg) scale(.85); } to { opacity: 1; transform: rotate(-90deg); } }
+.heat-cell { min-width: 3rem; padding: .5rem; border-radius: 10px; text-align: center; font-variant-numeric: tabular-nums; font-weight: 600; color: #1f2433; }
+.sla-arc { animation: sla-in var(--dur-lg) var(--ease-settle) both; }
+@keyframes sla-in { from { stroke-dasharray: 0 100; } }
+
+@media print {
+  [data-reveal], .path-draw { opacity: 1 !important; transform: none !important; stroke-dashoffset: 0 !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Fades only: the flip becomes a cross-fade, and nothing travels or turns. */
+  .tile-flip-inner, .tile-face { transform: none !important; }
+  .tile-face { backface-visibility: visible; -webkit-backface-visibility: visible; }
+  .tile-flip[data-flipped="true"] .tile-face:not(.tile-back), .tile-flip[data-flipped="false"] .tile-back { opacity: 0; visibility: hidden; }
+  [data-reveal="waiting"] { opacity: 1; transform: none; }
+  .path-draw[data-draw="waiting"] { stroke-dashoffset: 0; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after { animation-duration: .01ms !important; animation-delay: 0ms !important; transition-duration: .01ms !important; }

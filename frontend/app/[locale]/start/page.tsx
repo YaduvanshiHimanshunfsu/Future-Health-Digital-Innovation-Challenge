@@ -28,6 +28,7 @@ export default async function Start({
       const roles = await currentRoles();
       if (roles.includes("counsellor") || roles.includes("physician")) redirect(`/${locale}/counsellor`);
       if (roles.includes("auditor")) redirect(`/${locale}/admin/break-glass`);
+      if (roles.includes("program_admin")) redirect(`/${locale}/admin`);
       if (profile.data.service_consent_at) redirect(`/${locale}/app`);
       return (
         <SiteShell {...shell}>

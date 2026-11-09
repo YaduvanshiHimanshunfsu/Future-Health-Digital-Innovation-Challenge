@@ -1,5 +1,9 @@
-// FILE: frontend/components/motion/PulseCurrent.tsx
-// STATUS: STUB. Documentation only; no code until explicitly requested.
-// PURPOSE: Current-step pulse.
-// PLANNED LOGIC: Maximum 3 loops.
-// PHASE: 1.6 | SPEC: frontend.md §7, §8, §9
+import type { ReactNode } from "react";
+
+/**
+ * Draws the eye to where someone is now, such as the current step in their journey. It pulses three
+ * times and then rests, because nothing but the home page's idle background is allowed to loop.
+ */
+export function PulseCurrent({ children, active = true, className = "" }: { children: ReactNode; active?: boolean; className?: string }) {
+  return <span className={`${active ? "pulse-current" : ""} ${className}`}>{children}</span>;
+}

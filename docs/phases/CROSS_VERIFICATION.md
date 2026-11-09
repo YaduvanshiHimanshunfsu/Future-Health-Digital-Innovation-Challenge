@@ -353,6 +353,75 @@ Phases 1 to 3. All later checks are open.
 | V3.5.4 | Partly | English, Hindi, Romanised Arabic and Gulf dialect samples pass, written by the author. Native speakers still need to write the real samples, and Arabic script waits on approval |
 | V3.5.5 | **Done** | `test_only_listed_fields_reach_the_llm` |
 
+### Phase 4 evidence
+
+**Last full run, 9 Nov 2026: 779 (plus 1 added during the run, passing on its own) backend tests pass, with 90% coverage.** 50 browser tests pass against the containerised app, and `scripts/smoke_stack.py` passes all 65 checks on the real stack. ruff, mypy strict, bandit, pip-audit and npm audit are clean. Phases 1 to 3 were re-verified by the same run: their tests are part of it, and none failed.
+
+**Mode:** template only. No model provider is connected, so every answer is reviewed template text with figures filled in by the risk engine. The plan allows this ("If behind: ship with templates only and say so").
+
+**The early evaluation found a serious gap.** The first run of `scripts/eval_router.py` showed that the keyword router recognised only the phrasings it was written from. 28 of 84 questions meant for a person, including "I don't want to live anymore", got the automatic education answer, because education was the fallback for anything unrecognised. Three changes followed:
+- **Education is no longer the fallback.** Only a message naming a topic Samvid explains is answered automatically. Anything else goes to a person, with the same support line as distress.
+- **Wider rules in all three languages.**
+- **A bug in the Arabic rules is fixed.** Roman Arabic is compared after repeated letters are collapsed, so any rule spelled with a double letter could never match, including the carrier context "carrier". A test now guards against it.
+
+Those 84 questions then became the development set, so their score now shows regressions only. A **hold-out set of 59 questions**, written afterwards and never used for tuning, gives the honest figure:
+
+| | Before the fix (development set) | After (hold-out set) |
+|---|---|---|
+| Questions meant for a person that got the automatic answer | 28 of 84 | **10 of 59** |
+| Distress recognised as distress | 3 of 12 | **0 of 9** (most reached a person, as clinical or unclear) |
+
+**So V4.3.3 (clinical recall of at least 95% in each language) is not met.** A rule list can't recognise distress it hasn't seen. The way forward is a classifier that can only ever escalate, never downgrade a route (it needs the model decision), plus native-speaker word lists. Until then the limitation is stated, not hidden.
+
+| Check | Status | Evidence |
+|---|---|---|
+| V4.1.1 | **Done** | `app/kb/ingest.py` refuses a file without front matter: `tests/unit/test_kb.py` |
+| V4.1.2 | **Done** | `test_kb.py`: retrieval never crosses language or level |
+| V4.1.3 | Not yet | No native speaker has read the Hindi; no Arabic content exists. `docs/clinical/content_review_log.md` |
+| V4.1.4 | **Done, as drafts** | Every document is `status: draft` and the log says so. No clinician yet |
+| V4.1.5 | **Done** | Licence table in the review log: all team-written |
+| V4.1.6 | **Done** | Coverage table in the review log: 12 documents, English and Hindi, Simple level |
+| V4.1.7 | Partly | No document states a chance; figures come from the engine. Wording for reduced penetrance waits on a clinician |
+| V4.1.8 | **Done** | No faith or culture content exists; the log records that it's left out |
+| V4.2.1 to V4.2.5, V4.2.8 | **Done** | `tests/unit/test_validators.py`. The Hindi samples were written by the team, not a Hindi speaker, so V4.2.8 is only partly met |
+| V4.2.6 | Partly | All 24 knowledge-base documents pass every validator (0 blocked), but they were written to pass. A neutral sample is Phase 6 |
+| V4.2.7 | **Done** | `tests/unit/test_templates.py`: every template passes every validator |
+| V4.3.1, V4.3.2, V4.3.10 | **Done** | `tests/unit/test_router.py`, and on screen in `phase4.spec.ts` |
+| V4.3.3 | **Not met** | Above. `docs/evaluation/router_early_eval.md` |
+| V4.3.4 | **Done** | `test_distress_is_urgent_and_shows_no_made_up_number`; only verified contacts are shown |
+| V4.3.5 | **Done** | `tests/unit/test_pipeline.py`, with a stalled stub |
+| V4.3.6 | Partly | A rule-breaking draft falls back to the template whatever the question said (`test_pipeline.py`). No red-team set yet (Phase 6.1), and no model is connected to attack |
+| V4.3.7 | **Done** | `test_chat_works_with_no_model` |
+| V4.3.8 | **Done** | `test_uncertain_and_x_linked_never_get_the_general_carrier_text` |
+| V4.3.9 | **Done** | `phase4.spec.ts`: planted markup renders as text |
+| V4.3.11 | **Done** | `test_no_transaction_is_open_while_the_answer_is_drafted`; the client protocol has no tools |
+| V4.3.12 | **Done** | `test_coercion_reaches_a_person_quickly`, and the router tests in each language |
+| V4.3.13 | **Done** | Answers aren't streamed: the response is built only after validation (`app/explain/graph.py`) |
+| V4.4.1 to V4.4.5 | **Done** | `tests/api/test_cases.py`, and on screen in `phase4.spec.ts` |
+| V4.5.1 | **Done** | `tests/unit/test_triage.py` |
+| V4.5.2, V4.5.3 | **Done** | `test_cases.py`, `test_bola.py`, and on screen in `phase4.spec.ts` and `experience.spec.ts` |
+| V4.5.4 | **Done** | `test_priority_only_moves_up_on_its_own` |
+| V4.5.5 | Not yet | No counsellor has rated the summary. Stated as a limitation |
+| V4.5.6 | **Done** | `test_triage_runs_from_results_match_and_chat` |
+| V4.5.7 | **Done** | `test_the_summary_is_built_from_facts_and_says_verify` |
+
+### Frontend experience evidence (9 Nov 2026)
+
+The design spec's motion library, controls and visuals were stubs until now. They're built, wired to real data, and tested:
+
+| What | Where it shows | Evidence |
+|---|---|---|
+| Nothing loops forever except the hero background and loading indicators | Every main page | `experience.spec.ts` walks every element's computed animations |
+| Content is visible without script; below-the-fold content rises in on scroll | Home, learn pages | `experience.spec.ts`, with script switched off |
+| Reading level, saved to the profile; Detailed opens sources and tables | Every signed-in page | `experience.spec.ts`, including arrow keys and a reload |
+| Read-aloud with on-device voices only, reading exactly the text on screen | Result, learn and chat | `experience.spec.ts` with a stubbed speech engine; `copy.test.mjs` |
+| Myth tiles that flip on a button and move focus | Related-couples page | `experience.spec.ts`, axe |
+| Couple match tiles, and the engine's figure drawn for four pregnancies | Couple check | `demo_journey.spec.ts` |
+| Queue chart and time-left meters from real data | Counsellor queue and case | `experience.spec.ts` compares the chart's table with the listed cases; axe |
+| Counts never animate a chance, and charts never carry genetic results | Code rule | `copy.test.mjs` |
+
+**Found by these tests:** the dashboard announced two "current" steps at once (fixed: only the first is announced), and the counsellor's case summary showed raw API labels such as `two_copies`, in English even on the Hindi page (fixed: translated labels).
+
 ## Issues to sub-phases and checks
 
 | Issue | Sub-phases | Verified by |
