@@ -1,5 +1,4 @@
-# FILE: backend/app/repositories/consents.py
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# PURPOSE: Consent queries.
-# PLANNED LOGIC: Owner-scoped: the person ID comes from the token, never from the client.
-# PHASE: 3.2 | REQ: R4 | SPEC: backend.md 11.15
+"""Not needed. Consent queries live in `app/privacy/consent_service.py`, where the ledger and the
+authorisation store are written together. See `repositories/cases.py` for why only `genetic.py` is a
+repository.
+"""

@@ -8,7 +8,7 @@
 
 <br/>
 
-![Status: early build](https://img.shields.io/badge/status-early%20build%20%C2%B7%20phase%204%2C%20template%20mode-F4B740?style=for-the-badge)
+![Status: early build](https://img.shields.io/badge/status-early%20build%20%C2%B7%20phases%201%E2%80%935%20built%2C%206%20in%20progress-F4B740?style=for-the-badge)
 ![Prototype due 20 Nov 2026](https://img.shields.io/badge/prototype%20due-20%20Nov%202026-2F5BEA?style=for-the-badge)
 ![Synthetic data only](https://img.shields.io/badge/data-synthetic%20only-14A89B?style=for-the-badge)
 ![Global by design](https://img.shields.io/badge/scope-global%20by%20design-0E7C72?style=for-the-badge)
@@ -24,7 +24,15 @@
 ---
 
 > [!IMPORTANT]
-> **This project is in early build.** The secure API foundation, database and local stack work. The risk engine, AI explanation and screens are **still to come**, so most of this README describes the **target design**. Nothing here has been clinically validated.
+> **This is a working prototype on synthetic data.** The whole journey runs on one machine: the risk
+> engine, the explanation pipeline with its safety checks, consent and family sharing, the care
+> pathway, and the screens for people, counsellors and programme staff. Run it with
+> `python Run_Samvid.py`.
+>
+> **Not yet done, and said plainly throughout:** no clinician has reviewed the content or the
+> rules, no native speaker has reviewed the Hindi, Arabic text is pending approval, nobody has
+> user-tested it, and no country's settings are reviewed. Details in
+> [assumptions and limitations](docs/submission/assumptions_and_limitations.md).
 
 ## At a glance
 
@@ -532,22 +540,46 @@ gantt
 python Run_Samvid.py
 ```
 
-This starts everything (database, sign-in, authorisation, backend, background workers and the web app), creates demo accounts with synthetic lab reports, prints where to go and how to sign in, and then shows live activity from the web app and the API in the terminal. It needs Docker Desktop, plus [uv](https://docs.astral.sh/uv/) for the demo data. Run `python Run_Samvid.py --help` for the other options, such as `--status`, `--stop`, `--check` and `--reset`.
+On a first run it introduces the project, checks what you have installed and offers to install
+what's missing, asks for a Gemini API key if you have one and saves it for you, builds everything,
+creates demo accounts with synthetic lab reports, prints where to go, and then shows live activity
+from the web app and the API in your terminal. Each run is also written to `logs/`, with secrets
+removed.
+
+**You need Docker Desktop.** Everything else it can install or do without:
+
+| | |
+|---|---|
+| [uv](https://docs.astral.sh/uv/) | For the demo accounts. The launcher offers to install it |
+| [Ollama](https://ollama.com) | Optional. With `ollama pull qwen2.5:3b`, an AI model drafts answers without anything leaving your computer |
+| A Gemini API key | Optional, from [aistudio.google.com/apikey](https://aistudio.google.com/apikey). Without any model, reviewed text answers instead |
+| Node.js | Only for the browser tests; the web app is built inside Docker |
+
+| Command | Does |
+|---|---|
+| `python Run_Samvid.py` | Set up if needed, start everything, show live activity |
+| `--setup` | Walk through the first-run setup again, including the AI key |
+| `--status` | What's running, and which AI model will answer |
+| `--check` / `--verify` | The smoke test, or that plus the load test and a scan of the logs for personal data |
+| `--eval` | The safety evaluations, per language |
+| `--security` | Every scanner, with the outputs saved |
+| `--stop` / `--reset` | Stop, or delete all the data (it asks first) |
 
 ### Current status
 
 | Area | State |
 |---|---|
-| Problem research and specifications | Written, with [known issues](docs/04_Project_Review_Issues_and_Improvements.md) to correct |
-| Phase plan and verification checks | Written |
-| Folder and file skeleton | Created, with documentation-only stubs |
 | Backend foundation: API security, database, audit trail, local stack | **Built and tested** |
-| Risk engine, encryption, lab report ingestion, synthetic data, country packs | **Built and tested**, on placeholder gene values with no clinical review. Reachable through the API, with no screens yet |
+| Risk engine, encryption, lab report ingestion, synthetic data, country packs | **Built and tested**, on placeholder gene values with no clinical review |
 | Consent ledger, couple match, family invitations, access log, break-glass, redaction | **Built and tested** |
-| Frontend for all of the above, in English and Hindi, from the Stitch design | **Built and tested** in a real browser against the real stack |
-| AI explanation, options, counsellor queue, care pathway, dashboards | **Not started**: Phases 4 and 5 |
+| Screens for people, counsellors and programme staff, in English and Hindi | **Built and tested** in a real browser against the real stack |
+| AI explanation with safety checks, options, values, counsellor queue | **Built and tested**. Gemini or local Ollama, with reviewed text as the fallback |
+| Care pathway, booking, FHIR referrals, centre finder, understanding checks, dashboards | **Built and tested** |
+| Safety evaluation, security scans, submission documents | **Built**, with results and gaps in [docs/evaluation](docs/evaluation/) and [docs/security](docs/security/) |
+| Routing recall target (95% per language) | **Not met**: measured at 5 of 59 hold-out questions still answered automatically. Reported, not hidden |
 | Clinical review | **Not started**: no reviewer yet |
-| Evaluation and user testing | **Not started** |
+| Native-speaker review; Arabic text | **Not started**: Hindi unreviewed, Arabic pending approval |
+| User testing | **Not run**: the protocol is ready, and no figures are invented in its place |
 
 ---
 
@@ -658,7 +690,7 @@ The [runbook](docs/runbook_local_stack.md) covers tests and everything else. To 
 ## Responsible use
 
 - **Synthetic data only.** This repo must never contain real genetic or personal data. The organisers provide no data, so we generate our own and [declare every source](docs/submission/data_sources.md).
-- **Not medical advice.** This is a competition prototype in planning. It isn't a medical device and has not been clinically validated.
+- **Not medical advice.** This is a competition prototype on synthetic data. It isn't a medical device and has not been clinically validated.
 - **Legal review pending.** A real pilot in any country would need a licensed local health partner and regulatory approval.
 
 ## Competition

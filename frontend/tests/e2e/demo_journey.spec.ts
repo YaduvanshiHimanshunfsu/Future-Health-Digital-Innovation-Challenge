@@ -281,7 +281,8 @@ test("Hindi and the right-to-left layout both work", async ({ page }) => {
 test("the parts not built yet say so and show nothing simulated", async ({ browser }) => {
   const page = await newPage(browser);
   await signInAndAgree(page, await freshPerson());
-  for (const path of ["/en/app/check", "/en/app/journey"]) {
+  // Care steps and the understanding check are built now (Phase 5). The story slides are Phase 6.
+  for (const path of ["/en/story"]) {
     await page.goto(path);
     await expect(page.getByRole("heading", { name: "This part isn't built yet" })).toBeVisible();
   }

@@ -1,6 +1,8 @@
-# FILE: backend/app/privacy/psi_adapter.py
-# STATUS: STUB. Not built. The couple match runs on the server (matching.py) and isn't PSI. See S8.
-# PURPOSE: PSI protocol.
-# PLANNED LOGIC: Cross-institution mode only, optional install, not on Windows. Don't describe the in-app match as PSI unless it's used.
-# PHASE: 3.3 | REQ: R4 | SPEC: backend.md 11.25
-# CLOSE THESE ISSUES (docs/04): H15, S8
+"""Not built, and not claimed. The couple match compares both partners' findings on the server.
+
+What it does guarantee is minimal disclosure: only the view built for each partner leaves the
+server, and a partner's other findings appear in no response, log or AI context (`matching.py`, and
+`tests/api/test_matching.py` scans for exactly that). Private set intersection would matter for
+partners tested at different institutions, which is a later step, and
+`docs/submission/judge_qa.md` states the limits plainly.
+"""

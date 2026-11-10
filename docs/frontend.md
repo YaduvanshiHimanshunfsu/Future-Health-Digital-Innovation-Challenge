@@ -1,5 +1,12 @@
 # frontend.md — Samvid Frontend: Design System + Copy-Paste Prompts
 
+> **This is a design document, not a statement of what is built.** Where it describes a feature as
+> present, or private set intersection as in use, read it as the intent: the couple match runs on
+> the server and is **not** a blind protocol. For what exists, what doesn't, and the limits we
+> state plainly, see [docs/phases/CROSS_VERIFICATION.md](phases/CROSS_VERIFICATION.md),
+> [docs/submission/assumptions_and_limitations.md](submission/assumptions_and_limitations.md) and
+> [docs/submission/judge_qa.md](submission/judge_qa.md).
+
 > **Scope update (5 Nov 2026):** Samvid is global by design. UAE and Abu Dhabi details in this document describe the first reference pack, not the limit of the product. Supported languages are English, Arabic and Hindi. See [docs/07](07_Global_Design_and_Country_Packs.md).
 
 > **Stitch prompts have moved:** use [STITCH_PROMPTS.md](STITCH_PROMPTS.md). It replaces §3 and §5 here. The rest of this guide still applies to the code stage.

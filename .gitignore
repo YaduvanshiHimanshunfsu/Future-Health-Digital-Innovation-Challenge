@@ -42,3 +42,6 @@ Thumbs.db
 /stitch_*.zip
 frontend/test-results/
 frontend/playwright-report/
+
+# The launcher writes one log per run. Secrets are redacted, but these are local anyway.
+/logs/

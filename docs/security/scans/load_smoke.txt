@@ -1,0 +1,23 @@
+Load check, 10 Nov 2026, scripts/load_smoke.py. 400 requests, 10 at a time, non-AI routes, one
+signed-in synthetic person (created for the run and deleted after). Target: p95 under 300 ms.
+
+From inside the Docker network (the default, and what a deployment sees):
+400 requests, 10 at a time, 292 per second, from inside the Docker network
+route                   n   p50 ms   p95 ms
+/v1/centres            40     14.7     32.9
+/v1/consents           40     27.7     84.0
+/v1/health             40      6.1     35.5
+/v1/me                 40     18.7     46.5
+/v1/me/care            40     21.2     51.8
+/v1/me/journey         40     27.1     56.6
+/v1/me/results         40     60.9    189.2
+/v1/me/risk            40     57.5    186.9
+/v1/options            40     22.6     78.6
+/v1/packs              40     13.0     25.6
+All routes: p95 105.8 ms against a target of 300 ms. Errors: 0      -> MET
+
+From the Windows host, through Docker Desktop's forwarded port (--from-host), same load:
+400 requests, 10 at a time, 41 per second
+All routes: p95 481.9 ms (one API process) and 474.2 ms (four). Errors: 0
+The same with one process or four, and /v1/health alone (6 ms unloaded) behaved the same, so the
+forwarded port on this laptop is the limit, not the API. A deployment has no such proxy.

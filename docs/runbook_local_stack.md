@@ -8,7 +8,28 @@ Needs Docker Desktop, Python 3, and [uv](https://docs.astral.sh/uv/) for running
 python Run_Samvid.py
 ```
 
-This does everything below in one step: it creates `infra/.env`, builds and starts the stack, creates the demo accounts, and shows live activity. Ctrl+C stops it. The rest of this page is for doing each step by hand.
+This does everything below in one step:
+- creates `infra/.env`;
+- builds and starts the stack;
+- creates the demo accounts and the synthetic programme activity;
+- says which AI model will answer;
+- shows live activity.
+
+Ctrl+C stops it. The rest of this page is for doing each step by hand.
+
+| Command | Does |
+|---|---|
+| `python Run_Samvid.py --status` | What's running, and which AI model will answer (and why not) |
+| `python Run_Samvid.py --check` | Start, then the 65-check smoke test |
+| `python Run_Samvid.py --verify` | Start, then the smoke test, the load test and the log scan for personal data |
+| `python Run_Samvid.py --eval` | The safety evaluations, per language, templates and the first reachable model |
+| `python Run_Samvid.py --security` | Every scanner, outputs saved in `docs/security/scans/` |
+
+**AI models:** `LLM_PROVIDER` (default `gemini,ollama`) lists the models tried in order, then the reviewed templates.
+- **Gemini** needs `GEMINI_API_KEY`, in your environment or `infra/.env`. Get a key at aistudio.google.com/apikey; it starts with `AIza`.
+- **Ollama** needs the Ollama app running, with `ollama pull qwen2.5:3b` done once.
+
+With neither, everything still works on templates.
 
 ## Start
 

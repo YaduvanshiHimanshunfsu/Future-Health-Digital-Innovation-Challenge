@@ -494,3 +494,183 @@ Bugs found by testing, and fixed: error handlers read global settings; FastAPI t
 - [ ] Clinician for the knowledge base; counsellor for "must inform" and G6PD (user)
 - [ ] Phase 5 analytics endpoints, then wire the six dashboard charts to the kit
 - [ ] Commit and push when asked
+
+## #018 · 2026-11-09 · AI model providers, and Phase 5: care pathway, booking, referrals, measurement
+**What:**
+- **Model providers.** The user chose Gemini, with Ollama on this machine as an alternative and room for others later.
+  - Gemini, Ollama and any OpenAI-compatible service sit behind one interface.
+  - `LLM_PROVIDER=gemini,ollama` tries each in turn, then the reviewed templates. A provider missing its key is skipped with a warning; if none is configured, startup fails.
+  - Production refuses a hosted model until `LLM_EXTERNAL_APPROVED=true`, which needs a data processing agreement.
+  - The model also double-checks the router, but it can only escalate. Once the rules have reached a person, it may add only the crisis reading.
+  - The launcher reports which model will answer, and why not.
+- **The Gemini key on this machine is rejected by Google** with a 401 on every endpoint (AI Studio and Vertex, as a header, a query parameter and a bearer token). It has the "AQ." form, not an AI Studio key's "AIza" form. The user will make a new one. Until then Ollama `qwen2.5:3b` answers.
+- **Phase 5**, every part built and tested:
+  - **Care pathway:** a person's journey and their own steps (ask for counselling, step back), the reminder switch, and staff moves for assigned counsellors only. An overdue scan runs every 5 minutes: it flags stalled cases, sends at most one reminder per step with no details in it, and records lost-to-follow-up. A concurrent change gets 409.
+  - **Booking and referrals:** a slot is taken in one conditional update, so it can't be double-booked. Referrals are FHIR R5 `ServiceRequest` and `Task` records with a pseudonymous subject and an agreed field list.
+  - **Centre finder:** public, and honest that both packs' lists are empty.
+  - **Assessments:** teach-back (draft) and adapted SURE, honestly labelled; two missed checks bring in a counsellor.
+  - **Analytics:** each measure names its source rows; equity gaps per dimension, with small and protecting cells withheld; a synthetic programme seed.
+  - **Screens:** journey, check, counsellor actions, referrals, schedule, metrics, equity, centres.
+
+**Why:** the user asked for Gemini plus Ollama, then for Phase 5 done properly.
+
+**Design choices:**
+- **Pathway metrics read `pathway_step`, not a second event stream.** Every state change already writes a step, so one source can't disagree with another.
+- **Steps are insert-only for the app's database role,** so the FHIR reference is written when the step is created. Updating it afterwards was refused by the database, correctly.
+- **Booking hands the case to the slot's counsellor and applies that access at once,** as claiming does.
+- **A personal route takes no ID** (a Phase 2 rule), so the step route is `/v1/journey/{case_id}/steps`, outside `/v1/me`.
+
+**Bugs found by testing, all fixed:**
+- The web proxy dropped query strings.
+- Booking left the counsellor's access waiting for the worker.
+- The proxy's 15 s timeout cut off model-backed chat answers.
+- A small model relabelled a pregnancy question as coercion.
+- Two new columns were left unclassified.
+
+### Verification
+- See #019 for the final runs. The Phase 5 checks are in `docs/phases/CROSS_VERIFICATION.md`.
+
+## #019 · 2026-11-10 · Phase 6, the build's part: evaluation, security, submission documents
+**What:**
+- **Evaluation.**
+  - 96 answer items (45 golden, 51 red-team, 15 and 17 per language) run through the real pipeline with each persona's engine facts.
+  - Templates only and with Ollama: **0 wrong figures, other people's genes, IDs, markup or leaked instructions** in 192 answers.
+  - Missed hand-offs: 4 with templates, 2 with Ollama.
+  - Router hold-out with Ollama: 5 of 59 questions meant for a person answered automatically. The 95% target is **not met**, and the report says so.
+- **Security.**
+  - gitleaks over the full history and the working tree: clean.
+  - Trivy found 12 fixable HIGH vulnerabilities, fixed to 0: system updates in the backend image, and npm and yarn removed from the web image. The app never uses them, and they carried all 10 web findings.
+  - bandit, pip-audit and npm audit: clean.
+  - The log scan after the full browser suite found nothing in 12,875 lines.
+  - Load: p95 106 ms from inside the Docker network.
+  - The OWASP API and LLM checklists are complete.
+- **Documents:** technical documentation, assumptions and limitations, maturity statement, commercial and pilot plan (every figure labelled an assumption), demo script, deck outline, judge Q&A, submission checklist, the safety report, the human scoring sheet, and the comprehension protocol (not run; no simulated results).
+- **`Run_Samvid.py`:**
+  - `--verify` runs the smoke test, load test and log scan; `--eval` runs the evaluations with the first reachable model; `--security` runs every scanner and saves the outputs.
+  - Phase 5 is marked done and Phase 6 in progress.
+  - demo-coordinator and direct links to the new pages are printed at start.
+
+**Why:** the user asked to move ahead with Phase 6 and to integrate everything into `Run_Samvid.py`.
+
+**Findings worth remembering:**
+- **The load test first measured Docker Desktop's port proxy on Windows,** not the API: p95 482 ms whether there was one API process or four, against 106 ms from inside the network. The default now measures from inside, and `--from-host` keeps the other measurement.
+- **An evaluation "with Ollama" silently ran on templates** while Ollama was down after a restart. Both scripts now refuse when the model is unreachable.
+- **A small model's "decision" label sent a carrier question away from its explanation.** Its opinion now counts only when it brings in a person.
+
+### Verification
+- **847 backend tests pass, with 86% coverage** (100% line and branch on the risk engine). 55 browser tests pass against the containerised app. The smoke script passes all 65 checks on the real stack. ruff, ruff format, mypy strict, bandit, pip-audit, npm audit, gitleaks and Trivy are clean. The log scan found nothing in 12,875 lines, and the load check gives p95 106 ms from inside the Docker network.
+- **Not verified, and needs people:**
+  - native-speaker evaluation items and Hindi review;
+  - two independent human scorers;
+  - the volunteer comprehension test (needs an ethics answer first);
+  - the video, the deck and a rehearsal;
+  - a run by someone outside the team;
+  - a new Gemini key;
+  - the portal submission, commit and tag.
+
+### Follow-ups
+- [ ] New Gemini key (`aistudio.google.com/apikey`, starts with "AIza"), then `python Run_Samvid.py --eval` (user)
+- [ ] Native speakers: Hindi review, Arabic decision, evaluation items in their own words (user)
+- [ ] Two scorers for `docs/evaluation/human_scoring_sheet.md` (user)
+- [ ] Ethics answer, then the volunteer test, or record that it didn't run (user)
+- [ ] Find the full requirements from the registration email (user)
+- [ ] Record the video in template mode; build the deck; rehearse (user)
+- [ ] Commit, tag `v1.0-submission`, build from a clean clone, submit by 19 Nov (user)
+
+## #020 · 2026-11-10 · Run_Samvid.py as a first-run experience, and a cross-check of every phase
+
+- **Author:** Claude (Opus), directed by the user
+- **Phase:** all · **Issues:** S8 (anyone can run it) · **Checks:** V1.3.x (clean clone), V6.4.1, V6.4.2
+
+### What we did
+
+**`Run_Samvid.py` rewritten as a first run, so anyone who downloads the repository can start it.**
+On a first run it now, in order:
+1. introduces the project, the team, what makes it different, and that it never diagnoses or directs;
+2. checks what's installed, offers to install `uv` and the backend packages, says Docker is required
+   and how to get it, and says Ollama and Node are optional and what each would add;
+3. asks for a Gemini API key, hidden as it's typed, checks it with Google, and saves it to
+   `infra/.env` (and into this process's environment, or an older key already in the shell would
+   keep winning, because Compose reads the shell before the file);
+4. builds and starts everything;
+5. creates the demo accounts and the synthetic programme activity;
+6. prints where to go, in boxes, with the demo accounts;
+7. follows the live activity: every page opened, every call the browser makes, every API request.
+
+Repeat runs skip the introduction and setup, and print four steps instead of seven. New flags:
+`--setup` to walk through setup again, `--yes` for an unattended run, `--no-colour` for plain text.
+
+**The terminal layer is new:** self-sizing boxes, step headers that count themselves, tick and cross
+marks, and colour that turns itself off when output is piped, when `NO_COLOR` is set, or when the
+console can't encode the box characters. **Every run is written to `logs/`**, with ANSI codes stripped
+and every known secret replaced by `<redacted>`; the last 20 runs are kept. `logs/` is git-ignored.
+
+**14 dead stubs retired.** Each said "no code until requested" while the work actually existed
+somewhere else, which is a false signal to anyone reading the codebase. None was imported anywhere.
+Each now points at the real code or says plainly it isn't built: the five validator stubs point at
+`rules.py`, the four repository stubs explain why only `genetic.py` needed one, `speech/service.py`
+says speech is in the browser, `kb/embedder.py` says no embeddings by design (H15), `psi_adapter.py`
+and `api/v1/content.py` say they aren't built, and `tests/eval/test_llm_eval.py` points at the
+evaluation scripts. `docs/05_Project_Structure.md` marks each row the same way.
+
+**The README was corrected twice.** Its warning still said the risk engine, AI and screens were
+"still to come", and its status table still said Phases 4 and 5 were "not started". Both were months
+out of date in project time and would have told a judge that nothing works. The run instructions now
+describe the new first-run flow and what is optional.
+
+### How we did it
+
+The cross-check was done with scripts rather than by reading, so it can be repeated:
+- every `V<phase>.<n>.<n>` check in the six phase plans was counted against the evidence table;
+- every backticked test name and file path in `CROSS_VERIFICATION.md`, the security checklist, the
+  technical documentation, the judge Q&A, the safety report and `brain.md` was resolved against the
+  filesystem and against the 587 test functions that exist;
+- `git ls-files` was checked for every file a fresh clone needs to build;
+- the repository was actually cloned to a temporary folder, and `generate_env.py` was run in it.
+
+### Why we did it
+
+The user asked for a launcher that someone who downloads the project from GitHub can run on their own
+machine, and then for a deep cross-check that every phase goal is really met. A prototype that only
+starts on the machine it was built on isn't a working prototype for a judge.
+
+**Rejected:** installing Docker automatically. It needs a GUI installer and usually a restart, and a
+script that silently installs a system-wide daemon is worse than one that explains the one step.
+**Rejected:** a progress spinner during the build. Docker Compose already prints per-container
+progress, and a second animation on the same lines corrupts both.
+
+### Verification
+
+- **A fresh `git clone` into a temporary folder produced all 527 tracked files**, and
+  `generate_env.py` wrote all 15 settings with no empty value. The launcher's `--help` and its
+  welcome both ran there. The clone was then deleted.
+- **It parses on Python 3.11**, which is this machine's system Python. This mattered: the first
+  version used backslashes inside f-string expressions, which **only works from Python 3.12**. ruff
+  and mypy both passed it, because they are configured for the backend's 3.12, so neither caught it.
+  Anyone whose system Python was older would have seen a `SyntaxError` instead of a project. The
+  glyphs are now named constants, and there's a clear message for Python older than 3.9.
+- **The whole flow was run end to end** three times: full setup, a repeat run, and `--status`. The
+  live view was confirmed to show frontend page visits, the API calls the web server makes, and API
+  requests with their timings.
+- **The log file was checked for leaks:** the only key-shaped text in it is the help line telling the
+  user a key starts with "AIza". The invalid key in this machine's environment appears as
+  `<redacted>`, and the demo password is never printed unless `--show-password` is given.
+- **`write_env` was tested on a throwaway file:** it replaces a setting in place, appends a new one,
+  and leaves every other line alone. `infra/.env` was compared against a backup afterwards and was
+  byte-for-byte unchanged.
+- **All 238 checks across the six phases appear in the evidence table**, and every test name and path
+  cited across six documents resolves. 23 apparent misses were all shorthand (`docs/03`), URLs, API
+  routes, or files a past entry records deleting.
+- **847 backend tests still pass** after retiring the 14 stubs, and the 16 wording tests and the
+  frontend type check are clean. ruff, ruff format and mypy strict pass on the launcher, the five
+  scripts and the whole backend.
+- **Not verified:** nobody outside the team has run it; the first-run install prompts were exercised
+  with `--yes` rather than by typing, since `uv` and the packages were already present here; the
+  Gemini key prompt was tested through its validation and saving functions, not by pasting a working
+  key, because the key on this machine is rejected by Google.
+
+### Follow-ups
+- [ ] Add your names to `MEMBERS` at the top of `Run_Samvid.py`; it's deliberately empty, because
+      nobody's name should be guessed (user)
+- [ ] A new Gemini key, then `python Run_Samvid.py --setup` to paste it (user)
+- [ ] Someone outside the team runs it from the README alone, timed (V6.4.1) (user)

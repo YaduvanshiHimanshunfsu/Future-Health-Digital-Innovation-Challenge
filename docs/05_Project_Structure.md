@@ -104,7 +104,7 @@ Future Health/
 | `centres.py` [NEW] | Centre finder. | 5.2 | R2 | H14 |
 | `chat.py` | AI companion. | 4.3 | R1, R3 | C7, H9 |
 | `consents.py` | Consent centre. | 3.2 | R4 | H7, H8 |
-| `content.py` [NEW] | Content governance. | T3 | R1 | H14 |
+| `content.py` [NEW] | Content governance. **Not built** (Tier 3); listed as a limitation. | T3 | R1 | H14 |
 | `couples.py` | Couples and match. | 3.3 | R4 | C1, C2, C7, H8 |
 | `health.py` | Liveness and readiness. | 1.4 |  |  |
 | `invitations.py` | Invitations. | 3.4 | R4 | H17 |
@@ -196,12 +196,12 @@ Future Health/
 
 | File | Purpose | Phase | Req | Issues |
 |---|---|---|---|---|
-| `diagnosis.py` | Diagnosis guard. | 4.2 | R1, R2 | H13 |
-| `directive.py` | Non-directive guard. | 4.2 | R1, R2 | H12 |
-| `lexicon.py` | Stigma guard. | 4.2 | R1, R2 |  |
-| `numeric.py` | Numeric guard. | 4.2 | R1, R2 | C5 |
+| `diagnosis.py` | **Superseded by `rules.py`**: one module, so each answer is normalised once. | 4.2 | R1, R2 | H13 |
+| `directive.py` | **Superseded by `rules.py`.** | 4.2 | R1, R2 | H12 |
+| `lexicon.py` | **Superseded by `rules.py`** and `patterns.py`. | 4.2 | R1, R2 |  |
+| `numeric.py` | **Superseded by `rules.py`.** | 4.2 | R1, R2 | C5 |
 | `pipeline.py` | Runs all validators. | 4.2 | R1, R2 | H11 |
-| `readability.py` | Literacy guard. | 4.2 | R1, R2 |  |
+| `readability.py` | **Superseded by `rules.py`.** | 4.2 | R1, R2 |  |
 
 ## `backend/app/ingestion/`
 
@@ -215,7 +215,7 @@ Future Health/
 
 | File | Purpose | Phase | Req | Issues |
 |---|---|---|---|---|
-| `embedder.py` | Embeddings. | 4.1 | R1 | H15 |
+| `embedder.py` | **Not used by design** (H15): keyword retrieval over a small reviewed body. | 4.1 | R1 | H15 |
 | `ingest.py` | Knowledge-base loader. | 4.1 | R1 | M7 |
 
 ## `backend/app/models/`
@@ -268,7 +268,7 @@ Future Health/
 | `kms.py` | Key providers. | 2.1 | R4 |  |
 | `matching.py` | Couple matching. | 3.3 | R4 | C1, C2, C7, H3, S8 |
 | `outbox.py` [NEW] | Authorisation outbox. | 3.1 | R4 | H7 |
-| `psi_adapter.py` | PSI protocol. | 3.3 | R4 | H15, S8 |
+| `psi_adapter.py` | **Not built, and not claimed.** The match runs server-side; see `judge_qa.md`. | 3.3 | R4 | H15, S8 |
 | `redaction.py` | PII redaction and LLM allowlist. | 3.5 | R4 | H6 |
 | `right_not_to_know.py` [NEW] | Right not to know. | 3.2 | R4 | S4, H8 |
 
@@ -364,7 +364,7 @@ Future Health/
 |---|---|---|---|---|
 | `golden_qa.jsonl` | Golden questions: 150+ with expected labels and key facts. | 6.1 | R1, R3 | C6 |
 | `redteam.jsonl` | Red-team prompts: 50+. | 6.1 | R2, R3 | H12 |
-| `test_llm_eval.py` | Runs golden and red-team sets. | 6.1 | R1, R3, R6 | C5, H12 |
+| `test_llm_eval.py` | **Superseded by `scripts/eval_router.py` and `scripts/eval_answers.py`.** | 6.1 | R1, R3, R6 | C5, H12 |
 
 ## `backend/tests/unit/`
 

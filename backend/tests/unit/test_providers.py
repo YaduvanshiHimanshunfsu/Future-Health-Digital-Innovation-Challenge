@@ -274,3 +274,14 @@ async def test_an_unplaced_message_can_be_placed_by_the_model() -> None:
         "Nobody would notice if I was gone", "en", found, PACK, Opinion(Boundary.COERCION)
     )
     assert placed.boundary is Boundary.COERCION
+
+
+async def test_a_decision_label_from_the_model_changes_nothing() -> None:
+    """A decision label brings in nobody, so it would only cost the person their explanation."""
+    found = route("What does being a carrier mean?", "en")
+    assert (
+        await second_opinion(
+            "What does being a carrier mean?", "en", found, PACK, Opinion(Boundary.DECISION_SUPPORT)
+        )
+        == found
+    )

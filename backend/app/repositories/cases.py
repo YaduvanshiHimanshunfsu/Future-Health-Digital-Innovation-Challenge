@@ -1,6 +1,6 @@
-# FILE: backend/app/repositories/cases.py
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# PURPOSE: Case and queue queries.
-# PLANNED LOGIC: Owner-scoped: the person ID comes from the token, never from the client.
-# PHASE: 4.5 | REQ: R4 | SPEC: backend.md 11.15
-# CLOSE THESE ISSUES (docs/04): C9
+"""Not needed. Case queries live in `app/api/v1/cases.py` and `app/triage/service.py`.
+
+Only `genetic.py` became a repository, because loading a result means decrypting several rows with
+their own associated data, and that logic shouldn't sit in a route. A plain SQLAlchemy select
+doesn't need a wrapper to hide it.
+"""

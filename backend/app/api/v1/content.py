@@ -1,7 +1,6 @@
-# FILE: backend/app/api/v1/content.py
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Not in the original file list; added by docs/04 review.
-# PURPOSE: Content governance.
-# PLANNED LOGIC: List versions and review status. Tier 3 UI.
-# PHASE: T3 | REQ: R1 | SPEC: F26
-# CLOSE THESE ISSUES (docs/04): H14
+"""Not built: a Tier 3 screen, listed as a limitation rather than quietly missing.
+
+It would show each knowledge-base document's version and review status to a reviewer. The data is
+already there in the front matter `app/kb/ingest.py` requires, and the review status is recorded by
+hand in `docs/clinical/content_review_log.md`. No router includes this module.
+"""

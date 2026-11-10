@@ -131,6 +131,9 @@ services:
     <<: *backend
     environment:
       <<: *backend-env
+      # Worker processes for uvicorn. One process topped out near 40 requests a second under load
+      # (p95 482 ms); each request alone takes about 6 ms. Override with API_WORKERS.
+      WEB_CONCURRENCY: ${API_WORKERS:-4}
       # Only used by `python -m app.ops.check_services` to prove a real token verifies.
       LAB_CLIENT_ID: samvid-lab
       LAB_CLIENT_SECRET: ${LAB_CLIENT_SECRET}

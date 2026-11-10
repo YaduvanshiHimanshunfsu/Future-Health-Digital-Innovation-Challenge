@@ -104,6 +104,10 @@ async def second_opinion(
         return found
     if _CAREFUL.index(opinion) >= _CAREFUL.index(found.boundary):
         return found
+    # The check exists to bring in a person. "Decision" brings in nobody, so a model saying it only
+    # costs someone their explanation: a small model once called "what does carrier mean?" a decision.
+    if opinion not in _ESCALATE:
+        return found
     if reached and opinion is not Boundary.DISTRESS:
         return found
     return Route(opinion, (*found.reasons, "model_check"), found.pregnant)

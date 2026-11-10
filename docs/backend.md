@@ -1,5 +1,10 @@
 # backend.md — Samvid Backend: Complete Engineering Guide
 
+> **This is a design document, not a statement of what is built.** Where it describes content as
+> reviewed, or a feature as present, read it as the intent. For what actually exists and what
+> doesn't, see [docs/phases/CROSS_VERIFICATION.md](phases/CROSS_VERIFICATION.md) and
+> [docs/submission/assumptions_and_limitations.md](submission/assumptions_and_limitations.md).
+
 > **Scope update (5 Nov 2026):** Samvid is global by design. UAE and Abu Dhabi details in this document describe the first reference pack, not the limit of the product. Supported languages are English, Arabic and Hindi. See [docs/07](07_Global_Design_and_Country_Packs.md).
 
 > **Scope:** everything the backend does (what), how it is built (how) and the reasons behind each choice (why).

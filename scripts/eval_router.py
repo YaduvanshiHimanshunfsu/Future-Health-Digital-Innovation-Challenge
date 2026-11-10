@@ -143,11 +143,27 @@ def model(name: str, http: httpx.AsyncClient) -> tuple[LlmClient, str]:
     raise SystemExit("--model takes ollama[:tag] or gemini[:model]")
 
 
+async def reachable(name: str, http: httpx.AsyncClient) -> bool:
+    """Without this, an unreachable model falls back to templates and the report would mislabel it."""
+    if not name.startswith("ollama"):
+        return bool(os.environ.get("GEMINI_API_KEY"))
+    try:
+        url = os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434")
+        return (await http.get(f"{url}/api/tags", timeout=5)).status_code == 200
+    except httpx.HTTPError:
+        return False
+
+
 async def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", help="ollama[:tag] or gemini[:model]")
     args = parser.parse_args()
     async with httpx.AsyncClient() as http:
+        if args.model and not await reachable(args.model, http):
+            sys.stderr.write(
+                f"{args.model} isn't reachable, so the report would really be templates only.\n"
+            )
+            return 2
         if args.model:
             llm, label = model(args.model, http)
             report, unsafe = await run(llm, label)

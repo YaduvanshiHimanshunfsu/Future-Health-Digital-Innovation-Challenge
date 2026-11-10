@@ -1,20 +1,18 @@
 # Submission documents
 
-Portal-required documents and pitch material. Headed skeletons until Phase 6.
+What the competition asks for, and where each lives. Every claim in these files points to code or a test; anything not built says so.
 
-**Rules:** Claims must match the code.
+| File | Purpose |
+|---|---|
+| [technical_documentation.md](technical_documentation.md) | Architecture, data flows, safety and privacy models, deployment, how to run |
+| [assumptions_and_limitations.md](assumptions_and_limitations.md) | Assumptions, dependencies, limitations, mocks, open legal questions |
+| [data_sources.md](data_sources.md) | Every data source and service, with its licence and what it receives |
+| [maturity_statement.md](maturity_statement.md) | What existed before, what was built during the challenge, and maturity now |
+| [commercial_and_pilot_plan.md](commercial_and_pilot_plan.md) | Buyer, value model (labelled estimates), licensed partner, phased pilot |
+| [demo_script.md](demo_script.md) | The 4-minute demo, with a live red-team moment and a backup plan |
+| [pitch_deck_outline.md](pitch_deck_outline.md) | Ten slides mapped to the six judging criteria |
+| [judge_qa.md](judge_qa.md) | Answers to the hard questions, with proof |
+| [submission_checklist.md](submission_checklist.md) | Final checks, including what needs people |
+| [competition_requirements.md](competition_requirements.md) | The rules, copied from the portal |
 
-**Status:** stubs only. No code until requested.
-
-## Files
-
-| File | Purpose | Phase | Issues |
-|---|---|---|---|
-| `assumptions_and_limitations.md` | A required deliverable. Be candid. | 6.4 |  |
-| `commercial_and_pilot_plan.md` | Covers the 'commercial viability and path to pilot' criterion. See S2 and S4. | 6.4 |  |
-| `competition_requirements.md` | What the portal requires. Fill in while logged in. | 1.1 |  |
-| `demo_script.md` | Follows the journey in sub-phase 5.5. | 6.5 |  |
-| `judge_qa.md` | Extends docs/03 §6. | 6.5 |  |
-| `pitch_deck_outline.md` | Follows the six judging criteria. | 6.5 |  |
-| `submission_checklist.md` | Final check before submitting on 19 Nov. | 6.6 |  |
-| `technical_documentation.md` | A required deliverable. Must match the code. | 6.4 |  |
+Evidence: [docs/evaluation/](../evaluation/) (measured safety and routing) and [docs/security/](../security/) (scans, checklists, threat model).

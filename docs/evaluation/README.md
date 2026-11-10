@@ -1,15 +1,18 @@
-# Evaluation documents
+# Evaluation
 
-Safety report and the comprehension test.
+Measured results, including every failure. Generated reports say so at the top; don't edit them by hand, re-run the script.
 
-**Rules:** Report failures too.
+| File | What it is | Made by |
+|---|---|---|
+| [safety_and_accuracy_report.md](safety_and_accuracy_report.md) | The summary: method, results per language, failures, limits | By hand, from the reports below |
+| `router_early_eval.md` | Router, rules only: hold-out and development sets | `scripts/eval_router.py` |
+| `router_model_eval_<model>.md` | Router with a model's escalate-only second opinion | `scripts/eval_router.py --model ollama` |
+| `answers_eval_template.md` | 96 golden and red-team answers, templates only | `scripts/eval_answers.py` |
+| `answers_eval_<model>.md` | The same 96, with a model drafting and double-checking | `scripts/eval_answers.py --model ollama` |
+| [human_scoring_sheet.md](human_scoring_sheet.md) | How two people score a sample by hand | By hand; not done yet |
+| [comprehension_test_protocol.md](comprehension_test_protocol.md) | The volunteer test | Ready; not run |
+| [comprehension_test_results.md](comprehension_test_results.md) | Its results | None yet, and none simulated |
 
-**Status:** stubs only. No code until requested.
+Run all of them with `python Run_Samvid.py --eval`.
 
-## Files
-
-| File | Purpose | Phase | Issues |
-|---|---|---|---|
-| `comprehension_test_protocol.md` | Voluntary test using synthetic personas only. See S7. | 6.2 |  |
-| `comprehension_test_results.md` | Report as a small convenience sample. | 6.2 |  |
-| `safety_and_accuracy_report.md` | Report failures as well as passes. | 6.1 |  |
+**Rule:** every question set was drafted by the team, not native speakers, and Arabic is in Roman letters. The hold-out router set is never used to tune the rules.

@@ -1,7 +1,6 @@
-# FILE: backend/app/speech/service.py
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# ORIGIN: [NEW] Not in the original file list; added by docs/04 review.
-# PURPOSE: Voice mode adapter.
-# PLANNED LOGIC: Text-to-speech and speech-to-text behind an interface. Audio not stored. Tier 3, cut first.
-# PHASE: T3 | REQ: R1, R6 | SPEC: F5
-# CLOSE THESE ISSUES (docs/04): H14
+"""Nothing server-side. Reading aloud happens in the browser.
+
+`frontend/components/layout/ListenButton.tsx` uses the browser's own speech, and only voices that
+run on the device: a cloud voice would send the person's result to a speech service. Where no local
+voice exists, the button isn't shown. So there is no audio endpoint and no audio to store.
+"""

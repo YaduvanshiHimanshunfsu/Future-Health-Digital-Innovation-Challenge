@@ -199,9 +199,11 @@
 
 ## Phase 6 exit gate
 
-- [ ] Submitted, with confirmation saved
-- [ ] Safety report and limitations are honest and complete
-- [ ] Release tagged
-- [ ] Final `brain.md` entry written
+- [ ] Submitted, with confirmation saved. **Needs the team** (the portal)
+- [x] Safety report and limitations are honest and complete (`docs/evaluation/safety_and_accuracy_report.md`, `docs/submission/assumptions_and_limitations.md`). Human scoring and the volunteer test are still to do, and both documents say so
+- [ ] Release tagged. **Needs the team** (commit and tag)
+- [ ] Final `brain.md` entry written. #019 covers the build's part; the final entry comes after submission
+
+**Status, 10 Nov 2026:** the build's part is done: evaluation harnesses and reports, scanners, log and load checks, the security checklist and every submission document. What remains needs people; it's listed in `docs/submission/submission_checklist.md`.
 
 **If behind:** the order to protect is: submission, then prototype working, then documentation, then video polish.

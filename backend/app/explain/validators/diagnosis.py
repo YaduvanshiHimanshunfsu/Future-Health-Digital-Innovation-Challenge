@@ -1,6 +1,7 @@
-# FILE: backend/app/explain/validators/diagnosis.py
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# PURPOSE: Diagnosis guard.
-# PLANNED LOGIC: Blocks diagnosis claims and false certainty such as 'you are healthy'.
-# PHASE: 4.2 | REQ: R1, R2 | SPEC: backend.md 11.19
-# CLOSE THESE ISSUES (docs/04): H13, G1
+"""Superseded. The false-certainty and diagnosis checks live in `rules.py`, with their word and phrase tables in
+`patterns.py`, the text normalising in `text.py`, and the order they run in `pipeline.py`.
+
+They were built as one module because every check shares the same normalised text and the same
+`Flag` result, and splitting them meant normalising each answer five times. Nothing imports this
+file. See `tests/unit/test_validators.py`.
+"""

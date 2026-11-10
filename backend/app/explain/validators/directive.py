@@ -1,6 +1,7 @@
-# FILE: backend/app/explain/validators/directive.py
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# PURPOSE: Non-directive guard.
-# PLANNED LOGIC: MSA, Gulf dialect and soft English patterns, plus the LLM judge.
-# PHASE: 4.2 | REQ: R1, R2 | SPEC: backend.md 11.19
-# CLOSE THESE ISSUES (docs/04): H12, G1
+"""Superseded. The directive-language checks live in `rules.py`, with their word and phrase tables in
+`patterns.py`, the text normalising in `text.py`, and the order they run in `pipeline.py`.
+
+They were built as one module because every check shares the same normalised text and the same
+`Flag` result, and splitting them meant normalising each answer five times. Nothing imports this
+file. See `tests/unit/test_validators.py`.
+"""

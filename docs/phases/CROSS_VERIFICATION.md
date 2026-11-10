@@ -236,6 +236,30 @@ Each objective is written out in its phase file.
 |  |  | O6.6.2 | V6.6.2, V6.6.5 |
 |  |  | O6.6.3 | V6.6.6 |
 
+## Is each phase's goal met? (10 Nov 2026)
+
+Each phase states one goal. Below is a judgement against the goal as written, not against the number
+of checks ticked. Checked by script where possible: all 238 `V` checks in the six plans appear in
+this document, and every test name and file path cited in the records resolves to something real.
+
+| Phase | Goal, as written | Verdict |
+|---|---|---|
+| **1** | Registered, scope and clinical rules agreed, an empty but secure system runs locally with a working audit log | **Met, except "clinical rules agreed".** They are drafted and unreviewed: no clinician has signed off the rules, the G6PD handling or "must inform". Everything else is built and tested |
+| **2** | A synthetic lab result goes in, encrypted, and the correct risk appears on screen, with every number traceable to a tested rule | **Met.** 100% line and branch coverage on the risk engine, no plaintext gene names in a real database dump, and the result on screen in a browser. Caveat: "correct" means it matches the team's own hand-worked answers, not a second person's (V2.4.12) |
+| **3** | People control exactly who sees what, and tests prove nothing leaks, including through the couple match | **Met.** 81 deliberate rule breaks were all caught, a marker gene is scanned for across every response, log, audit row and AI context, and OpenFGA was stopped for real |
+| **4** | Safe, non-directive answers in English, Arabic and Hindi, and anything complex reaches a real counsellor | **Partly met.** Safe and non-directive holds: 0 wrong figures, directive, stigmatising or falsely certain answers in 192 evaluated answers. Two gaps: **Arabic has no text of its own** (Arabic pages answer in English and say so, though Arabic questions in Roman letters are understood), and **"anything complex" is not yet reliable** — 5 of 59 hold-out questions meant for a person still got an automatic answer |
+| **5** | The whole journey runs from result to referral on screen, and the metrics show what happened, broken down fairly | **Met.** Result to booking to counselling to a FHIR referral, driven entirely from the screens in a browser test, and the dashboards suppress any group under 10 people, plus any group that would let a suppressed one be worked out |
+| **6** | Submit on 19 Nov with honest proof | **Not yet, and not the build's to finish.** The proof is built: evaluations per language with every failure listed, every scanner run and saved, the checklists completed, and all submission documents written. Submitting, tagging, the video and the human-run checks need the team |
+
+**So:** phases 2, 3 and 5 are met. Phase 1 is met apart from clinical sign-off. Phase 4 is partly met,
+with both gaps measured and written down rather than hidden. Phase 6 is waiting on people.
+
+**The one gap that matters most** is Phase 4's routing: rules plus a small local model still answer
+some questions that should reach a person. Every such answer is still validated, so the failure is a
+missed hand-off rather than unsafe text, and the way to close it is native-speaker word lists and a
+stronger model check. It is stated in the safety report, the limitations, the judge Q&A and the
+security checklist.
+
 ## Checks with evidence so far
 
 Phases 1 to 3. All later checks are open.
@@ -421,6 +445,93 @@ The design spec's motion library, controls and visuals were stubs until now. The
 | Counts never animate a chance, and charts never carry genetic results | Code rule | `copy.test.mjs` |
 
 **Found by these tests:** the dashboard announced two "current" steps at once (fixed: only the first is announced), and the counsellor's case summary showed raw API labels such as `two_copies`, in English even on the Hindi page (fixed: translated labels).
+
+### Phase 5 evidence
+
+**Last full run, 9 Nov 2026: 847 backend tests pass, with 86% coverage.** 55 browser tests pass against the containerised app. The smoke script passes all 65 checks on the real stack.
+
+**Also in this phase: model providers.** Gemini, Ollama on this machine, and any OpenAI-compatible service sit behind one interface. They're tried in order (`LLM_PROVIDER=gemini,ollama`), so a hosted model's outage falls through to the local one, and then to the reviewed templates. A model now also double-checks the router, but it can only escalate. Once the rules have sent a question to a person, it may add only the crisis reading.
+- **Result on the hold-out set:** with Ollama qwen2.5:3b, dangerous misses fell from 10 of 59 to 5 of 59 (`docs/evaluation/router_model_eval_ollama.md`).
+- **Gemini:** the key on this machine is rejected by Google (401 on every endpoint). Gemini has been tested only against a fake service until a valid key is added.
+
+| Check | Status | Evidence |
+|---|---|---|
+| V5.1.1 | **Done** | `test_every_change_leaves_a_step_and_a_counsellor_can_reach_referral`: step count equals change count |
+| V5.1.2 | **Done** | `test_an_invalid_move_is_409_and_changes_nothing`; `tests/unit/test_state_machine.py` |
+| V5.1.3 | **Done** | Parametrised unit test over every active state, `test_declining_stops_reminders_and_can_be_undone`, and on screen in `phase5.spec.ts` |
+| V5.1.4 | **Done** | `test_declining_stops_reminders_and_can_be_undone`, `test_reminders_can_be_switched_off` |
+| V5.1.5 | **Done** | `test_advancing_resets_the_deadline_so_it_does_not_stall_again` |
+| V5.1.6 | **Done** | `scan-pathway` runs every 5 minutes in beat; `test_an_overdue_step_is_flagged_and_reminded_once_with_no_details`. The worker's run was checked live: `python Run_Samvid.py --verify` exercises it on the real stack. |
+| V5.1.7 | **Done** | `test_two_changes_at_once_give_one_success_and_one_conflict` |
+| V5.1.8 | **Done** | `test_a_case_left_unanswered_becomes_lost_to_follow_up`; NOT_CONFIRMED is a state of its own |
+| V5.1.9 | **Done** | `test_a_person_reads_their_own_journey_and_nobody_elses` |
+| V5.2.1 | **Done** | `test_a_referral_is_valid_fhir_with_only_the_agreed_fields`: ServiceRequest and Task validate with `fhir.resources` 8.3 (R5) |
+| V5.2.2 | **Done** | Same test, against `SERVICE_REQUEST_FIELDS` and `TASK_FIELDS`; no gene, name, ID or result |
+| V5.2.3 | **Done** | `test_two_people_can_never_book_one_slot`: one conditional UPDATE, plus the database's unique index |
+| V5.2.4 | **Done** | `test_no_reminder_text_can_carry_details`, and the reminder test checks the sent text |
+| V5.2.5 | **Done** | `test_sending_a_referral_moves_the_case_and_traces_the_step` (FHIR reference on the step), and on screen in `phase5.spec.ts` |
+| V5.2.6 | **Done** | `test_the_centre_finder_needs_no_account_and_never_invents_entries`; both packs' lists are honestly empty |
+| V5.3.1 | **Done** | `test_scoring_is_right_on_known_answers` |
+| V5.3.2 | Not yet | No back-translation note: no Hindi speaker has checked the items, and there are no Arabic items |
+| V5.3.3 | **Done** | `test_two_missed_checks_bring_in_a_counsellor` |
+| V5.3.4 | Partly | Noted in `app/assessments/instruments.py`: teach-back is our own; SURE's permission is still to be confirmed in writing; MMIC and GCOS aren't offered |
+| V5.3.5 | **Done** | The label is in the API response and on screen in both languages (`phase5.spec.ts`) |
+| V5.4.1 | **Done** | `test_the_real_spread_is_reported`: 30 points, where the original spec reported 2.0 |
+| V5.4.2 | **Done** | `test_escalated_cases_count_in_time_to_referral` |
+| V5.4.3 | **Done** | `test_a_hand_worked_example_matches` |
+| V5.4.4 | **Done** | `test_small_groups_are_withheld_and_cannot_be_recovered_by_subtraction`, two property tests over any table, and `test_small_numbers_are_withheld_everywhere` |
+| V5.4.5 | **Done** | `test_events_have_no_free_text_column`; `emit` has no text parameter |
+| V5.4.6 | Partly | Each measure names its source in the API (`sources`). The table against `docs/03` section 5 still needs reviewing |
+| V5.4.7 | **Done** | `synthetic: true` in every response, and the banner on screen (`phase5.spec.ts`) |
+| V5.4.8 | **Done** | `test_no_metric_treats_a_choice_as_success`; the funnel is labelled "reach, not success" |
+| V5.4.9 | **Done** | `test_alerts_use_the_thresholds_the_plan_sets` |
+| V5.5.1 | Partly | The journey passes in English; Hindi pages are covered by the accessibility run. Arabic has no text of its own yet |
+| V5.5.2 | **Done** | `demo_journey.spec.ts`: no tokens in browser storage |
+| V5.5.3 | **Done** | axe on every new screen in `phase5.spec.ts` |
+| V5.5.4 | **Done** | From Phase 3: revoke waits for the server |
+| V5.5.5 | Not yet | Nobody outside the team has tried it |
+| V5.5.6 | Partly | `python Run_Samvid.py --reset` then a start rebuilds everything. Not timed yet |
+| V5.5.7 | **Done** | `lib/api/schema.ts` is generated by `npm run api:types`; types come from it |
+| V5.5.8 | **Done** | Sign-in is outside the role guard; menus follow roles and the API decides (`test_bola.py`) |
+| V5.5.9 | Partly | Packs change the options (`test_options_differ_by_pack`) and the centre finder (`phase5.spec.ts`). No browser test signs in as an India person yet |
+
+### Phase 6 evidence (10 Nov 2026, in progress)
+
+Phase 6 is partly work for people: native-speaker items, human scoring, volunteers, the video, the portal and the release tag. What the build can do is done; the rest is listed with who must do it.
+
+| Check | Status | Evidence |
+|---|---|---|
+| V6.1.1 | **Met on the test set** | 0 wrong figures in 192 evaluated answers (`docs/evaluation/answers_eval_template.md`, `answers_eval_ollama.md`) |
+| V6.1.2 | **Not met** | Clinical questions reaching a person on the hold-out set, with Ollama: English 5/6, Hindi 2/6, Arabic 4/5 (`router_model_eval_ollama.md`) |
+| V6.1.3 | Not yet | Needs two scorers; the sheet is ready (`human_scoring_sheet.md`) |
+| V6.1.4 | **Done** | Every table is per language (`safety_and_accuracy_report.md`) |
+| V6.1.5 | **Done** | Generated reports list every failing item with its answer text |
+| V6.1.6 | **Done**, team-drafted | 188 golden and 51 red-team items, at least 50 per language. Not native-speaker written |
+| V6.1.7 | Partly | 0 flagged by the automatic rules; human sample not done |
+| V6.2.1 to V6.2.5 | Not run | Protocol ready (`comprehension_test_protocol.md`); results file says it hasn't run, with no simulated figures |
+| V6.3.1 | **Done** | `docs/security/scans/`: gitleaks, Trivy, bandit, pip-audit, npm audit, log scan, load. semgrep not run |
+| V6.3.2 | **Done** | `docs/security/security_checklist.md`: every OWASP API and LLM row has a test or a reason |
+| V6.3.3 | **Done** | Log scan after the full browser suite: nothing in 12,875 lines |
+| V6.3.4 | **Done** | p95 106 ms inside the Docker network; through the Windows port proxy 482 ms, explained |
+| V6.3.5 | **Done** | gitleaks over the full history (7 commits) and the working tree: no leaks |
+| V6.4.1 | Not yet | Needs someone outside the team, timed |
+| V6.4.2 | Partly | Each document points claims to tests; a full claims table isn't written |
+| V6.4.3 | **Done** | Mocks listed in `assumptions_and_limitations.md` |
+| V6.4.4 | **Done** | `commercial_and_pilot_plan.md` shows the formula and labels every figure an assumption |
+| V6.4.5 | **Done** | `pitch_deck_outline.md` maps slides to all six criteria |
+| V6.4.6 | **Done** | Both packs described as unreviewed; no country called supported |
+| V6.4.7 | **Done** | `data_sources.md` updated with the metrics seed, SURE, Gemini, Ollama and browser speech |
+| V6.4.8 | **Done** | Assumptions, dependencies and limitations each have a section |
+| V6.4.9 | **Done** | `maturity_statement.md` separates before 5 Nov from what was built |
+| V6.4.10 | **Done** | Hindi review status stated in the limitations |
+| V6.5.x | Partly | Demo script, deck outline and judge Q&A written; video, deck slides and rehearsal need the team |
+| V6.6.x | Not yet | Submission, tag and confirmation need the team; checklist ready |
+
+**Found and fixed in this phase:**
+- **Both images carried fixable HIGH vulnerabilities:** 2 in the backend's base system packages, and 10 in the npm tool bundled with the web image, which the app never uses at run time. Both are now 0.
+- **A small model's "decision" label cost a person their explanation.** Its opinion now counts only when it brings in a person.
+- **An evaluation run silently fell back to templates** when Ollama wasn't running. Both evaluation scripts now refuse to run if the model is unreachable.
+- **The load test measured the wrong thing.** On Windows, Docker Desktop's port proxy was the limit, not the API.
 
 ## Issues to sub-phases and checks
 

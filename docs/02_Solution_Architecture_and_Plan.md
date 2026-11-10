@@ -1,5 +1,10 @@
 # 02 — Feasibility, Technical Design, Tech Stack & 6-Phase Plan
 
+> **This is a design document, not a statement of what is built.** Where it describes content as
+> reviewed, or a feature as present, read it as the intent. For what actually exists and what
+> doesn't, see [docs/phases/CROSS_VERIFICATION.md](phases/CROSS_VERIFICATION.md) and
+> [docs/submission/assumptions_and_limitations.md](submission/assumptions_and_limitations.md).
+
 > **Scope update (5 Nov 2026):** Samvid is global by design. UAE and Abu Dhabi details in this document describe the first reference pack, not the limit of the product. Supported languages are English, Arabic and Hindi. See [docs/07](07_Global_Design_and_Country_Packs.md).
 
 > Companion to [01_Problem_Understanding.md](01_Problem_Understanding.md). This document is backend-first. The frontend is generated with **Google Stitch** (or a similar tool) and wired to the backend through a typed OpenAPI client.

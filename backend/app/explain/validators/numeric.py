@@ -1,6 +1,7 @@
-# FILE: backend/app/explain/validators/numeric.py
-# STATUS: STUB. Documentation only; no code until explicitly requested.
-# PURPOSE: Numeric guard.
-# PLANNED LOGIC: Numbers must bind to their fact label. Checks Arabic and Hindi number words. Must not flag ordinary words such as 'one copy'.
-# PHASE: 4.2 | REQ: R1, R2 | SPEC: backend.md 11.19
-# CLOSE THESE ISSUES (docs/04): C5, G1
+"""Superseded. The free-number and label-binding checks live in `rules.py`, with their word and phrase tables in
+`patterns.py`, the text normalising in `text.py`, and the order they run in `pipeline.py`.
+
+They were built as one module because every check shares the same normalised text and the same
+`Flag` result, and splitting them meant normalising each answer five times. Nothing imports this
+file. See `tests/unit/test_validators.py`.
+"""
