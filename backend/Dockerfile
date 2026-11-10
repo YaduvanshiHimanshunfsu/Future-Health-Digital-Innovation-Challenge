@@ -1,6 +1,8 @@
 FROM python:3.12-slim AS build
 ENV PIP_NO_CACHE_DIR=1 PYTHONDONTWRITEBYTECODE=1 UV_PROJECT_ENVIRONMENT=/opt/venv
-RUN pip install "uv>=0.5,<1"
+# Pinned to the uv that wrote uv.lock: an older uv cannot read a newer lockfile revision.
+# Change this and .github/workflows/ci.yml together whenever the lock is regenerated.
+RUN pip install "uv==0.11.18"
 WORKDIR /src
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev

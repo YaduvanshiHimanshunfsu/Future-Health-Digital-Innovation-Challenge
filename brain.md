@@ -674,3 +674,70 @@ progress, and a second animation on the same lines corrupts both.
       nobody's name should be guessed (user)
 - [ ] A new Gemini key, then `python Run_Samvid.py --setup` to paste it (user)
 - [ ] Someone outside the team runs it from the README alone, timed (V6.4.1) (user)
+
+## #021 · 2026-11-10 · CI failed after the push: hardened the workflow, without being able to read the logs
+
+- **Author:** Claude (Opus), directed by the user
+- **Phase:** 6.3 · **Checks:** V6.3.1
+
+### What we did
+
+`ci` ran on commit `6d0fab5` and two of its three jobs failed: `backend` after 7 seconds and `image`
+after 3 seconds, while `secrets` passed. The repository is private, so neither the GitHub API nor a
+`gh` CLI was available to read the logs, and **the exact error was never seen**. What follows is
+reasoning from evidence, and it is a diagnosis, not a confirmed cause.
+
+**First, what was ruled out.** Every step of the old workflow was run locally, exactly as written:
+`uv lock --check`, `ruff check .`, `ruff format --check .`, `uv run mypy` with no arguments (it uses
+`files = ["app"]`), `bandit -q -r app` without the config file, `pip-audit`, the unit tests, the
+frontend build, and `docker build -t samvid-backend:ci backend` followed by a Trivy scan with the
+workflow's own severity settings. All passed, Trivy with 0 findings. The pushed tree was also
+compared against the working tree: identical apart from the workflow itself. Linux portability was
+checked too, with `git ls-files --eol` (no CRLF text files) and a case-collision scan (none). The
+`openmined.psi` package, which has no Windows wheels, is an optional extra that `uv sync` never
+installs. **So the code is not what failed.**
+
+**The two likely environmental causes, and the fixes:**
+- **`backend`, about 7 seconds in:** `astral-sh/setup-uv` does not install Python, so
+  `uv sync --frozen` has to find or download a CPython matching `>=3.12,<3.13`. When it can't, it
+  fails in seconds. The workflow now installs Python 3.12 with `actions/setup-python` *before* uv
+  runs, so an interpreter always exists.
+- **`image`, about 3 seconds in:** Trivy downloads its vulnerability database from ghcr.io, which
+  rate-limits anonymous pulls hard enough to fail a run almost immediately. The scan now uses the
+  public ECR mirrors (`TRIVY_DB_REPOSITORY`, `TRIVY_JAVA_DB_REPOSITORY`).
+
+**Also fixed, and worth having either way:**
+- **uv is pinned to 0.11.18** in both the workflow and `backend/Dockerfile`, matching the uv that
+  wrote `uv.lock`. An older uv cannot read a newer lockfile revision, and the lock is at revision 3.
+- **The frontend had no CI job at all.** 55 browser tests, 16 wording tests and the type check never
+  ran on a push, so the web app could break and CI would stay green. It now runs the type check, the
+  wording rules, a production build and `npm audit`.
+- **`backend` was one long job**, so a lint error waited behind the container-based tests. It is now
+  `backend-checks` (about a minute) and `backend-tests`, with the unit tests run before the full
+  suite so a basic break fails fast.
+- Every job has a timeout, `image` waits for `backend-checks`, the Docker build uses a layer cache,
+  and a new push cancels the previous run.
+
+### Why we did it
+
+The user asked for it to be fixed properly before pushing again. Without the logs, the honest move is
+to remove every cause that can be removed and to make the next run say plainly what happened: the
+checks job now prints the uv version, the Python version and the lockfile revision before anything
+else runs.
+
+### Verification
+
+Every step of the **new** workflow was run locally first: ruff, format, mypy, bandit and pip-audit
+all exit 0; 509 unit tests pass; the frontend type check, wording tests (16) and production build all
+pass, and `npm audit --audit-level=high` exits 0; `docker build` with the pinned uv succeeds, and
+Trivy reports 0 HIGH or CRITICAL on the built image. The workflow YAML was parsed to confirm all five
+jobs and their dependencies.
+
+**Not verified:** the actual CI run, since nothing here can push. The diagnosis above is inference
+from timing and from everything that was ruled out, not from an error message.
+
+### Follow-ups
+- [ ] Push, and if a job still fails, send the failing step's log text: with the repository private,
+      that is the only way to see it (user)
+- [ ] If `backend-tests` is slow or flaky on the runner, consider marking the testcontainers tests
+      so they can run on a schedule instead of every push

@@ -3,25 +3,102 @@ on: [push, pull_request]
 permissions:
   contents: read
 
+# A new push to the same branch cancels the previous run, so a queue never builds up.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # uv writes the lockfile with a revision number, and an older uv can't read a newer one. Pinning
+  # the version that wrote `backend/uv.lock` keeps `uv sync --frozen` from failing on day one.
+  UV_VERSION: "0.11.18"
+  PYTHON_VERSION: "3.12"
+  NODE_VERSION: "22"
+
 jobs:
-  backend:
+  # Fast feedback: lint, format, types and the security scanners. No containers, so it finishes in
+  # about a minute and tells you most of what's wrong before the slow job has started.
+  backend-checks:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: backend
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
       - uses: astral-sh/setup-uv@v5
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - name: Versions, so a failure here is obvious in the log
+        run: |
+          uv --version
+          python --version
+          echo "lockfile revision: $(grep -m1 '^revision' uv.lock || echo none)"
       - run: uv sync --frozen
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run mypy
-      - run: uv run bandit -q -r app
+      - run: uv run bandit -q -r app -c pyproject.toml
       - run: uv run pip-audit
-      - run: uv run pytest -q --cov --cov-fail-under=80
+
+  # The test suite. The API tests start real Postgres, Redis and OpenFGA containers through
+  # testcontainers, so this needs Docker and takes a while.
+  backend-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - run: uv sync --frozen
+      # Unit tests first: they need nothing and fail in seconds if something is broken.
+      - name: Unit tests
+        run: uv run pytest -q tests/unit
+      - name: Every test, with coverage
+        run: uv run pytest -q --cov --cov-fail-under=80
+
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Types
+        run: npm run typecheck
+      # The wording rules: no directive, stigmatising or falsely certain text, Hindi parity with
+      # English, and no Arabic script until it's approved.
+      - name: Wording rules
+        run: npm run test:copy
+      - name: Production build
+        run: npm run build
+      - name: Dependency audit
+        run: npm audit --audit-level=high
 
   secrets:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,12 +109,29 @@ jobs:
 
   image:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
+    # No point scanning an image built from code that doesn't pass its own checks.
+    needs: backend-checks
     steps:
       - uses: actions/checkout@v4
-      - run: docker build -t samvid-backend:ci backend
-      - uses: aquasecurity/trivy-action@0.28.0
+      - uses: docker/setup-buildx-action@v3
+      - name: Build the backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          tags: samvid-backend:ci
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Scan it for known vulnerabilities
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: samvid-backend:ci
           severity: CRITICAL,HIGH
           ignore-unfixed: true
           exit-code: "1"
+        env:
+          # Trivy's database lives on ghcr.io, which rate-limits anonymous pulls hard enough to fail
+          # a run within seconds. These public mirrors are the documented way round it.
+          TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db:2
+          TRIVY_JAVA_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-java-db:1
