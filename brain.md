@@ -741,3 +741,114 @@ from timing and from everything that was ruled out, not from an error message.
       that is the only way to see it (user)
 - [ ] If `backend-tests` is slow or flaky on the runner, consider marking the testcontainers tests
       so they can run on a schedule instead of every push
+
+## #022 · 2026-11-13 · backend/app/models was missing from every clone: .gitignore had swallowed it
+
+- **Author:** Claude (Opus), directed by the user
+- **Phase:** 6.3 · **Checks:** V1.3.1 (stack runs from a clean clone), V6.3.3
+
+### What we did
+
+A team member cloned the project and `python Run_Samvid.py` failed. The `migrate` container stopped
+with `ModuleNotFoundError: No module named 'app.models'`, which then blocked the API, the worker and
+the web app, because each waits on the one before it. Their diagnosis was right, and the cause was
+ours: **`.gitignore` line 33 was an unanchored `models/`**, written for downloaded model weights. An
+unanchored directory name matches at every depth, so it also matched `backend/app/models/`, and the
+whole SQLAlchemy layer — 21 modules, 21 tables — had never been committed. Nothing ever failed here,
+because on this machine the files were present. `git ls-files backend/app/models` returned nothing.
+
+Fixed, and then guarded in three places so it cannot happen quietly again:
+
+- **`.gitignore`:** `models/` is now `/models/`. `out/` and `coverage/` were anchored for the same
+  reason, since both are ordinary words that a source folder could use.
+- **The 21 model modules and the package README** are committed.
+- **`scripts/check_clone.py`** fails if a required path is missing or empty, and if a .gitignore rule
+  matches a tracked source file. `REQUIRED` in `Run_Samvid.py` is the single list, now 20 paths:
+  every `COPY` source in both Dockerfiles plus what the launcher runs.
+- **A `clone` CI job** runs it first, on a plain `actions/checkout`. `backend-checks` now waits on it.
+  The same job compiles the launcher on Python 3.9, the oldest version it claims to support.
+- **The launcher** runs the same check straight after the welcome, before Docker is touched, and
+  prints what is missing and how to get a complete copy.
+- **README:** "Getting started" now leads with `git clone` and the launcher instead of raw
+  `docker compose`, warns that a zip saved from a file listing is only part of the project, and has
+  a troubleshooting table whose first row is this error.
+
+Two unrelated things found while cross-checking, both fixed:
+
+- **`GEMINI_KEY_SHAPE` only matched `AIza...`.** AI Studio also issues `AQ.`-prefixed keys, so a
+  teammate pasting a current, valid key was told it didn't look like one. It still checked the key
+  with Google and still redacted it, so this was friction rather than a fault. Both shapes now match,
+  and the warning no longer asserts a single format.
+- **`scan_logs.py` had no pattern for an API key.** A `Settings` validation error prints the input it
+  was handed: those fields are `SecretStr`, but pydantic reports the raw mapping from before the
+  wrapping, so a startup crash can put the AI key in a container log. Observed while importing every
+  module with the settings absent. The scanner now looks for both key shapes.
+
+### How we did it
+
+`git status --ignored` listed every ignored path and each was judged: only `backend/app/models/` was
+source. `git check-ignore -v` named the rule and the line. The guard uses
+`git check-ignore --no-index`, which is the part that matters: without `--no-index` git skips its
+ignore rules for paths it already tracks, so a rule that will drop the *next* file added to a folder
+looks harmless. Its input is passed as bytes, because a text-mode pipe on Windows turns each newline
+into CR+LF and git then tests paths with a trailing carriage return and matches nothing.
+
+### Why we did it
+
+A prototype that only starts on the machine it was built on is not a working prototype, and a judge
+or a team member gets one shot at a first run. Fixing the rule alone would have left the same trap
+for the next broadly-named folder, and nothing in CI looked at what a clone actually contains.
+
+**Rejected:** a `!backend/app/models/` negation in `.gitignore`. It would have fixed this one folder
+and left the pattern to catch the next one. **Rejected:** dropping the `models/` rule entirely. No
+directory needs it today, but the launcher may yet cache model weights, so it is kept and anchored.
+**Rejected:** deriving `REQUIRED` by walking the tree for `__init__.py`. A folder that is missing
+cannot be discovered from the tree that is missing it, so the list has to be written down.
+
+### Verification
+
+Done against a **real `git clone` of this repository into an empty temporary folder**, not the
+working tree:
+
+- The clone holds **558 tracked files** and all 21 model modules.
+- `scripts/check_clone.py` passes in the clone. With `backend/app/models/` deleted it exits 1 and
+  names it, and the launcher stops with the same list and exits 1 **before Docker is touched**.
+  With the old `models/` rule put back, the guard names all 20 affected files and exits 1.
+- `app.models` imports from the clone: 21 models, 21 tables on `Base.metadata`.
+- `alembic upgrade head --sql` from the clone generates 22 `CREATE TABLE` statements.
+- **`docker build` of `backend` from the clone succeeds**, and inside that image `app.models`
+  imports and alembic generates the same 22 statements.
+- **The full stack was brought up from the clone** under its own Compose project name, and
+  `docker compose up -d --build --wait` **exited 0**. `migrate` **exited 0**, ran all three
+  migrations, and PostgreSQL then held **22 tables**: the exact container and command that was
+  failing. All eight long-running services reported healthy — postgres, redis, keycloak, openfga,
+  api, worker, beat, web — and both one-shot jobs exited 0. `GET /v1/health` and `/v1/ready`
+  returned 200, and the web app returned 200 on `/en`. The stack was then removed with its volumes.
+- **158 of 161 backend modules import** from the clone. The 3 that don't are `app.asgi`,
+  `app.workers.celery_app` and `app.workers.tasks`, each refusing to start because required settings
+  were absent from the shell. That is the fail-closed behaviour working, not a missing file.
+- `generate_env.py` in the clone wrote all 15 settings, none empty.
+- **All 169 relative links in every markdown file resolve.**
+- Line endings: the committed `infra/postgres/init.sh` holds **0 CR bytes**, and everything is LF in
+  the index, so a teammate on Linux or macOS is unaffected.
+- ruff, `ruff format --check` and `mypy --strict` pass on the launcher and all six scripts. The
+  launcher compiles on this machine's Python 3.11 and parses under the 3.9 grammar.
+- Backend unit tests: **457 passed** on four of five runs, with 52 errors each time from the
+  testcontainers tests while Docker was down. One run reported a single failure that did not
+  reproduce in four further runs, and **its name was not captured** — it is unidentified, not
+  explained away.
+
+**Not verified:** nobody outside the team has run this yet, so V6.4.1 is still open. The CI `clone`
+job has not run on GitHub, since nothing here can push. The browser tests and the seeding step were
+not re-run, as nothing they touch was changed. The `AQ.` key shape was tested against the regex, not
+by pasting a working key, because the key on this machine is rejected by Google.
+
+### Follow-ups
+- [ ] **Push this.** Until it is pushed, every clone and every zip is still missing the ORM layer,
+      and no team member can run the project (user)
+- [ ] Watch the new `clone` job on the first push; it is the one that has never run (user)
+- [ ] Someone outside the team runs it from the README alone, timed (V6.4.1) (user)
+- [ ] Add your names to `MEMBERS` at the top of `Run_Samvid.py` (user)
+- [ ] Consider setting `COMPOSE_PROJECT_NAME`: the project name comes from the compose file's folder,
+      so every copy of the repository is the Docker project "infra" and two clones would share
+      containers and volumes

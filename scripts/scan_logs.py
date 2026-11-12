@@ -7,7 +7,7 @@ Run it after a full demo or browser run, so the logs hold real traffic. It looks
 - national ID formats (the UAE "784-" pattern and the India demo pattern),
 - gene symbols from the packs, as whole words,
 - the synthetic personas' names,
-- bearer tokens, JWTs, invitation tokens in paths, and email addresses.
+- bearer tokens, JWTs, invitation tokens in paths, email addresses, and AI Studio API keys.
 
 Gene symbols in Keycloak's or OpenFGA's own startup lines would be noise, so only the services that
 handle health data are scanned for genes: api, worker, beat and web. Every service is scanned for IDs,
@@ -35,6 +35,10 @@ EVERYWHERE = {
     "JWT": re.compile(r"\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}"),
     "invitation token in a path": re.compile(r"/i/[A-Za-z0-9_-]{20,}"),
     "email address": re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"),
+    # A settings error prints the values it was given. Those are SecretStr fields, but pydantic
+    # reports the raw input it was handed, before any of it was wrapped, so a crash at startup can
+    # put the AI key in a container log. Both AI Studio key shapes.
+    "Google API key": re.compile(r"\b(AIza[0-9A-Za-z_\-]{30,45}|AQ\.[0-9A-Za-z_\-]{20,})"),
 }
 NAMES = ["Fatima", "Khalid", "Priya", "Rohan"]
 # Keycloak's own admin and service accounts appear by design and aren't people.

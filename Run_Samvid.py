@@ -152,7 +152,10 @@ APP_SERVICES = ["web", "api", "worker", "beat", "openfga", "keycloak"]
 QUIET_ROUTES = {"/health", "/ready"}
 ROUTINE_TASKS = ("samvid.apply_authz_outbox", "samvid.reconcile_authz", "samvid.ping")
 GEMINI_PROBE = "https://generativelanguage.googleapis.com/v1beta/models?pageSize=1"
-GEMINI_KEY_SHAPE = re.compile(r"^AIza[0-9A-Za-z_\-]{30,45}$")
+# AI Studio has issued two key shapes: the long-standing "AIza..." and the newer "AQ."-prefixed
+# one. This is only a hint before the key is checked with Google, so an unknown shape warns
+# rather than refusing: a third format should not stop anyone setting the project up.
+GEMINI_KEY_SHAPE = re.compile(r"^(AIza[0-9A-Za-z_\-]{30,45}|AQ\.[0-9A-Za-z_\-]{20,})$")
 
 # Named so no f-string has to hold a backslash: that needs Python 3.12, and this file runs on
 # whatever Python someone already has.
@@ -423,10 +426,11 @@ def sync_backend(auto: bool) -> None:
         warn("That didn't finish. Demo accounts and the scripts may not work.")
 
 
-# Paths the stack cannot start without. A zip taken from the web interface of a branch, a clone
-# that was interrupted, or a .gitignore rule that matched a source folder all leave a tree that
-# looks complete until Docker is three minutes into a build. A directory here must also be
-# non-empty: git stores no empty directories, so a missing package often survives as a bare folder.
+# Paths the stack cannot start without: every COPY source in the two Dockerfiles, plus what the
+# launcher itself runs. A zip taken from a file listing, an interrupted clone, or a .gitignore rule
+# that matched a source folder all leave a tree that looks complete until Docker is three minutes
+# into a build. A directory here must also be non-empty, because git stores no empty directories
+# and a package lost this way often survives as a bare folder left over from an earlier run.
 REQUIRED = [
     "backend/app/models",
     "backend/app/api",
@@ -435,6 +439,8 @@ REQUIRED = [
     "backend/app/risk_engine",
     "backend/app/country_packs",
     "backend/alembic/versions",
+    "backend/alembic.ini",
+    "backend/packs",
     "backend/synthetic",
     "backend/pyproject.toml",
     "backend/uv.lock",
@@ -594,7 +600,7 @@ def ai_setup(auto: bool, force: bool) -> None:
     say(f"  and every safety rule still applies. Only redacted words are ever sent.{reset()}")
     say()
     say(
-        f"  Get a free key at {bold()}https://aistudio.google.com/apikey{reset()} {dim()}(it starts with AIza){reset()}"
+        f"  Get a free key at {bold()}https://aistudio.google.com/apikey{reset()} {dim()}(it starts with AIza or AQ.){reset()}"
     )
     say()
     if auto or not sys.stdin.isatty():
@@ -613,9 +619,7 @@ def ai_setup(auto: bool, force: bool) -> None:
             return
         _SECRETS.add(key)
         if not GEMINI_KEY_SHAPE.match(key):
-            warn(
-                "That doesn't look like an AI Studio key, which starts with AIza. Checking anyway..."
-            )
+            warn("That isn't a key shape we recognise. Checking it with Google anyway...")
         note("Checking it with Google...")
         code = gemini_status(key)
         if code == 200:
