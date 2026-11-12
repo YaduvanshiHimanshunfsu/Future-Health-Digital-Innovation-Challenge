@@ -19,18 +19,23 @@ __pycache__/
 htmlcov/
 .hypothesis/
 
-# Node and Next.js
+# Node and Next.js. The directory names here are anchored on purpose: a bare
+# `out/` or `coverage/` matches at every depth and would hide a source package
+# that happens to share the name.
 node_modules/
 .next/
-out/
-coverage/
+/frontend/out/
+/frontend/coverage/
+/backend/coverage/
 playwright-report/
 test-results/
 *.tsbuildinfo
 
-# Models and caches
+# Downloaded model weights and tool caches. Anchored to the repository root:
+# an unanchored `models/` also matched `backend/app/models/`, the SQLAlchemy
+# package, and kept the whole ORM layer out of every clone. See brain.md #022.
+/models/
 .cache/
-models/
 
 # OS and editors
 .DS_Store

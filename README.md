@@ -671,16 +671,44 @@ Future Health/
 
 ## Getting started
 
-Run the foundation built so far:
+You need [Docker Desktop](https://www.docker.com/products/docker-desktop/) running, and Python 3.9
+or newer to start the launcher. Nothing else is required.
 
 ```bash
-python scripts/generate_env.py
-cd infra
-docker compose up -d --build --wait
-docker compose exec api python -m app.ops.check_services
+git clone <repository URL> samvid
+cd samvid
+python Run_Samvid.py
 ```
 
-The [runbook](docs/runbook_local_stack.md) covers tests and everything else. To contribute:
+That is the whole setup. The launcher writes `infra/.env` with fresh random passwords, builds the
+eight containers, creates the demo accounts with their synthetic lab reports, and prints where to
+go. Allow around ten minutes for the first build, and under a minute after that.
+
+**Use `git clone`, not a downloaded zip.** A zip saved from a file listing rather than from the
+repository's main page holds only part of the project, and the stack cannot start from it.
+
+### If it doesn't start
+
+```bash
+python scripts/check_clone.py
+```
+
+That says in one line whether your copy is complete. The launcher runs the same check and stops
+with the same list, before anything is built.
+
+| What you see | What it means |
+|---|---|
+| `ModuleNotFoundError: No module named 'app.models'`, or another `app.*` module | The download is incomplete. Run `git pull`, or clone again. `check_clone.py` names the missing folders |
+| `This copy of Samvid is incomplete` | The same thing, caught before the build. The list it prints is what to restore |
+| `Docker isn't available` | Docker Desktop isn't running. Start it, wait for the whale icon to settle, and run the launcher again |
+| A container restarting, or the web app not answering | `python Run_Samvid.py --status` shows each service. `docker compose -f infra/docker-compose.yml logs <service>` shows why |
+| Ports 3000, 8000 or 8080 already in use | Stop whatever holds them, or `python Run_Samvid.py --stop` if an older run is still up |
+| The build succeeded but there is no data | `python Run_Samvid.py` again without `--no-seed`. Seeding needs `uv`, which the launcher offers to install |
+
+Every run is written to `logs/`, with secrets removed, so that file is safe to share when asking
+for help. The [runbook](docs/runbook_local_stack.md) covers tests and everything else.
+
+### To contribute
 
 1. Read the latest entries in [brain.md](brain.md).
 2. Pick up the next open sub-phase in the [phase plan](docs/phases/00_PHASE_OVERVIEW.md).

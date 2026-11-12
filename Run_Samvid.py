@@ -423,6 +423,59 @@ def sync_backend(auto: bool) -> None:
         warn("That didn't finish. Demo accounts and the scripts may not work.")
 
 
+# Paths the stack cannot start without. A zip taken from the web interface of a branch, a clone
+# that was interrupted, or a .gitignore rule that matched a source folder all leave a tree that
+# looks complete until Docker is three minutes into a build. A directory here must also be
+# non-empty: git stores no empty directories, so a missing package often survives as a bare folder.
+REQUIRED = [
+    "backend/app/models",
+    "backend/app/api",
+    "backend/app/core",
+    "backend/app/db",
+    "backend/app/risk_engine",
+    "backend/app/country_packs",
+    "backend/alembic/versions",
+    "backend/synthetic",
+    "backend/pyproject.toml",
+    "backend/uv.lock",
+    "backend/Dockerfile",
+    "frontend/app",
+    "frontend/package.json",
+    "frontend/package-lock.json",
+    "frontend/Dockerfile",
+    "infra/docker-compose.yml",
+    "scripts/generate_env.py",
+    "scripts/seed_demo.py",
+]
+
+
+def check_download() -> bool:
+    """Confirms the download is complete, and names what's missing if it isn't."""
+    missing = []
+    for relative in REQUIRED:
+        path = ROOT / relative
+        if not path.exists() or (path.is_dir() and not any(path.iterdir())):
+            missing.append(relative)
+    if not missing:
+        return True
+
+    bad(f"This copy of {PROJECT} is incomplete, so it can't start.")
+    say()
+    say("  These are missing or empty:")
+    for relative in missing:
+        say(f"      {red()}{glyph(CROSS, 'X')}{reset()} {relative}")
+    say()
+    say(f"  {bold()}Get a complete copy:{reset()}")
+    say("      git clone <the repository URL> samvid")
+    say("      cd samvid")
+    say("      python Run_Samvid.py")
+    say()
+    say(f"  {dim()}If you already have a clone here, 'git pull' is enough. If you downloaded a")
+    say("  zip instead, download it again from the repository's main page: a zip saved from a")
+    say(f"  file listing holds only part of the project.{reset()}")
+    return False
+
+
 def prerequisites(auto: bool) -> bool:
     """Checks what's installed, installs what it safely can, and says what's optional."""
     step("What's installed")
@@ -1043,6 +1096,9 @@ def main() -> int:
     full_setup = first_run or args.setup
     short = any([args.status, args.stop, args.reset, args.eval, args.security])
     welcome(brief=not full_setup or short)
+
+    if not check_download():
+        return 1
 
     if short:
         if not docker_ready() and not start_docker_desktop():

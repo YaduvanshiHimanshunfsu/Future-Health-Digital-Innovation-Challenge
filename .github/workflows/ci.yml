@@ -16,10 +16,33 @@ env:
   NODE_VERSION: "22"
 
 jobs:
+  # Runs first and takes seconds. A checkout here is exactly what someone gets from a clone, so
+  # this is the only place that can prove the repository holds everything needed to start the
+  # stack. It also fails if a .gitignore rule matches a source file: `backend/app/models/` was
+  # excluded from every clone by an unanchored `models/` rule, and no other job noticed.
+  clone:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: The checkout is complete and nothing source-like is ignored
+        run: python scripts/check_clone.py
+      # The launcher is the first thing anyone runs, and it has to parse on an older Python than
+      # the backend's. 3.9 is the oldest it claims to support.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - name: The launcher parses on Python 3.9
+        run: python -m py_compile Run_Samvid.py
+
   # Fast feedback: lint, format, types and the security scanners. No containers, so it finishes in
   # about a minute and tells you most of what's wrong before the slow job has started.
   backend-checks:
     runs-on: ubuntu-latest
+    needs: clone
     timeout-minutes: 15
     defaults:
       run:
