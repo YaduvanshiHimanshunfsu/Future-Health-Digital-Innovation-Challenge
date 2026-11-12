@@ -30,13 +30,22 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: The checkout is complete and nothing source-like is ignored
         run: python scripts/check_clone.py
-      # The launcher is the first thing anyone runs, and it has to parse on an older Python than
-      # the backend's. 3.9 is the oldest it claims to support.
-      - uses: actions/setup-python@v5
+      # The launcher and the clone check are the two files someone runs with whatever Python they
+      # already have, before any of the project's own tooling exists, so both have to work on the
+      # oldest version they claim. uv fetches that interpreter itself: `actions/setup-python` can
+      # only offer what the runner image publishes, and 3.9 is absent from Ubuntu 26.04.
+      #
+      # It has to be a real interpreter. `ast.parse(..., feature_version=(3, 9))` looks like it
+      # would do, but on 3.12 it accepts a backslash inside an f-string expression, which is a
+      # SyntaxError before 3.12 and is exactly the mistake this step exists to catch.
+      - uses: astral-sh/setup-uv@v5
         with:
-          python-version: "3.9"
-      - name: The launcher parses on Python 3.9
-        run: python -m py_compile Run_Samvid.py
+          version: ${{ env.UV_VERSION }}
+      - name: The launcher and the clone check run on Python 3.9
+        run: |
+          uv python install 3.9
+          uv run --no-project --python 3.9 -- python -m py_compile \
+            Run_Samvid.py scripts/check_clone.py
 
   # Fast feedback: lint, format, types and the security scanners. No containers, so it finishes in
   # about a minute and tells you most of what's wrong before the slow job has started.

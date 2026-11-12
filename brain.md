@@ -852,3 +852,70 @@ by pasting a working key, because the key on this machine is rejected by Google.
 - [ ] Consider setting `COMPOSE_PROJECT_NAME`: the project name comes from the compose file's folder,
       so every copy of the repository is the Docker project "infra" and two clones would share
       containers and volumes
+
+## #023 · 2026-11-13 · The new `clone` CI job failed on its first run: Ubuntu 26.04 has no Python 3.9
+
+- **Author:** Claude (Opus), directed by the user
+- **Phase:** 6.3 · **Checks:** V6.3.1
+
+### What we did
+
+The user pushed #022. Run #8 failed, and the only failing job was the `clone` job added in that
+entry, after 7 seconds:
+
+```
+The version '3.9' with architecture 'x64' was not found for Ubuntu 26.04.
+```
+
+`actions/setup-python` can only offer what the runner image publishes, and `ubuntu-latest` has
+moved to 26.04, which ships no 3.9 build. The step now gets its interpreter from **uv**, which
+downloads a standalone CPython independently of the runner image, and it compiles
+`scripts/check_clone.py` as well as `Run_Samvid.py`, since the README tells people to run that one
+with whatever Python they already have.
+
+The rest of the run behaved exactly as designed: `backend-tests`, `frontend` and `secrets` all
+passed, and `backend-checks` and `image` were correctly skipped because they wait on `clone`.
+Nothing in #022's actual fix was implicated.
+
+### How we did it
+
+The obvious repair was to drop the second interpreter and use
+`ast.parse(source, feature_version=(3, 9))` on the 3.12 that the job already has. **That was tested
+and rejected**, because it is weaker than it looks:
+
+| Checker | Backslash inside an f-string expression |
+|---|---|
+| `ast.parse(feature_version=(3, 9))` on 3.12 | **accepted** — at `(3, 9)`, `(3, 11)` and `(3, 12)` alike |
+| real Python 3.11 `py_compile` | rejected: *f-string expression part cannot include a backslash* |
+| real Python 3.9 `py_compile` | rejected, same message |
+
+`feature_version` constrains grammar features, not the f-string tokenizer, so it would have waved
+through **the exact mistake entry #020 records making** — the one that would have given anyone on
+an older Python a `SyntaxError` instead of a project. The check has to be a real interpreter, so
+uv installs one.
+
+### Why we did it
+
+A guard that cannot catch the bug it was written for is worse than none, because it reads as
+coverage. Pinning the job to `ubuntu-24.04` would also have worked today and would break again at
+the next image retirement; uv's interpreter does not depend on the image at all.
+
+### Verification
+
+- `uv python install 3.9` fetched CPython 3.9.25, and **the exact command the job now runs**
+  compiled `Run_Samvid.py` and `scripts/check_clone.py` on it with no error.
+- That same real 3.9 was pointed at a file holding a backslash inside an f-string expression and
+  rejected it, so the guard is proven against the mistake it exists to catch.
+- The workflow YAML parses; the `clone` job has five steps, and `backend-checks` still waits on it.
+- `scripts/check_clone.py` passes: 20 required paths, no ignore rule over a source file.
+
+**Not verified:** the corrected job has not run on GitHub. The reasoning about Ubuntu 26.04 comes
+from the runner's own error message, which named the cause outright, unlike the blind diagnosis in
+entry #021.
+
+### Follow-ups
+- [ ] Push, and confirm `clone` is green; the whole chain behind it was skipped on run #8 (user)
+- [ ] Four jobs warn that `actions/checkout@v4`, `actions/setup-python@v5`, `setup-node@v4`,
+      `setup-uv@v5` and `gitleaks-action@v2` are Node 20 actions now forced onto Node 24. They
+      still run, so this is noise rather than breakage, but the majors will need bumping together,
+      and not in the week before the deadline (user)
