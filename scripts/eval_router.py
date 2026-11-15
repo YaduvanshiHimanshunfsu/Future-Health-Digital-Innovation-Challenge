@@ -40,7 +40,7 @@ SETS = [
     ("Development set", EVAL / "router_early.jsonl"),
 ]
 REPORTS = ROOT / "docs" / "evaluation"
-LANGUAGES = {"en": "English", "hi": "Hindi", "ar": "Arabic (Roman letters)"}
+LANGUAGES = {"en": "English", "ar": "Arabic (Roman letters)"}
 BOUNDARIES = ["DISTRESS", "COERCION", "CLINICAL_ADVICE", "DECISION_SUPPORT", "EDUCATION"]
 # A question meant for a person that the router answers itself is the dangerous kind of miss.
 NEEDS_A_PERSON = {"DISTRESS", "COERCION", "CLINICAL_ADVICE"}

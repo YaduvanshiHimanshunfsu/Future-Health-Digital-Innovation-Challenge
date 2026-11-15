@@ -18,13 +18,32 @@ class SlotIn(StrictIn):
 
 
 class SlotOut(Out):
-    """What a person sees: when and how. Not who, until they've booked and met."""
+    """When, how, and with which counsellor.
+
+    The counsellor was hidden until booking at first. The user chose on 15 Nov 2026 to show the team
+    and their availability, as booking services do. What stays hidden is anything about another
+    client: a busy counsellor is shown as busy, never with whom.
+    """
 
     id: UUID
+    counsellor_id: UUID
     starts_at: datetime
     ends_at: datetime
     mode: str
     lang: str
+
+
+class CounsellorOut(Out):
+    id: UUID
+    display_name: str
+    role: str
+    languages: list[str]
+    fictional: bool
+    # in_session, free_soon (within a day), free_later or no_times. From their calendar only.
+    status: str
+    next_open: datetime | None
+    # This counsellor already has the person's case, so only their times are offered.
+    yours: bool
 
 
 class BookIn(StrictIn):
@@ -58,19 +77,37 @@ class ReferralOut(Out):
 
 
 class CentreOut(Out):
+    id: str
+    # True for an invented demo entry. Screens must say so on the entry itself.
+    fictional: bool
     name: str
+    city: str
     region: str
-    services: str
+    kind: str
+    services: list[str]
+    modes: list[str]
+    step_free: bool | None
+    lat: float
+    lon: float
     contact: str | None
-    source_url: str
-    checked_on: str
+    source_url: str | None
+    checked_on: str | None
 
 
 class CentresOut(Out):
     pack: str
+    pack_name: str
     pack_reviewed: bool
     # Who counts as the qualified person in this country, or "none" if nobody has checked one.
     qualified_human: str
+    # How many the pack lists before any filter, and how many of those are invented.
+    total: int
+    fictional_count: int
+    # The pack's regions that have at least one centre, in the pack's own order.
+    regions: list[str]
+    # The pack's own names for regions that are proper names. Others are translated on screen.
+    region_names: dict[str, str]
     centres: list[CentreOut]
     funding_notes: list[str]
+    # The oldest check date among the real centres shown. None when none of them is real.
     as_of: date | None

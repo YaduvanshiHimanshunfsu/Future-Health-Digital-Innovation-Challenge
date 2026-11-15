@@ -29,7 +29,7 @@ A required deliverable. Written to be candid: where something isn't done, it say
 - **Placeholder carrier frequencies.** Every gene entry is marked `source: placeholder`. They aren't measurements of any population.
 - **No clinical review.** No clinician has signed off the gene tables, the risk rules (including G6PD), the "must inform" rule, or the knowledge base. All of it is labelled draft.
 - **No native-speaker review.** The Hindi interface, Hindi word lists and all non-English evaluation items were written by the team.
-- **Arabic:** the right-to-left layout works, but no Arabic text has been added, by the team's rule and pending approval. Arabic pages show English and say so. Arabic questions typed in Roman letters are understood; Arabic script goes to a person.
+- **Arabic:** the interface is in Arabic (Modern Standard Arabic, right to left), approved by the user on 15 Nov 2026. **It was drafted without a native speaker's review**, and every Arabic page says so in a banner. Backend text is still English in Arabic mode: explanations from reviewed templates, error messages, and names that come from the country packs (country, region, city and centre names). Arabic questions typed in Roman letters are understood; Arabic script goes to a person.
 
 ### Safety
 - **Routing misses some unfamiliar phrasing.** On questions never used to write the rules, 10 of 59 meant for a person got an automatic answer with rules alone; 5 of 59 with a local model double-checking. The target of 95% recall in each language is **not met**. Each of those answers was still validated, so the failure is a missed hand-off, not an unsafe sentence. See [docs/evaluation/](../evaluation/).

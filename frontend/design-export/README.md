@@ -9,7 +9,7 @@ The team designed the screens in Google Stitch. The export arrived as `stitch_sa
 - Certifications we don't hold (HIPAA, ISO 27001), invented study results ("p < 0.001"), and a made-up clinical sign-off.
 - Names of real hospitals and health authorities, which would suggest an endorsement we don't have.
 - "You are healthy and safe", "free screening", pressure on a partner ("Send reminder", "active 8 mins ago"), and the partner's exact variant shown to the other partner.
-- Arabic and Urdu script, which project files don't hold until the user approves it and a reviewer writes it.
+- Arabic and Urdu script. Since 15 Nov 2026 the user has approved Arabic interface text in `messages/ar.json` only, drafted and awaiting a native speaker's review; the design's own Arabic samples are still not used.
 
 So the layouts follow Stitch, and every word comes from `messages/`, where `tests/unit/copy.test.mjs` enforces the wording rules.
 

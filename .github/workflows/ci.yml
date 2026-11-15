@@ -119,8 +119,8 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - name: Types
         run: npm run typecheck
-      # The wording rules: no directive, stigmatising or falsely certain text, Hindi parity with
-      # English, and no Arabic script until it's approved.
+      # The wording rules: no directive, stigmatising or falsely certain text in English or Arabic,
+      # Arabic parity with English, and Arabic script only in messages/ar.json.
       - name: Wording rules
         run: npm run test:copy
       - name: Production build

@@ -35,7 +35,7 @@ function preferredLocale(request: NextRequest) {
   const header = request.headers.get("accept-language") ?? "";
   for (const part of header.split(",")) {
     const code = part.trim().split(/[-;]/)[0];
-    if (isLocale(code) && code !== "ar") return code;
+    if (isLocale(code)) return code;
   }
   return DEFAULT_LOCALE;
 }

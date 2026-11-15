@@ -46,7 +46,7 @@ from synthetic.generate import load_personas  # noqa: E402
 ITEMS = ROOT / "backend" / "tests" / "eval" / "answers.jsonl"
 REPORTS = ROOT / "docs" / "evaluation"
 PACK = load_pack(DEFAULT_PACKS_DIR / "ae-abu-dhabi")
-LANGUAGES = {"en": "English", "hi": "Hindi", "ar": "Arabic (Roman letters)"}
+LANGUAGES = {"en": "English", "ar": "Arabic (Roman letters)"}
 PERSON = {Boundary.DISTRESS, Boundary.COERCION, Boundary.CLINICAL_ADVICE, Boundary.DECISION_SUPPORT}
 PERCENT = re.compile(r"(\d+(?:\.\d+)?)\s*%")
 ONE_IN = re.compile(r"\b1\s+in\s+(\d+)\b", re.IGNORECASE)

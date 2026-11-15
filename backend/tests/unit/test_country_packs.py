@@ -92,8 +92,16 @@ def test_unreviewed_pack_loads_for_a_demo_and_is_labelled() -> None:
     assert not registry.default.is_reviewed
 
 
+def drop_demo_centres(pack: Path) -> None:
+    # A pack going for review has its invented centres taken out first; the loader insists on it.
+    (pack / "services.yaml").write_text(
+        "qualified_human: counsellor\ncentres: []\nfunding_notes: []\n", "utf-8"
+    )
+
+
 def test_reviewed_status_with_no_named_reviewer_is_still_refused(tmp_path: Path) -> None:
     pack = copy_pack(tmp_path)
+    drop_demo_centres(pack)
     replace_in(pack / "pack.yaml", "status: reference", "status: reviewed")
     with pytest.raises(PackError, match="production"):
         load_registry(tmp_path, ["ae-abu-dhabi"], "ae-abu-dhabi", production=True)
@@ -101,6 +109,7 @@ def test_reviewed_status_with_no_named_reviewer_is_still_refused(tmp_path: Path)
 
 def test_reviewed_pack_with_a_named_reviewer_runs_in_production(tmp_path: Path) -> None:
     pack = copy_pack(tmp_path)
+    drop_demo_centres(pack)
     replace_in(pack / "pack.yaml", "status: reference", "status: reviewed")
     replace_in(pack / "pack.yaml", "reviewers: []", "reviewers: [Dr Example]")
     registry = load_registry(tmp_path, ["ae-abu-dhabi"], "ae-abu-dhabi", production=True)
@@ -119,10 +128,91 @@ def test_no_country_specific_values_in_application_code() -> None:
 
 
 def test_no_qualified_service_is_stated_and_not_assumed() -> None:
-    """V2.6.6. The screens use this to say nothing is listed, instead of implying a service."""
+    """V2.6.6. The screens use this to say nothing is listed, instead of implying a service.
+
+    India lists demo centres, but every one is fictional, so none implies a real service.
+    """
     india = load_pack(INDIA)
     assert india.services.qualified_human == "none"
-    assert india.services.centres == []
+    assert india.services.centres
+    assert all(centre.fictional for centre in india.services.centres)
+
+
+@pytest.mark.parametrize("pack", [ABU_DHABI, INDIA])
+def test_a_demo_centre_can_never_send_anyone_anywhere(pack: Path) -> None:
+    """An invented centre has no phone, website or check date, so it can't pass for a real one."""
+    for centre in load_pack(pack).services.centres:
+        assert centre.fictional
+        assert (centre.contact, centre.source_url, centre.checked_on) == (None, None, None)
+
+
+TEST_ENTRY = """
+  - id: ae-test-entry
+    fictional: true
+    name: Test Clinic
+    city: Abu Dhabi
+    region: abu-dhabi
+    kind: community_clinic
+    services: [genetic_counselling]
+    modes: [in_person]
+    lat: 24.4
+    lon: 54.4
+"""
+
+
+def add_centre(pack: Path, entry: str) -> None:
+    replace_in(pack / "services.yaml", "\nfunding_notes:", f"{entry}\nfunding_notes:")
+
+
+@pytest.mark.parametrize(
+    ("old", "new"),
+    [
+        # A phone number on an invented centre would send someone to a real one.
+        ("    lon: 54.4\n", "    lon: 54.4\n    contact: 02 000 0000\n"),
+        # A real centre must say where its details came from, and when they were checked.
+        ("    fictional: true", "    fictional: false"),
+        ("    region: abu-dhabi", "    region: dubai"),
+        ("[genetic_counselling]", "[genetic_counselling, genetic_counselling]"),
+        ("[genetic_counselling]", "[miracle_cure]"),
+        ("id: ae-test-entry", "id: ae-abu-dhabi-nakhla"),
+    ],
+    ids=[
+        "contact",
+        "real-no-source",
+        "unknown-region",
+        "service-twice",
+        "unknown-service",
+        "same-id",
+    ],
+)
+def test_a_centre_that_breaks_a_rule_stops_the_pack(tmp_path: Path, old: str, new: str) -> None:
+    pack = copy_pack(tmp_path)
+    assert old in TEST_ENTRY
+    add_centre(pack, TEST_ENTRY.replace(old, new))
+    with pytest.raises(PackError):
+        load_pack(pack)
+
+
+def test_a_real_centre_with_its_source_loads(tmp_path: Path) -> None:
+    pack = copy_pack(tmp_path)
+    real = TEST_ENTRY.replace("fictional: true", "fictional: false")
+    add_centre(
+        pack, real + "    source_url: https://example.org/list\n    checked_on: '2026-11-15'\n"
+    )
+    loaded = load_pack(pack)
+    assert [c.id for c in loaded.services.centres if not c.fictional] == ["ae-test-entry"]
+
+
+def test_a_reviewed_pack_cannot_list_fictional_centres(tmp_path: Path) -> None:
+    """Once local reviewers sign a pack off, an invented centre in it would read as checked."""
+    pack = copy_pack(tmp_path)
+    replace_in(
+        pack / "pack.yaml",
+        "status: reference\nreviewers: []",
+        "status: reviewed\nreviewers: [A Reviewer]",
+    )
+    with pytest.raises(PackError, match="fictional"):
+        load_pack(pack)
 
 
 def test_legal_defaults_are_the_most_restrictive() -> None:
@@ -228,3 +318,21 @@ def test_national_id_normalisation_uses_the_pack_rule() -> None:
     assert pack.normalise_national_id("784-1990-1234567-1") == pack.normalise_national_id(
         "784199012345671"
     )
+
+
+def test_a_variant_naming_a_condition_its_gene_cannot_cause_stops_the_pack(
+    tmp_path: Path,
+) -> None:
+    pack = copy_pack(tmp_path)
+    replace_in(pack / "panel.yaml", '"c.20A>T": sickle_cell', '"c.20A>T": cystic_fibrosis')
+    with pytest.raises(PackError, match="invalid"):
+        load_pack(pack)
+
+
+def test_region_names_belong_to_the_pack_and_name_only_its_regions(tmp_path: Path) -> None:
+    """A proper name such as "Al Ain" is country-specific, so it lives in the pack (rule 6)."""
+    assert load_pack(ABU_DHABI).strata.region_names["al-ain"] == "Al Ain"
+    pack = copy_pack(tmp_path)
+    replace_in(pack / "strata.yaml", "al-dhafra: Al Dhafra}", "al-dhafra: Al Dhafra, dubai: Dubai}")
+    with pytest.raises(PackError, match="invalid"):
+        load_pack(pack)

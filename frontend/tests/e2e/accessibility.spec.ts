@@ -11,7 +11,7 @@ async function clean(page: Page, label: string) {
   expect(problems, label).toEqual([]);
 }
 
-for (const locale of ["en", "hi", "ar"]) {
+for (const locale of ["en", "ar"]) {
   for (const path of ["", "/learn/inheritance", "/learn/cousin-marriage", "/privacy", "/start"]) {
     test(`public ${locale}${path || "/"} has no WCAG AA problems`, async ({ page }) => {
       await page.goto(`/${locale}${path}`);

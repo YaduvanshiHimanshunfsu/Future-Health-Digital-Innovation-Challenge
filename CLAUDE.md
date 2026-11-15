@@ -9,7 +9,7 @@
 2. **No implementation code until the user explicitly asks.** Files are documentation-only stubs for now. When asked, implement only what was named, then remove that file's `STUB` header.
 3. **Don't commit or push unless asked.**
 4. **Follow the plan.** Work from [docs/phases/](docs/phases/00_PHASE_OVERVIEW.md). A sub-phase is done only when its cross-verification checks have evidence.
-5. **No Arabic or Urdu script in project files.** Write in English, and spell any Arabic examples in Roman letters with their meaning. The product supports English, Arabic and Hindi, so ask the user before adding Arabic interface text or test data. Hindi may be written in Devanagari.
+5. **No Arabic or Urdu script in project files, with one exception.** Write in English, and spell any Arabic examples in Roman letters with their meaning. The exception: the user approved Arabic interface text on 15 Nov 2026, so Arabic script may appear in `frontend/messages/ar.json` and nowhere else (a wording test enforces this). Ask the user before adding Arabic anywhere else, including backend text and test data. Never write Arabic for "carrier" as bare *hamil*, which also means "pregnant". Hindi may be written in Devanagari.
 6. **Global by design.** Nothing country-specific goes in the core. It goes in a country pack (see [docs/07](docs/07_Global_Design_and_Country_Packs.md)), with Abu Dhabi as the first reference pack and India as an illustrative second pack. Don't claim a country is supported without a reviewed pack.
 7. **Close the listed issues.** Each stub's header lists issue IDs from the [review](docs/04_Project_Review_Issues_and_Improvements.md). The spec's code has known bugs, so don't copy it unchanged.
 

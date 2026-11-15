@@ -77,9 +77,7 @@ async def read_shared(
         meta={"consent_id": str(consent.id), "mode": consent.kind, "actor_kind": "shared_with"},
     )
     await db.commit()
-    pack_info = PackInfo(
-        code=pack.code, status=pack.manifest.status.value, reviewed=pack.is_reviewed
-    )
+    pack_info = PackInfo.of(pack)
     if consent.kind == ConsentKind.SHARE_FULL.value:
         return SharedFullOut(
             has_report=record.has_report,

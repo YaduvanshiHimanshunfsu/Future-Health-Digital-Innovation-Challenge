@@ -3,11 +3,12 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { callApi } from "@/lib/api/client";
-import type { Appointment, Journey, Slot } from "@/lib/api/types";
+import type { Appointment, Journey } from "@/lib/api/types";
 import { formatDate, formatDateTime } from "@/lib/risk/words";
 import { useI18n } from "@/components/layout/I18nProvider";
 import { ClayCard, Notice } from "@/components/ui/ClayCard";
 import { PulseCurrent } from "@/components/motion/PulseCurrent";
+import { Booking } from "./Booking";
 
 const KNOWN = new Set([
   "RESULT_RELEASED",
@@ -56,82 +57,6 @@ function Timeline({ journey }: { journey: Journey }) {
   );
 }
 
-function Booking({ caseId, appointments }: { caseId: string; appointments: Appointment[] }) {
-  const { t, locale } = useI18n();
-  const router = useRouter();
-  const [slots, setSlots] = useState<Slot[] | null>(null);
-  const [problem, setProblem] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  const booked = appointments.filter((item) => item.status === "booked");
-
-  async function load() {
-    setProblem(null);
-    const found = await callApi<Slot[]>(`booking/slots?case_id=${caseId}`);
-    if (found.ok) setSlots(found.data);
-    else setProblem("error.generic");
-  }
-
-  async function book(slotId: string) {
-    setBusy(true);
-    setProblem(null);
-    const done = await callApi(`booking/slots/${slotId}/book`, { method: "POST", body: { case_id: caseId } });
-    setBusy(false);
-    if (done.ok) {
-      setSlots(null);
-      router.refresh();
-    } else {
-      setProblem(done.status === 409 ? "journey.slot_taken" : "error.generic");
-      void load();
-    }
-  }
-
-  async function cancel(appointmentId: string) {
-    setBusy(true);
-    const done = await callApi(`booking/appointments/${appointmentId}/cancel`, { method: "POST" });
-    setBusy(false);
-    if (done.ok) router.refresh();
-    else setProblem("error.generic");
-  }
-
-  return (
-    <div className="grid gap-3" data-testid="booking">
-      {booked.map((item) => (
-        <div key={item.id} className="rounded-field border border-turquoise/40 bg-turquoise-tint p-4">
-          <p className="font-semibold">{t("journey.booked_for", { when: formatDateTime(item.starts_at, locale) })}</p>
-          <p className="muted">{t(`journey.mode_${item.mode}`)}</p>
-          <button type="button" className="pill-secondary mt-3" disabled={busy} onClick={() => void cancel(item.id)}>
-            {t("journey.cancel")}
-          </button>
-        </div>
-      ))}
-      {booked.length === 0 ? (
-        slots === null ? (
-          <div>
-            <button type="button" className="pill-primary" onClick={() => void load()}>{t("journey.find_times")}</button>
-          </div>
-        ) : slots.length === 0 ? (
-          <Notice>{t("journey.no_times")}</Notice>
-        ) : (
-          <ul className="stagger grid gap-2 sm:grid-cols-2">
-            {slots.map((slot) => (
-              <li key={slot.id} className="flex flex-wrap items-center justify-between gap-2 rounded-field border border-line bg-porcelain p-3">
-                <span>
-                  <span className="block font-medium">{formatDateTime(slot.starts_at, locale)}</span>
-                  <span className="muted">{t(`journey.mode_${slot.mode}`)}</span>
-                </span>
-                <button type="button" className="pill-secondary" disabled={busy} onClick={() => void book(slot.id)}>
-                  {t("journey.book")}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )
-      ) : null}
-      {problem ? <Notice tone="problem">{t(problem)}</Notice> : null}
-    </div>
-  );
-}
-
 // No deadline is shown once someone has stepped back or the case has ended.
 const RESTING = new Set(["DECLINED_BY_USER", "LOST_TO_FOLLOW_UP", "CLOSED"]);
 
@@ -166,7 +91,7 @@ export function JourneyView({ journeys, appointments }: { journeys: Journey[]; a
   const mine = appointments.filter((item) => item.status === "booked");
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[1.2fr_1fr]">
+    <div className="grid items-start gap-5 lg:grid-cols-[1.2fr_1fr]">
       <ClayCard title={t("journey.steps_t")} accent={1}>
         <Timeline journey={current} />
         {RESTING.has(current.state) ? null : (

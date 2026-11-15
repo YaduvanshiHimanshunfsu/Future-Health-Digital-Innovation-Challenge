@@ -17,11 +17,9 @@ log = logging.getLogger(__name__)
 TEMPLATES: dict[str, dict[str, str]] = {
     "reminder": {
         "en": "You have a step waiting in Samvid. Open the app when it suits you. Reply STOP for no more reminders.",
-        "hi": "Samvid में आपका एक कदम बाकी है। जब सुविधा हो, ऐप खोलें। और याद-दिहानी न चाहें तो STOP लिखें।",
     },
     "appointment": {
         "en": "Your appointment in Samvid has changed. Open the app to see the details.",
-        "hi": "Samvid में आपकी मुलाकात बदली है। विवरण देखने के लिए ऐप खोलें।",
     },
 }
 

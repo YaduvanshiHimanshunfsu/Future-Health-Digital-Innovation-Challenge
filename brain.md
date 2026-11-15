@@ -919,3 +919,229 @@ entry #021.
       `setup-uv@v5` and `gitleaks-action@v2` are Node 20 actions now forced onto Node 24. They
       still run, so this is noise rather than breakage, but the majors will need bumping together,
       and not in the week before the deadline (user)
+
+## #024 · 2026-11-15 · Report 15: why the sign-in page doesn't match the design (investigation only)
+
+- **Author:** Claude (Fable), directed by the user
+- **Phase:** 2.3, 3.2 (screen P5) · **Checks:** none closed; this is a finding, not a fix
+
+### What we did
+
+The user is listing faults seen by hand, one report each, and asked for this one to be verified and
+explained **without changing the codebase**. The fault: `/[locale]/start` should look like the
+Stitch P5 design, ask its steps one after another instead of one below another, and work.
+
+Written up in [report15.md](report15.md), with four screenshots of the current flow in
+`report15_assets/`. No code, config, message or test file was touched.
+
+The report confirms the fault and splits it into three:
+
+- **It doesn't look like the design.** Of the design's 18 parts, 1 is built as designed, 6 exist in
+  a different form and 11 are missing: stepper, step labels, checkbox, language step, read-aloud
+  toggle, side panel and others.
+- **The steps aren't one at a time, in either place.** The build puts the agreement and the reading
+  level in one card. But the **design stacks all four steps too**, and it does so because our own
+  prompt in `docs/STITCH_PROMPTS.md` says "Show all four steps stacked so each design is visible".
+  The image is a sheet of four designs, not one screen. So "look like the design" and "one at a
+  time" are two jobs, and the report says so before proposing anything.
+- **It is only partly functional.** What is built works. The design's HTML has 0 forms and 0 click
+  handlers, so nothing functional can be taken from it.
+
+The other causes: `start/page.tsx` knows two states (signed in, agreed) and has no notion of a step;
+entry #014 rebuilt the screens from the design's colours after rightly discarding its HTML for
+rule-breaking text, which for this screen also dropped the layout; and the design assumes things the
+product lacks (sign-in on our own page, a second sign-in method, a changeable country, a saved
+read-aloud choice, live counsellor chat).
+
+The report proposes a one-step-per-screen flow with the step in the address and the server deciding
+which steps a person may see, a Samvid login theme for Keycloak, and lists six decisions for the
+user. It also lists ten pieces of design text that must not be copied, each against the rule in
+`tests/unit/copy.test.mjs` that bans it, including "Recommended" on a reading level.
+
+### How we did it
+
+The existing stack was started without a rebuild (the `web` image is current: no screen file has
+changed since it was built). A Playwright script kept in the scratchpad, outside the project, made a
+throwaway Keycloak account, walked the flow at 1280 and 390 pixels wide, photographed each stage,
+counted headings, buttons, checkboxes and steppers from the live page, then deleted the account. The
+design's HTML was read as a file and never run. The stack was stopped afterwards, as found.
+
+### Why we did it
+
+The user wants every fault identified before any is fixed, so the fixes can be ordered against the
+20 Nov deadline. A report that only said "rebuild it to match" would have hidden that the design
+contradicts the request, and that most of its words can't ship.
+
+### Verification
+
+- Screen 1 today: 1 heading, 1 button, 2 country radios, no stepper, no picture.
+- Screen 2 is Keycloak's default theme at `localhost:8080`, in English from either language.
+- Screen 3: 1 heading, 1 button, 3 level radios, no checkbox, no stepper.
+- The backend already has every endpoint the proposed flow needs except storage for read-aloud:
+  `POST /v1/me/service-consent`, `PATCH /v1/me`, `POST /v1/me/results-preference`.
+- `signIn` and `signInAndAgree` in `tests/e2e/fixtures.ts` are called 36 times across 5 spec files,
+  so any rebuild of this page must update them in the same change.
+- Every link in the report resolves, and it holds no Arabic or Urdu script.
+
+Five further faults were found and are listed in the report, unfixed. The two that matter: a failed
+sign-in always redirects to `/en/start`, losing the person's language, and the Keycloak form is
+never told which language to use.
+
+**Not verified:** the Hindi page was photographed, not read by a Hindi speaker. The right-to-left
+layout and the phone-width design were not compared. The Keycloak theme is a plan, not a trial.
+
+**Left behind:** one empty profile row in the local demo database for the deleted throwaway account,
+the same kind the browser tests leave.
+
+### Follow-ups
+- [ ] Answer the six decisions in section 9 of report15.md before anything is built (user)
+- [ ] Further fault reports, one per problem, as the user lists them (user, then Claude)
+- [ ] Decide whether `report15.md` and `report15_assets/` are committed or stay local (user)
+
+## #025 · 2026-11-15 · Vercel config, .gitignore for submission, and fixes in progress (not finished)
+
+- **Author:** Claude (Opus), directed by the user
+- **Phase:** 6.3 · **Checks:** V6.3.1
+
+### What we did
+
+**Vercel and the GitHub submission (finished, unverified on Vercel):**
+- `vercel.json`: two services. `frontend` (Next.js) is the only public one, at `/(.*)`. `backend`
+  (FastAPI, entrypoint `app/asgi.py`, since `app/main.py` holds a factory, not an `app`) is
+  internal, and the frontend reaches it through a binding injected as `API_URL`, the variable all
+  three callers already read. **Rejected:** Vercel's suggested `/api/(.*)` → backend rewrite. The
+  web app owns `/api/auth/*` and `/api/proxy/*`, and the backend lives under `/v1`, so that rewrite
+  would have broken sign-in and every browser call.
+- `.gitignore` rewritten: adds `.vercel/` (can hold pulled secrets), logs, build outputs, editor
+  files, and the local working reports `/report*.md` and `/report*_assets/`. Every directory name is
+  still anchored. No tracked file was junk: the repository was already clean.
+- `.vercelignore` keeps docs, infra, scripts, tests and synthetic data out of the upload, and keeps
+  `backend/packs` and `backend/alembic`, which the API reads at run time.
+
+**The user's fault list, done in code but not yet checked in a browser:**
+- The "draft" notice showed `ae-abu-dhabi`. `PackInfo` and `CentresOut` now carry the pack's
+  `name`, and `PackInfo.of()` replaces two hand-built copies (mypy found the second).
+- Centre finder: fictional demo centres (9 India, 6 Abu Dhabi), real cities, no phone, street or
+  website. A required `fictional` flag; the loader refuses a fictional centre in a reviewed pack
+  and a real one without a source. Server-side filters, a list and a schematic map sharing a
+  selection. No country outlines, no outside map tiles.
+- **Medical error fixed:** Fatima's HBB c.20A>T is the sickle cell change, yet the screen named
+  beta thalassaemia too, because conditions came from the gene. Packs now map known HBB variants
+  to their one condition; the variant never leaves the server (an existing test insists), only the
+  condition and a `conditions_exact` flag. An unknown change names both and says the exact change
+  decides.
+- `app/models/outbox.py` reformatted: CI's format check had never seen it, because the folder was
+  ignored until #022. It would have failed `backend-checks` on its first real run.
+- Arabic: approved by the user for `frontend/messages/ar.json` only. The plumbing is done (real
+  `lang`, Arabic font, each language names itself, a draft-translation banner); **ar.json itself
+  is not written yet**, so the wording tests fail until it is.
+
+### Verification
+
+`vercel.json` parses; `scripts/check_clone.py` passes; `git check-ignore` confirms the new source
+files are not ignored and the secrets, logs, `.vercel/`, design zip and reports are. Backend:
+44 pack tests and 30 results tests pass, both centre API tests pass against real containers,
+ruff, format, mypy and bandit are clean. Frontend type-checks.
+
+**Not verified:** nothing has been deployed to Vercel, and no Vercel CLI is installed here. **The
+backend cannot run on Vercel alone**: it needs PostgreSQL, Redis, Keycloak and OpenFGA, and the
+worker needs a long-running process. Without hosted versions of each, the deployed site shows the
+frontend and every call to the backend fails closed.
+
+### Follow-ups
+- [ ] Confirm the service names, that only the frontend is public, and the one binding (user)
+- [ ] Decide where PostgreSQL, Redis, Keycloak, OpenFGA and the worker will run (user)
+- [ ] Finish: check page wording, "no report yet" card, counsellor slots and status, ar.json,
+      browser verification of every fix, the e2e helpers (Claude, next)
+
+## #026 · 2026-11-16 · The user's fault list, finished: booking, check page, medical wording, no report, Arabic, centres
+
+- **Author:** Claude (Opus), directed by the user
+- **Phase:** 5.2, 5.3, 6.3 · **Checks:** V5.2.1, V5.2.3, V5.2.6, V6.3.1 · Continues #025
+
+### What we did
+
+Seven faults the user found by hand, all fixed and checked in a real browser:
+
+1. **Booking had no times and no people.** A fictional counselling team per country (three
+   each, with names, roles and languages) and a week of times. Each counsellor's status is worked
+   out from their own calendar: "In a session now", "Free at 11:30", "Next free Tuesday", "No open
+   times". Nothing is invented: a busy counsellor is busy because a booking covers this moment.
+   Choosing a counsellor shows only their times; times show three days at a time, in the device's
+   time zone. New: `counsellor_profile` table (migration 0004), `GET /v1/booking/counsellors`,
+   `counsellor_id` on each slot, `app/ops/seed_counsellors.py`, run by the launcher on every start.
+   **Also fixed:** slots were never filtered by country, so a person in India could be offered,
+   and book, an Abu Dhabi counsellor. Both listing and booking now refuse it (404).
+2. **The check page's badges.** "Draft questions, awaiting review" and "Adapted, not validated in
+   Hindi or Arabic" were researcher notes shown as badges, and the second said nothing useful on
+   the English page. Now a plain footnote under each questionnaire, specific to the page's
+   language. The facts are unchanged: still drafts, still unvalidated in translation.
+3. **Medically wrong result.** Fatima's HBB c.20A>T is the sickle cell change, but the screen
+   said "Linked to: Beta thalassaemia, Sickle cell condition", because conditions came from the
+   gene. Packs now map known HBB variants to their one condition. The variant stays on the server
+   (an existing test forbids it in the response); only the condition and a `conditions_exact` flag
+   leave. An unknown change names both and says the exact change decides. "Sickle cell condition"
+   is now "Sickle cell disease"; a carrier gets a short note on what the trait means (sickle cell
+   trait, beta or alpha thalassaemia trait); "Source: Mendelian inheritance" is "Method: ...".
+4. **"No report yet" was a dead end.** Now says how a result arrives (the lab sends it, matched by
+   national ID), links to the centre finder and the inheritance page, and names a demo account
+   that has a result. It is still never shown as a result: `demo-no-report` exists to prove that.
+5. **Arabic showed English.** User approved Arabic interface text, `ar.json` only. All 693 strings
+   written in Modern Standard Arabic, with a banner on every Arabic page saying no native speaker
+   has reviewed it. Real `lang="ar"`, an Arabic font, each language names itself in its own
+   script. Wording tests now hold Arabic to the same rules as English and Hindi, plus one for the
+   project's own warning: *hamil* means both "pregnant" and "carrier", so every "carrier" is
+   *hamil lil-taghayyur* ("carrying the change"), never bare.
+6. **Centre finder was empty.** Fictional demo centres: 9 in India, 6 in Abu Dhabi, real cities,
+   invented names, no phone, street or website. Search, region, service, visit type and step-free
+   filters, done on the server so the address can be shared and the page works without
+   JavaScript. A schematic map (no outside map tiles, no country borders). "How this list is
+   ordered" replaces the design's "100% unbiased" claim.
+7. **"ae-abu-dhabi settings are a draft".** Two API responses carried the pack's code, not its
+   name. Fixed at the source (#025).
+
+### How we did it, and the decisions
+
+- **The variant never leaves the server.** Returning HGVS would have let the screen be "more
+  detailed", but an existing test (`test_response_holds_only_listed_fields`) pins its absence as a
+  minimisation rule, and the medical fix doesn't need it.
+- **"Who runs a slot" is now shown.** Booking was built as "when and how, never who". The user
+  asked for the team; the line held is that nothing about another client is ever shown, and the
+  test that pinned the old rule now pins the new one.
+- **Region proper names moved into the pack** (`strata.yaml`'s `region_names`). I first put "Abu
+  Dhabi" and "Al Ain" in the core message files, which breaks CLAUDE.md rule 6; caught on
+  review, moved. Generic words ("North") stay translated in the core.
+- **The fictional team is non-login.** Booking with one assigns the case to them, so the
+  loginable `demo-counsellor` won't see that case. The old flow still works when
+  `demo-counsellor` publishes their own times. The seed only adds, never deletes: the API's
+  database role has no DELETE on appointments.
+- **The map is a sketch**, laid out left to right even on Arabic pages: geography doesn't follow
+  reading direction, and RTL flipped the labels off the edge.
+- **CLAUDE.md rule 5 rewritten** for the ar.json exception; memory updated.
+
+### Verification
+
+- **Browser, real stack, 34 of 34 checks pass**, signed in through Keycloak with throwaway
+  accounts (deleted afterwards): the notice names Abu Dhabi; the result names sickle cell disease
+  only, explains the trait, shows no variant; both footnotes; the team, a session in progress,
+  three fictional labels, no India counsellor in Abu Dhabi, times in three-day pages, choosing a
+  counsellor filters, booking names the counsellor; the no-report card; 6 Abu Dhabi and 3 India
+  prenatal centres, the map marks the chosen one, no "Abu Dhabi · Abu Dhabi"; Arabic `lang`,
+  `dir`, banner, Arabic headings, results and booking; an India person sees India's team.
+  Screenshots were read by eye, which is what caught the map and the region names.
+- Migration 0004 applied on the real database; `alembic check` confirms models match migrations;
+  downgrade and upgrade both run. The seed added 216 times, then 0 on a second run.
+- Wording tests: 25 pass. Backend lint, format, mypy strict, bandit: clean. Frontend type-check
+  clean; `npm audit`: 0 vulnerabilities. `scripts/check_clone.py` passes.
+- Two files outside `ar.json` contain Arabic script, both from before today: line 89 of this log
+  (entry of 3 Nov; entries are append-only, so it stays) and Arabic-Indic digits in
+  `backend/tests/unit/test_logging.py`, which tests number handling. Neither is new.
+- **Not verified:** no native speaker has read the Arabic; the browser test suite and the
+  production build are reported below; the variant table needs a clinician.
+
+### Follow-ups
+- [ ] A native Arabic speaker reviews `ar.json`, and a clinician the HBB variant list and the
+      three trait notes (user)
+- [ ] Country, city, centre names and pack notes are English on Hindi and Arabic pages: they come
+      from the packs. Translating them means per-language pack fields (Claude, if wanted)
+- [ ] Decide the Vercel questions from #025 (user)

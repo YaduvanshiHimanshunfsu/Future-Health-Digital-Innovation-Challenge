@@ -117,7 +117,22 @@ def load_pack(directory: Path) -> CountryPack:
             re.compile(pack.identity.phone_pattern)
     except re.error as exc:
         raise PackError(f"{pack.code}: invalid identity pattern") from exc
+    _check_centres(pack)
     return pack
+
+
+def _check_centres(pack: CountryPack) -> None:
+    centres = pack.services.centres
+    ids = [centre.id for centre in centres]
+    if len(set(ids)) != len(ids):
+        raise PackError(f"{pack.code}: two centres share an id")
+    stray = {centre.region for centre in centres} - set(pack.strata.regions)
+    if stray:
+        raise PackError(f"{pack.code}: centres name regions it doesn't define: {sorted(stray)}")
+    # Demo entries are for a pack still being drafted. Once local reviewers sign a pack off,
+    # an invented centre in it would read as a checked one.
+    if pack.manifest.status is PackStatus.REVIEWED and any(c.fictional for c in centres):
+        raise PackError(f"{pack.code}: a reviewed pack cannot list fictional centres")
 
 
 class PackRegistry:

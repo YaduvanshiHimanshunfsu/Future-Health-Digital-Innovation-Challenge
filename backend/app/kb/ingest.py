@@ -14,7 +14,7 @@ REQUIRED = ("id", "condition", "lang", "level", "version", "status", "source", "
 STATUSES = frozenset({"draft", "reviewed"})
 # Figures written into content must be one of these general facts, which hold for every
 # recessive condition. Anything personal comes from the risk engine instead.
-APPROVED_FIGURES = re.compile(r"\b1 (in|में) (4|2)\b")
+APPROVED_FIGURES = re.compile(r"\b1 in (4|2)\b")
 _FRONT_MATTER = re.compile(r"^---\n(.*?)\n---\n(.*)$", re.S)
 
 

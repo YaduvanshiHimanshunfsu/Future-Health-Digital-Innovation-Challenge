@@ -30,7 +30,7 @@
 > `python Run_Samvid.py`.
 >
 > **Not yet done, and said plainly throughout:** no clinician has reviewed the content or the
-> rules, no native speaker has reviewed the Hindi, Arabic text is pending approval, nobody has
+> rules, no native speaker has reviewed the Hindi or the newly drafted Arabic, nobody has
 > user-tested it, and no country's settings are reviewed. Details in
 > [assumptions and limitations](docs/submission/assumptions_and_limitations.md).
 
@@ -578,7 +578,7 @@ removed.
 | Safety evaluation, security scans, submission documents | **Built**, with results and gaps in [docs/evaluation](docs/evaluation/) and [docs/security](docs/security/) |
 | Routing recall target (95% per language) | **Not met**: measured at 5 of 59 hold-out questions still answered automatically. Reported, not hidden |
 | Clinical review | **Not started**: no reviewer yet |
-| Native-speaker review; Arabic text | **Not started**: Hindi unreviewed, Arabic pending approval |
+| Native-speaker review; Arabic text | **Not started**: the Hindi and the Arabic interface are both drafted and unreviewed |
 | User testing | **Not run**: the protocol is ready, and no figures are invented in its place |
 
 ---

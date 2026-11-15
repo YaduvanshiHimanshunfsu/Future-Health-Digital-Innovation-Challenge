@@ -1,5 +1,75 @@
-# Directory left empty until filled from a public source. Never invent entries.
 qualified_human: counsellor
-centres: []
+
+# Every centre below is FICTIONAL, for the demo. The names are invented and the cities are real.
+# None carries a phone number, a street or a website, so none can send anyone to a real door.
+# A real centre needs fictional: false, a public source_url and the date it was checked, and the
+# loader refuses a fictional centre in a reviewed pack. Declared in docs/submission/data_sources.md.
+centres:
+  - id: ae-abu-dhabi-nakhla
+    fictional: true
+    name: Nakhla Genetics Centre
+    city: Abu Dhabi
+    region: abu-dhabi
+    kind: academic
+    services: [genetic_counselling, carrier_screening, confirmatory_testing, prenatal_diagnosis, family_testing]
+    modes: [in_person, video]
+    step_free: true
+    lat: 24.45
+    lon: 54.38
+  - id: ae-abu-dhabi-lulua
+    fictional: true
+    name: Lulua Premarital Screening Clinic
+    city: Abu Dhabi
+    region: abu-dhabi
+    kind: private_hospital
+    services: [genetic_counselling, carrier_screening, haemoglobin_clinic]
+    modes: [in_person]
+    step_free: true
+    lat: 24.42
+    lon: 54.57
+  - id: ae-abu-dhabi-darb
+    fictional: true
+    name: Darb Tele-genetics Service
+    city: Abu Dhabi
+    region: abu-dhabi
+    kind: community_clinic
+    services: [genetic_counselling, family_testing]
+    modes: [video]
+    lat: 24.49
+    lon: 54.45
+  - id: ae-al-ain-ghaf
+    fictional: true
+    name: Ghaf Family Genetics Clinic
+    city: Al Ain
+    region: al-ain
+    kind: public_hospital
+    services: [genetic_counselling, carrier_screening, haemoglobin_clinic, family_testing]
+    modes: [in_person, video]
+    step_free: true
+    lat: 24.21
+    lon: 55.75
+  - id: ae-al-ain-samar
+    fictional: true
+    name: Samar Prenatal Unit
+    city: Al Ain
+    region: al-ain
+    kind: private_hospital
+    services: [genetic_counselling, confirmatory_testing, prenatal_diagnosis]
+    modes: [in_person]
+    step_free: true
+    lat: 24.19
+    lon: 55.68
+  - id: ae-al-dhafra-sabkha
+    fictional: true
+    name: Sabkha Community Genetics Clinic
+    city: Madinat Zayed
+    region: al-dhafra
+    kind: community_clinic
+    services: [genetic_counselling, carrier_screening]
+    modes: [in_person, video]
+    step_free: false
+    lat: 23.68
+    lon: 53.70
+
 funding_notes:
   - Funding may be available for eligible couples. Ask your counsellor.

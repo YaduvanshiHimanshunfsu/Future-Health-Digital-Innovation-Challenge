@@ -1,12 +1,19 @@
-# Secrets: never commit these
+# Directory names that are ordinary words are anchored with a leading "/" on purpose. An unanchored
+# rule matches at every depth: `models/` once hid backend/app/models/ from every clone (brain.md
+# #022). scripts/check_clone.py fails CI if any rule here matches a tracked source file.
+
+# Secrets: never commit these. Covers .env.local and the files `vercel env pull` writes.
 .env
 .env.*
 !.env.example
 *.pem
 *.key
 
+# Vercel's local link and pulled settings. .vercel/ can hold secrets from `vercel env pull`.
+.vercel/
+
 # Real data must never enter this repo. Synthetic output is generated.
-backend/synthetic/out/
+/backend/synthetic/out/
 
 # Python
 __pycache__/
@@ -15,13 +22,15 @@ __pycache__/
 .mypy_cache/
 .pytest_cache/
 .ruff_cache/
-.coverage
-htmlcov/
 .hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+*.egg-info/
+/backend/dist/
+/backend/build/
 
-# Node and Next.js. The directory names here are anchored on purpose: a bare
-# `out/` or `coverage/` matches at every depth and would hide a source package
-# that happens to share the name.
+# Node and Next.js
 node_modules/
 .next/
 /frontend/out/
@@ -30,23 +39,35 @@ node_modules/
 playwright-report/
 test-results/
 *.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-# Downloaded model weights and tool caches. Anchored to the repository root:
-# an unanchored `models/` also matched `backend/app/models/`, the SQLAlchemy
-# package, and kept the whole ORM layer out of every clone. See brain.md #022.
+# Downloaded model weights and tool caches
 /models/
 .cache/
+
+# Logs. The launcher writes one per run, secrets redacted, but they are local anyway.
+/logs/
+*.log
 
 # OS and editors
 .DS_Store
 Thumbs.db
+desktop.ini
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# AI assistant settings that are personal to one machine
+.claude/settings.local.json
 
 # Design tool export: holds text the project mustn't publish. See frontend/design-export/README.md.
 /stitch_*.zip
-frontend/test-results/
-frontend/playwright-report/
 
-# The launcher writes one log per run. Secrets are redacted, but these are local anyway.
-/logs/
+# Working notes and their screenshots, for the team only, not the submission
+/report*.md
+/report*_assets/

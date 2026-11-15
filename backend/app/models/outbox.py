@@ -18,9 +18,7 @@ class AuthzOutbox(Base):
     __tablename__ = "authz_outbox"
     __table_args__ = (
         one_of("operation", OutboxOperation),
-        Index(
-            "ix_authz_outbox_pending", "created_at", postgresql_where=text("applied_at IS NULL")
-        ),
+        Index("ix_authz_outbox_pending", "created_at", postgresql_where=text("applied_at IS NULL")),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)

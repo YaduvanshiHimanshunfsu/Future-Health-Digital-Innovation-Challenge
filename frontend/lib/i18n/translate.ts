@@ -1,10 +1,9 @@
 import en from "@/messages/en.json";
-import hi from "@/messages/hi.json";
 import ar from "@/messages/ar.json";
 import type { Locale } from "./config";
 
 export type Messages = Record<string, string>;
-const CATALOGUES: Record<Locale, Messages> = { en, hi, ar };
+const CATALOGUES: Record<Locale, Messages> = { en, ar };
 
 export function messagesFor(locale: Locale): Messages {
   return { ...en, ...CATALOGUES[locale] };

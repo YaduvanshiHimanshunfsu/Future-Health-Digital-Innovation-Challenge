@@ -53,8 +53,9 @@ def _fixed(key: str, boundary: Boundary, language: str, found: Route, pack: Coun
     text = catalogue[key]
     contacts: tuple[dict[str, str], ...] = ()
     # A message the router couldn't place may be distress in words it doesn't know, so it gets the
-    # same support contacts. The early evaluation found exactly that kind of message.
-    unclear = "unclear" in found.reasons
+    # same support contacts. The early evaluation found exactly that kind of message. A message in a
+    # script no rule reads, Arabic script included, could be distress too, so it gets them as well.
+    unclear = "unclear" in found.reasons or "unsupported_script" in found.reasons
     if boundary is Boundary.DISTRESS or unclear:
         # Only contacts the pack lists as checked. A guessed crisis number could cost a life.
         listed = [

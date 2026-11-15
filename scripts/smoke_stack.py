@@ -40,7 +40,6 @@ REALM = f"{KEYCLOAK}/realms/samvid"
 ADMIN_API = f"{KEYCLOAK}/admin/realms/samvid"
 REDIRECT = "http://localhost:3000/callback"
 ABU_DHABI = "ae-abu-dhabi"
-INDIA = "in-india"
 # Nothing here may appear in a raw copy of the database.
 NEVER_IN_DUMP = (
     "HBB",
@@ -206,7 +205,6 @@ def check_ingestion(results: Results, lab: str, run: str) -> str:
         (ABU_DHABI, "x_man"),
         (ABU_DHABI, "x_carrier"),
         (ABU_DHABI, "uncertain"),
-        (INDIA, "priya"),
     ):
         other, _ = persona_bundle(pack, slug, run)
         response = ingest(lab, other, pack)

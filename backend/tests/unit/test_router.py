@@ -17,8 +17,6 @@ from app.models.enums import Boundary
         ("ana hamila lil marad?", "ar"),  # "am I a carrier of the condition?"
         ("What does being a carrier mean?", "en"),
         ("How does inheritance work?", "en"),
-        ("वाहक होने का मतलब क्या है?", "hi"),  # "what does being a carrier mean?"
-        ("vahak hone ka matlab kya hai", "hi"),
     ],
 )
 def test_carrier_questions_are_education(question: str, language: str) -> None:
@@ -34,8 +32,6 @@ def test_carrier_questions_are_education(question: str, language: str) -> None:
         ("I'm 12 weeks pregnant, what should I do?", "en"),
         ("What medicine should my son take?", "en"),
         ("Is my baby sick?", "en"),
-        ("मैं गर्भवती हूँ, क्या करूँ?", "hi"),  # "I'm pregnant, what should I do?"
-        ("main garbhvati hoon", "hi"),
     ],
 )
 def test_clinical_questions_go_to_a_person(question: str, language: str) -> None:
@@ -54,7 +50,6 @@ def test_pregnancy_is_noticed_for_triage() -> None:
     [
         ("I can't go on like this", "en"),
         ("I want to die", "en"),
-        ("मैं मरना चाहती हूँ", "hi"),  # "I want to die"
         ("abi amoot", "ar"),  # "I want to die"
     ],
 )
@@ -67,7 +62,6 @@ def test_distress_is_caught_first(question: str, language: str) -> None:
     [
         ("My family is forcing me to show them my result", "en"),
         ("My in-laws insist I share it", "en"),
-        ("ससुराल वाले ज़बरदस्ती कर रहे हैं", "hi"),  # "my in-laws are forcing me"
         ("abuya yijburni atazawaj", "ar"),  # "my father forces me to marry"
     ],
 )
@@ -114,7 +108,6 @@ def test_arabic_rules_are_written_the_way_the_text_is_compared() -> None:
     [
         ("Nobody would notice if I was gone", "en"),
         ("hello", "en"),
-        ("कोई बात नहीं", "hi"),
         ("kayf halik", "ar"),
     ],
 )

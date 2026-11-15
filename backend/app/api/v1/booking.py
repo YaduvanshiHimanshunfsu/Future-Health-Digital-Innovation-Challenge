@@ -1,7 +1,8 @@
 """Counselling appointments: counsellors publish slots, people book them for their own case.
 
-A person sees when and how a slot runs, never who runs it, and books only for their own case
-(404 for anyone else's). A counsellor sees and completes only their own appointments.
+A person sees the counsellors in their own country, each with a status from their calendar, and
+books only for their own case (404 for anyone else's). Nothing about another client is ever shown.
+A counsellor sees and completes only their own appointments.
 """
 
 from http import HTTPStatus
@@ -29,6 +30,7 @@ from app.privacy.outbox import drain_quietly
 from app.schemas.booking import (
     AppointmentOut,
     BookIn,
+    CounsellorOut,
     SlotIn,
     SlotOut,
     StaffAppointmentOut,
@@ -84,7 +86,36 @@ async def list_slots(
         raise ApiError(HTTPStatus.NOT_FOUND, "not_found")
     return [
         SlotOut.model_validate(slot, from_attributes=True)
-        for slot in await service.open_slots(db, case=case)
+        for slot in await service.open_slots(db, case=case, pack_code=person.pack_code)
+    ]
+
+
+@router.get("/counsellors", response_model=list[CounsellorOut])
+async def list_counsellors(
+    case_id: UUID | None = Query(default=None),
+    person: Person = Depends(current_person),
+    db: AsyncSession = Depends(get_db),
+) -> list[CounsellorOut]:
+    """The team in the person's country, with each one's status. Names, roles and languages only."""
+    require_service_consent(person)
+    assigned = None
+    if case_id is not None:
+        case = await db.get(CareCase, case_id)
+        if case is None or case.subject_id != person.id:
+            raise ApiError(HTTPStatus.NOT_FOUND, "not_found")
+        assigned = case.counsellor_id
+    return [
+        CounsellorOut(
+            id=profile.person_id,
+            display_name=profile.display_name,
+            role=profile.role,
+            languages=list(profile.languages),
+            fictional=profile.fictional,
+            status=status.status,
+            next_open=status.next_open,
+            yours=profile.person_id == assigned,
+        )
+        for profile, status in await service.team(db, pack_code=person.pack_code)
     ]
 
 

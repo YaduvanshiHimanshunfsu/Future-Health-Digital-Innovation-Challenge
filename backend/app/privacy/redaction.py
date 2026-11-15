@@ -1,7 +1,7 @@
 """What may reach an LLM. Nothing does unless it's on a list, and any failure means no call.
 
 Finding names in free text is unreliable in any language, and there's no model we could trust for
-Arabic and Hindi names. So this works the other way round: a word survives only if it's on the
+Arabic names. So this works the other way round: a word survives only if it's on the
 language's vocabulary list, and everything else becomes a placeholder. A language with no list yet,
 such as Arabic for now, loses every word. That makes for poor answers, never for leaked names.
 
@@ -53,7 +53,7 @@ def _vocabulary(language: str) -> frozenset[str]:
 
 
 def _is_word_character(character: str) -> bool:
-    # Hindi vowel signs are marks, not letters, and \w would split a word at each one.
+    # Some scripts write vowel signs as combining marks, and \w would split a word at each one.
     return unicodedata.category(character)[0] in ("L", "M")
 
 

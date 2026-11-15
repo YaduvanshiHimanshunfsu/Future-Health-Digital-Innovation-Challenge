@@ -34,8 +34,10 @@ test("reading the result, checking understanding and stepping back all show on t
 
   // A first, deliberately poor try is the "before" score; the second, right one is "after".
   await page.goto("/en/app/check");
-  await expect(page.getByTestId("teach-back").getByTestId("instrument-status")).toHaveText("Draft questions, awaiting review");
-  await expect(page.getByTestId("sure").getByTestId("instrument-status")).toHaveText("Adapted, not validated in Hindi or Arabic");
+  // Where the questions come from stays on the page, as a footnote in plain words.
+  await expect(page.getByTestId("teach-back").getByTestId("instrument-status")).toContainText("counsellors are still reviewing them");
+  await expect(page.getByTestId("sure").getByTestId("instrument-status")).toContainText("adapted from the SURE test");
+  await expect(page.getByTestId("sure").getByTestId("instrument-status")).not.toContainText("translation");
   await answerAll(page, "teach-back", () => 2);
   await expect(page.getByTestId("teach-back").getByRole("status")).toContainText("weren't explained well enough");
   await page.reload();
@@ -74,7 +76,7 @@ test("a counsellor offers a time, a person books it, and the counsellor refers o
   await expect(counsellor.getByTestId("schedule")).toContainText("Open");
 
   await person.goto("/en/app/journey");
-  await person.getByRole("button", { name: "See available times" }).click();
+  // Times load by themselves now, with the team beside them.
   const booking = person.getByTestId("booking");
   await booking.getByRole("button", { name: "Book this time" }).first().click();
   await expect(booking).toContainText("Booked for");
@@ -123,11 +125,25 @@ test("people and counsellors can't open the programme metrics", async ({ browser
   expect(denied.status()).toBe(403);
 });
 
-test("the centre finder works with no account and never shows invented entries", async ({ page }) => {
+test("the centre finder works with no account and marks every demo centre as fictional", async ({ page }) => {
   await page.goto("/en/centres");
-  await expect(page.getByTestId("centres")).toContainText("No centres listed yet");
-  await page.getByRole("link", { name: /India/ }).click();
-  await expect(page).toHaveURL(/pack=in-india/);
-  await expect(page.getByTestId("centres")).toContainText("Nobody has yet checked a counselling service");
+  await expect(page.getByText("A demo directory")).toBeVisible();
+  const list = page.getByTestId("centres");
+  const cards = list.locator("article");
+  expect(await cards.count()).toBeGreaterThan(0);
+  // Every card says it is fictional, and none offers a phone number or a source to follow.
+  await expect(list.getByText("Fictional (demo)")).toHaveCount(await cards.count());
+  await expect(list.getByRole("link", { name: "Source" })).toHaveCount(0);
+  await expect(page.locator("#centre-map svg")).toBeVisible();
+
+  // Abu Dhabi has a counsellor service, so the page offers one beside the demo list.
+  await expect(page.getByRole("link", { name: "Talk to a counsellor" })).toBeVisible();
+  await page.getByLabel("City or centre name").fill("Al Ain");
+  await page.getByRole("button", { name: "Show centres" }).click();
+  await expect(page).toHaveURL(/q=Al\+Ain/);
+  await expect(list.locator("article")).toHaveCount(2);
+  await expect(list).toContainText("Al Ain");
+  await page.getByRole("link", { name: /Remove filter/ }).click();
+  await expect(page).not.toHaveURL(/q=/);
   await axeClean(page);
 });

@@ -27,11 +27,11 @@ test("an Arabic carrier question gets an education answer on screen", async ({ b
 
 for (const question of [
   "I'm 12 weeks pregnant, what should I do?",
-  "मैं गर्भवती हूँ, क्या करूँ?",
+  "\u0623\u0646\u0627 \u062d\u0627\u0645\u0644\u060c \u0645\u0627\u0630\u0627 \u0623\u0641\u0639\u0644\u061f",
   "ana hamil fi al-shahr al-thalith",
 ]) {
   test(`a clinical question reaches a person: ${question.slice(0, 20)}`, async ({ browser }) => {
-    // Phase 4 exit gate, in all three languages.
+    // Phase 4 exit gate: English, Arabic script (no rule reads it, so a person does), and Arabic in Roman letters.
     const page = await newPage(browser);
     await signInAndAgree(page, await freshPerson());
     const answer = await ask(page, question);

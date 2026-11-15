@@ -36,7 +36,7 @@ from app.triage.service import reasons_aad, sla_hours
 NAMESPACE = uuid.UUID("5a3c1d2e-0000-4000-8000-73796e746869")  # "synthi" in the last bytes
 PEOPLE = 360
 ACTOR = "system:synthetic"
-LANGUAGES = ["en", "ar", "hi"]
+LANGUAGES = ["en", "ar"]
 LEVELS = ["simple", "standard", "detailed"]
 PRIORITIES = [("P1", 0.05), ("P2", 0.2), ("P3", 0.35), ("P4", 0.4)]
 

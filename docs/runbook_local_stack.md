@@ -70,12 +70,19 @@ uv run python ../scripts/seed_demo.py     # prints the accounts. The password is
 
 | Account | Shows |
 |---|---|
-| `demo-fatima` and `demo-khalid` | A couple who share a finding. Link them on the Partner page |
+| `demo-fatima` and `demo-khalid` | A couple who share a finding: her sickle cell trait and his beta thalassaemia trait. Link them on the Partner page. "My care" shows the fictional counselling team and books a time |
 | `demo-x-carrier`, `demo-x-man` | X-linked results, with their own picture |
 | `demo-uncertain` | An uncertain finding, with no number |
-| `demo-no-report` | What "no report yet" looks like |
-| `demo-priya`, `demo-rohan` | The India pack, in Hindi |
+| `demo-no-report` | What "no report yet" looks like: how a result arrives, never a result |
+| `demo-priya`, `demo-rohan` | The India pack, in Hindi, with India's own counselling team |
 | `demo-doctor`, `demo-auditor` | Emergency access, and reviewing it |
+
+The counselling team and its week of times come from a separate seed, which the launcher runs on
+every start. It is fictional, adds only times that don't exist yet, and never touches a booking:
+
+```bash
+docker compose -f infra/docker-compose.yml exec api python -m app.ops.seed_counsellors
+```
 
 Then check the whole flow, using real tokens and a real database dump:
 

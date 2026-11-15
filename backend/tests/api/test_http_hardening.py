@@ -193,6 +193,10 @@ async def test_docs_are_off_in_production(app_factory: Any, tmp_path: Path) -> N
         ),
         "utf-8",
     )
+    # A reviewed pack holds no invented centres; the loader refuses one that does.
+    (pack / "services.yaml").write_text(
+        "qualified_human: counsellor\ncentres: []\nfunding_notes: []\n", "utf-8"
+    )
     app = app_factory(
         env="prod",
         kms_provider="vault",

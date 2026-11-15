@@ -87,9 +87,3 @@ def test_retrieval_never_crosses_language_or_level() -> None:
 
 def test_a_persons_own_condition_comes_first() -> None:
     assert [p.id for p in retrieve("tell me more", "en", "simple", ["dmd"])][:1] == ["dmd"]
-
-
-def test_hindi_questions_find_hindi_content() -> None:
-    found = retrieve("वाहक होने का मतलब क्या है", "hi", "simple")
-    assert found
-    assert found[0].id == "carrier_basics"

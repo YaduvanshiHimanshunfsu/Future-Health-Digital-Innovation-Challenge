@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -19,24 +21,40 @@ from app.privacy.crypto import FieldCipher
 from app.privacy.right_not_to_know import human_contact_required
 from app.repositories.genetic import load_record, person_sex
 from app.risk_engine.engine import person_facts
-from app.risk_engine.types import RiskFact
+from app.risk_engine.types import Finding, RiskFact
 from app.risk_engine.visuals import visuals_for
-from app.schemas.results import CareStepOut, FactOut, MyResultsOut, MyRiskOut, PackInfo
+from app.schemas.results import (
+    CareStepOut,
+    FactOut,
+    MyResultsOut,
+    MyRiskOut,
+    PackInfo,
+)
 
 router = APIRouter(prefix="/me", tags=["results"])
 
 
-def _pack_info(pack: CountryPack) -> PackInfo:
-    return PackInfo(code=pack.code, status=pack.manifest.status.value, reviewed=pack.is_reviewed)
+def _conditions_of(
+    findings: Iterable[Finding], facts: list[RiskFact], pack: CountryPack
+) -> tuple[dict[str, list[str]], dict[str, bool]]:
+    """The conditions to name for each gene, and whether that naming is exact.
 
-
-def _conditions_of(facts: list[RiskFact], pack: CountryPack) -> dict[str, list[str]]:
+    One gene can cause different conditions: HBB c.20A>T is the sickle cell change, while
+    c.92+5G>C causes beta thalassaemia. When the pack knows every one of the person's changes in a
+    gene, only those conditions are named. Otherwise every condition the gene can cause is named,
+    and the screen says that the exact change decides which. The variant itself never leaves here.
+    """
     genes = pack.panel.genes
-    return {
-        fact.gene: list(genes[fact.gene].conditions)
-        for fact in facts
-        if fact.gene is not None and fact.gene in genes
-    }
+    shown = {fact.gene for fact in facts if fact.gene is not None and fact.gene in genes}
+    named: dict[str, list[str]] = {}
+    exact: dict[str, bool] = {}
+    for gene in sorted(shown):
+        known = [genes[gene].variants.get(f.variant) for f in findings if f.gene == gene]
+        exact[gene] = bool(known) and all(known)
+        named[gene] = (
+            sorted({c for c in known if c}) if exact[gene] else list(genes[gene].conditions)
+        )
+    return named, exact
 
 
 @router.get("/results", response_model=MyResultsOut)
@@ -52,6 +70,7 @@ async def my_results(
     pack = packs.require(person.pack_code)
     record = await load_record(db, cipher, person.id)
     facts = person_facts(record.findings, await person_sex(cipher, person), pack.gene_table)
+    conditions, exact = _conditions_of(record.findings, facts, pack)
     withheld = person.results_withheld_at is not None
     await audit.append(
         db,
@@ -65,8 +84,9 @@ async def my_results(
         has_report=record.has_report,
         facts=[] if withheld else [FactOut.from_fact(fact) for fact in facts],
         panels=sorted(record.panel_versions),
-        conditions={} if withheld else _conditions_of(facts, pack),
-        pack=_pack_info(pack),
+        conditions={} if withheld else conditions,
+        conditions_exact={} if withheld else exact,
+        pack=PackInfo.of(pack),
         withheld=withheld,
         human_contact_required=withheld and human_contact_required(facts, pack),
     )
@@ -99,7 +119,7 @@ async def my_risk(
         has_report=record.has_report,
         facts=[] if withheld else [FactOut.from_fact(fact) for fact in facts],
         visuals=[] if withheld else visuals_for(facts),
-        pack=_pack_info(pack),
+        pack=PackInfo.of(pack),
         withheld=withheld,
         human_contact_required=withheld and human_contact_required(facts, pack),
     )

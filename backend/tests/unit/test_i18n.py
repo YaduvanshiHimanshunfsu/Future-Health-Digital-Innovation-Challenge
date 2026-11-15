@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 
 import pytest
@@ -14,14 +13,10 @@ MESSAGES = Path(__file__).resolve().parents[2] / "app" / "core" / "messages"
     [
         (None, "en"),
         ("", "en"),
-        ("hi", "hi"),
-        ("hi-IN", "hi"),
         ("ar-AE,ar;q=0.9,en;q=0.8", "ar"),
-        ("en;q=0.5,hi;q=0.9", "hi"),
         ("fr,de", "en"),
         ("hi;q=0,en", "en"),
         ("hi;q=not-a-number,en", "en"),
-        ("HI", "hi"),
         ("x" * 300, "en"),
     ],
 )
@@ -39,9 +34,3 @@ def test_unknown_key_returns_the_key_rather_than_nothing() -> None:
 
 def test_language_tag_cannot_read_arbitrary_files() -> None:
     assert translate("error.not_found", "../../secrets") == translate("error.not_found", "en")
-
-
-def test_hindi_covers_every_english_message() -> None:
-    english = json.loads((MESSAGES / "en.json").read_text("utf-8"))
-    hindi = json.loads((MESSAGES / "hi.json").read_text("utf-8"))
-    assert set(hindi) == set(english)

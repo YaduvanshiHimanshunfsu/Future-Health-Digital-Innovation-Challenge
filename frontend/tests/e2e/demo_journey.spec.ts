@@ -267,15 +267,17 @@ test("signing out ends the session here and at Keycloak", async ({ browser }) =>
   await expect(page.locator("#password"), "a shared device has to ask for the password again").toBeVisible();
 });
 
-test("Hindi and the right-to-left layout both work", async ({ page }) => {
-  await page.goto("/hi");
-  await expect(page.locator("html")).toHaveAttribute("lang", "hi");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("आनुवंशिक");
+test("English by default, and Arabic right to left", async ({ page }) => {
+  await page.goto("/");
+  await expect(page).toHaveURL(/\/en$/);
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await page.goto("/ar");
   await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
-  await expect(page.getByText("Arabic text is waiting for a reviewer")).toBeVisible();
-  const text = await page.locator("body").innerText();
-  expect(text).not.toMatch(/[\u0600-\u06FF]/);
+  await expect(page.locator("html")).toHaveAttribute("lang", "ar");
+  // Arabic text, drafted without a native speaker's review, and every page says so.
+  await expect(page.getByTestId("draft-translation")).toBeVisible();
+  const heading = await page.getByRole("heading", { level: 1 }).innerText();
+  expect(heading).toMatch(/[\u0600-\u06FF]/);
 });
 
 test("the parts not built yet say so and show nothing simulated", async ({ browser }) => {

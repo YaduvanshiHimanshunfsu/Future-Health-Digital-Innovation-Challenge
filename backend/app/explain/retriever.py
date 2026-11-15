@@ -11,7 +11,7 @@ from collections.abc import Iterable
 from app.explain.validators.text import normalise
 from app.kb.ingest import Passage, load_all
 
-# Devanagari vowel signs are marks, which \w alone would treat as breaks inside a Hindi word.
+# Some scripts write vowel signs as combining marks, which \w alone treats as breaks inside a word.
 _WORD = re.compile(r"(?:[^\W\d_]|[ऀ-ॿ]){3,}", re.UNICODE)
 _STOP = frozenset(
     {

@@ -1,7 +1,8 @@
+from datetime import date
 from enum import StrEnum
-from typing import Literal
+from typing import Literal, Self
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 class _Strict(BaseModel):
@@ -66,9 +67,20 @@ class GeneEntry(_Strict):
     carrier_frequency: float = Field(gt=0, lt=1)
     detection_rate: float = Field(ge=0, le=1)
     conditions: list[str] = []
+    # Known variants and the one condition each causes, by HGVS. One gene can cause different
+    # conditions: in HBB, c.20A>T is the sickle cell change and c.92+5G>C a beta thalassaemia one.
+    # A variant missing from here is shown with every condition the gene can cause, and says so.
+    variants: dict[str, str] = {}
     risk_group: str | None = None
     routine_when_hemizygous: bool = False
     source: str
+
+    @model_validator(mode="after")
+    def _variants_name_known_conditions(self) -> Self:
+        stray = set(self.variants.values()) - set(self.conditions)
+        if stray:
+            raise ValueError(f"variants name conditions the gene doesn't list: {sorted(stray)}")
+        return self
 
 
 class Panel(_Strict):
@@ -77,13 +89,50 @@ class Panel(_Strict):
     genes: dict[str, GeneEntry]
 
 
+CentreService = Literal[
+    "genetic_counselling",
+    "carrier_screening",
+    "confirmatory_testing",
+    "prenatal_diagnosis",
+    "haemoglobin_clinic",
+    "family_testing",
+]
+VisitMode = Literal["in_person", "video"]
+
+
 class Centre(_Strict):
-    name: str
+    id: str = Field(pattern=r"^[a-z0-9-]{3,48}$")
+    # Required, with no default: nobody can add a centre without saying whether it is real.
+    fictional: bool
+    name: str = Field(min_length=2, max_length=120)
+    city: str = Field(min_length=2, max_length=60)
     region: str
-    services: str
+    kind: Literal["public_hospital", "private_hospital", "academic", "community_clinic"]
+    services: list[CentreService] = Field(min_length=1)
+    modes: list[VisitMode] = Field(min_length=1)
+    # None means nobody has checked, which is not the same as "no".
+    step_free: bool | None = None
+    # A city's position, for the schematic map. Never a street address.
+    lat: float = Field(ge=-90, le=90)
+    lon: float = Field(ge=-180, le=180)
     contact: str | None = None
-    source_url: str
-    checked_on: str
+    source_url: str | None = None
+    checked_on: str | None = None
+
+    @model_validator(mode="after")
+    def _real_or_plainly_invented(self) -> Self:
+        if len(set(self.services)) != len(self.services) or len(set(self.modes)) != len(self.modes):
+            raise ValueError(f"{self.id}: a service or visit mode is listed twice")
+        if self.fictional:
+            # An invented centre gets no phone, website or check date, so it can never send
+            # anyone to a real number or a real door.
+            if self.contact or self.source_url or self.checked_on:
+                raise ValueError(f"{self.id}: a fictional centre carries no contact or source")
+        else:
+            if not (self.source_url and self.checked_on):
+                raise ValueError(f"{self.id}: a real centre needs source_url and checked_on")
+            date.fromisoformat(self.checked_on)
+        return self
 
 
 class Services(_Strict):
@@ -131,6 +180,16 @@ class SlaHours(_Strict):
 
 class Strata(_Strict):
     regions: list[str] = []
+    # Display names for regions that are proper names, such as a city. Generic ones like "north"
+    # are translated by the screens; a proper name belongs to its country, so it lives here.
+    region_names: dict[str, str] = {}
     age_bands: list[str] = []
     genders: list[str] = []
     sla_hours: SlaHours = SlaHours()
+
+    @model_validator(mode="after")
+    def _names_are_for_listed_regions(self) -> Self:
+        stray = set(self.region_names) - set(self.regions)
+        if stray:
+            raise ValueError(f"region_names for regions not listed: {sorted(stray)}")
+        return self

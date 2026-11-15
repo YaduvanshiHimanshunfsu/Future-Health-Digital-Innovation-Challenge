@@ -91,6 +91,12 @@ class AppointmentMode(StrEnum):
     VIDEO = "video"
 
 
+class CounsellorRole(StrEnum):
+    GENETIC_COUNSELLOR = "genetic_counsellor"
+    CLINICAL_GENETICIST = "clinical_geneticist"
+    COUNSELLING_NURSE = "counselling_nurse"
+
+
 class ReferralKind(StrEnum):
     CONFIRMATORY_LAB = "confirmatory_lab"
     REPRODUCTIVE_GENOMICS = "reproductive_genomics"

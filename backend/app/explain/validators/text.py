@@ -32,6 +32,11 @@ def sentences(text: str) -> list[str]:
     return [part for part in _SENTENCE_END.split(text.strip()) if part]
 
 
+def has_unread_script(text: str) -> bool:
+    """True when the text has a letter in any script other than Latin, which no rule here reads."""
+    return any(c.isalpha() and not unicodedata.name(c, "").startswith("LATIN") for c in text)
+
+
 def has_arabic_script(text: str) -> bool:
     return any(
         "\u0600" <= c <= "\u06ff" or "\u0750" <= c <= "\u077f" or "\ufb50" <= c <= "\ufeff"

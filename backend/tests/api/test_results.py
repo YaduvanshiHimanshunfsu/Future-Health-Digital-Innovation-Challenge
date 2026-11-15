@@ -1,4 +1,5 @@
 import asyncio
+import json
 from typing import Any
 
 import pytest
@@ -143,6 +144,7 @@ async def test_response_holds_only_listed_fields(stack: Stack) -> None:
         "facts",
         "panels",
         "conditions",
+        "conditions_exact",
         "pack",
         "withheld",
         "human_contact_required",
@@ -213,7 +215,12 @@ async def test_response_says_how_far_the_country_pack_has_been_reviewed(stack: S
     await stack.ingest(bundle_for("priya", pack=INDIA), pack=INDIA)
     headers = await stack.sign_in("priya-login", "priya", pack=INDIA)
     body = (await stack.http.get("/v1/me/results", headers=headers)).json()
-    assert body["pack"] == {"code": INDIA, "status": "illustrative", "reviewed": False}
+    assert body["pack"] == {
+        "code": INDIA,
+        "name": "India",
+        "status": "illustrative",
+        "reviewed": False,
+    }
 
 
 async def test_language_follows_the_persons_country(stack: Stack) -> None:
@@ -270,11 +277,33 @@ async def test_two_tabs_signing_in_together_both_succeed(stack: Stack) -> None:
     assert first.json()["id"] == second.json()["id"]
 
 
-async def test_results_name_the_conditions_from_the_pack(stack: Stack) -> None:
+async def test_results_name_the_condition_her_exact_change_causes(stack: Stack) -> None:
+    """HBB c.20A>T is the sickle cell change. Naming beta thalassaemia too would be wrong for her."""
     await stack.ingest(bundle_for("fatima"))
     headers = await stack.sign_in("fatima-login", "fatima")
     body = (await stack.http.get("/v1/me/results", headers=headers)).json()
+    assert body["conditions"] == {"HBB": ["sickle_cell"]}
+    assert body["conditions_exact"] == {"HBB": True}
+
+
+async def test_a_beta_thalassaemia_change_is_named_as_one(stack: Stack) -> None:
+    await stack.ingest(bundle_for("khalid"))
+    headers = await stack.sign_in("khalid-login", "khalid")
+    body = (await stack.http.get("/v1/me/results", headers=headers)).json()
+    assert (body["conditions"], body["conditions_exact"]) == ({"HBB": ["beta_thal"]}, {"HBB": True})
+
+
+async def test_an_unknown_change_names_every_condition_and_says_it_isnt_exact(
+    stack: Stack,
+) -> None:
+    """A change the pack doesn't list could be either, so neither one is picked."""
+    bundle = json.loads(json.dumps(bundle_for("fatima")).replace("c.20A>T", "c.999A>G"))
+    await stack.ingest(bundle)
+    headers = await stack.sign_in("fatima-login", "fatima")
+    body = (await stack.http.get("/v1/me/results", headers=headers)).json()
     assert body["conditions"] == {"HBB": ["beta_thal", "sickle_cell"]}
+    assert body["conditions_exact"] == {"HBB": False}
+    assert "c.999" not in str(body)
 
 
 async def test_a_gene_outside_the_pack_has_no_conditions_to_name(stack: Stack) -> None:

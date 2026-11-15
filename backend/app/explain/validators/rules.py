@@ -16,7 +16,7 @@ class Flag:
 
 
 def _scan(text: str, table: patterns.Patterns, language: str, rule: str) -> list[Flag]:
-    # Hindi speakers mix in English, and Arabic speakers often type in Roman letters, so English
+    # Arabic speakers often type in Roman letters and mix in English, so English
     # checks always run as well as the language's own.
     found: list[Flag] = []
     for lang in {language, "en"}:

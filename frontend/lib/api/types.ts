@@ -24,6 +24,7 @@ export type Values = Schemas["ValuesOut"];
 export type QueueItem = Schemas["QueueItemOut"];
 export type Journey = Schemas["JourneyOut"];
 export type Slot = Schemas["SlotOut"];
+export type Counsellor = Schemas["CounsellorOut"];
 export type Appointment = Schemas["AppointmentOut"];
 export type StaffAppointment = Schemas["StaffAppointmentOut"];
 export type Referral = Schemas["ReferralOut"];

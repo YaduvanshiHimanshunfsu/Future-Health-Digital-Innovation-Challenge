@@ -23,8 +23,8 @@ const config: Config = {
         lilac: "#B9AEF7",
       },
       fontFamily: {
-        display: ["var(--font-display)", "var(--font-devanagari)", "system-ui", "sans-serif"],
-        body: ["var(--font-body)", "var(--font-devanagari)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "var(--font-arabic)", "system-ui", "sans-serif"],
+        body: ["var(--font-body)", "var(--font-arabic)", "system-ui", "sans-serif"],
       },
       borderRadius: { plate: "24px", field: "16px", chip: "12px" },
       boxShadow: {

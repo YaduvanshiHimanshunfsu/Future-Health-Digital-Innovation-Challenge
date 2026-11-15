@@ -167,7 +167,7 @@ export function Schedule() {
     const starts = new Date(when);
     const done = await callApi("booking/slots", {
       method: "POST",
-      body: { starts_at: starts.toISOString(), minutes: Number(minutes), mode, lang: locale === "hi" ? "hi" : "en" },
+      body: { starts_at: starts.toISOString(), minutes: Number(minutes), mode, lang: locale === "ar" ? "ar" : "en" },
     });
     setBusy(false);
     if (done.ok) {

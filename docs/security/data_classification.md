@@ -169,6 +169,12 @@ These end in `_enc` and hold AES-256-GCM ciphertext, encrypted per record (imple
 | `appointment.lang` | Low | Calendar |
 | `appointment.status` | Low | Calendar |
 | `appointment.created_at` | Low | Time of creation, needed for ordering and retention |
+| `counsellor_profile.person_id` | Random | Links a staff profile to its person row. Only staff have one |
+| `counsellor_profile.display_name` | Low | A staff member's working name, shown to people booking. Never a client's name: `person` holds none |
+| `counsellor_profile.role` | Low | Job title, from a fixed list |
+| `counsellor_profile.languages` | Low | Languages the counsellor works in |
+| `counsellor_profile.fictional` | Low | Marks an invented demo counsellor, so screens can say so |
+| `counsellor_profile.created_at` | Low | Time of creation, needed for ordering and retention |
 | `break_glass_event.id` | Random | Random UUID, meaningless on its own |
 | `break_glass_event.actor_id` | Low | Who broke the glass |
 | `break_glass_event.case_id` | Sensitive link | Which case |

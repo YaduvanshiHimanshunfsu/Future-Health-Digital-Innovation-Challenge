@@ -89,9 +89,6 @@ def test_ordinary_carrier_wording_passes(text: str) -> None:
         ("We recommend that you don't marry.", "en"),
         ("You should think about adoption.", "en"),
         ("The best option is prenatal testing.", "en"),
-        ("आपको शादी नहीं करनी चाहिए।", "hi"),  # "you should not marry"
-        ("सबसे अच्छा विकल्प आईवीएफ है।", "hi"),  # "the best option is IVF"
-        ("apko test karana chahiye", "hi"),  # Hindi in Roman letters: "you should get tested"
         ("ahsan lak tatazawaj wahda thanya", "ar"),  # "better for you to marry someone else"
     ],
 )
@@ -107,8 +104,6 @@ def test_directing_a_decision_is_flagged(text: str, language: str) -> None:
         ("Good news: there is no risk.", "en"),
         ("Your child will have thalassaemia.", "en"),
         ("This is 100% safe.", "en"),
-        ("आप पूरी तरह स्वस्थ हैं।", "hi"),  # "you are completely healthy"
-        ("कोई खतरा नहीं है।", "hi"),  # "there is no danger"
         ("anta salim, ma fi khatar", "ar"),  # "you are healthy, there's no danger"
     ],
 )
@@ -123,17 +118,11 @@ def test_false_certainty_is_flagged(text: str, language: str) -> None:
         ("Your genes are defective.", "en"),
         ("You two are incompatible.", "en"),
         ("A child suffering from the condition.", "en"),
-        ("आपके खराब जीन हैं।", "hi"),  # "you have bad genes"
         ("dam fasid", "ar"),  # "corrupt blood"
     ],
 )
 def test_stigmatising_words_are_flagged(text: str, language: str) -> None:
     assert "stigma" in rules_fired(text, language)
-
-
-def test_hindi_number_words_are_caught() -> None:
-    """V4.2.8, in part: a Hindi speaker still has to write the full sample set."""
-    assert "number" in rules_fired("आपके आधे बच्चों को यह मिलेगा।", "hi")  # "half your children"
 
 
 def test_arabic_script_cannot_pass_until_it_can_be_checked() -> None:

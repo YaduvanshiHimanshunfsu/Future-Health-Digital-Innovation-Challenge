@@ -8,6 +8,7 @@ from app.models.case_note import CaseNote
 from app.models.centre import Centre
 from app.models.consent import Consent
 from app.models.conversation import Conversation, Message
+from app.models.counsellor import CounsellorProfile
 from app.models.couple import Couple
 from app.models.genetic import CarrierFinding, GeneticReport
 from app.models.invitation import Invitation
@@ -29,6 +30,7 @@ __all__ = [
     "Centre",
     "Consent",
     "Conversation",
+    "CounsellorProfile",
     "Couple",
     "Event",
     "GeneticReport",

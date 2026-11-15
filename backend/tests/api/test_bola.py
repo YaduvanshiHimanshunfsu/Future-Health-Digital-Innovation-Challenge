@@ -52,6 +52,7 @@ EXPECTED = {
     "/v1/journey/{case_id}/steps",
     "/v1/cases/{case_id}/advance",
     "/v1/booking/slots",
+    "/v1/booking/counsellors",
     "/v1/booking/slots/{slot_id}/book",
     "/v1/booking/mine",
     "/v1/booking/schedule",

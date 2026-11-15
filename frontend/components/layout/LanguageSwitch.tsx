@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { LOCALES, LOCALE_NAMES, type Locale } from "@/lib/i18n/config";
+import { LOCALES, type Locale } from "@/lib/i18n/config";
+import { getT } from "@/lib/i18n/translate";
 
 export function LanguageSwitch({ locale, path, label }: { locale: Locale; path: string; label: string }) {
   return (
@@ -8,13 +9,14 @@ export function LanguageSwitch({ locale, path, label }: { locale: Locale; path: 
         <Link
           key={item}
           href={`/${item}${path}`}
-          lang={item === "ar" ? "en" : item}
+          lang={item}
           aria-current={item === locale ? "true" : undefined}
           className={`flex min-h-11 items-center rounded-chip px-2.5 text-xs font-semibold ${
             item === locale ? "bg-lapis-tint text-lapis-dark" : "text-slate hover:bg-sand-light"
           }`}
         >
-          {LOCALE_NAMES[item]}
+          {/* Each language by its own name, from its own catalogue: Arabic script lives only there. */}
+          {getT(item)("lang.self")}
         </Link>
       ))}
     </nav>

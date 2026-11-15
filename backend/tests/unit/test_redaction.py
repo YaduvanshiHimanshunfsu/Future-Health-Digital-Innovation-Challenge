@@ -8,7 +8,6 @@ from app.country_packs.loader import load_pack
 from app.privacy import redaction
 from app.privacy.redaction import (
     NUMBER_PLACEHOLDER,
-    WORD_PLACEHOLDER,
     LlmRequest,
     RedactionError,
     build_llm_facts,
@@ -54,16 +53,6 @@ def test_identifying_details_are_removed(language: str, text: str, secrets: list
 def test_ordinary_questions_survive_in_english() -> None:
     question = "What does being a carrier mean for my children?"
     assert redact(question, "en") == question
-
-
-def test_ordinary_questions_survive_in_hindi() -> None:
-    question = "वाहक होने का मतलब क्या है?"
-    assert redact(question, "hi") == question
-
-
-def test_hindi_words_stay_whole_despite_their_vowel_signs() -> None:
-    """Python's \\w treats these signs as breaks, which would leave pieces of a name behind."""
-    assert redact("प्रिया", "hi") == WORD_PLACEHOLDER
 
 
 def test_short_numbers_stay_since_they_identify_nobody() -> None:

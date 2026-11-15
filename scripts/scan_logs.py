@@ -4,7 +4,7 @@
     python scripts/scan_logs.py --since 2h   # only recent lines
 
 Run it after a full demo or browser run, so the logs hold real traffic. It looks for marker values:
-- national ID formats (the UAE "784-" pattern and the India demo pattern),
+- the national ID format (the UAE "784-" pattern),
 - gene symbols from the packs, as whole words,
 - the synthetic personas' names,
 - bearer tokens, JWTs, invitation tokens in paths, email addresses, and AI Studio API keys.
@@ -30,7 +30,6 @@ HEALTH_SERVICES = {"api", "worker", "beat", "web"}
 
 EVERYWHERE = {
     "UAE national ID": re.compile(r"\b784-\d{4}-\d{7}-\d\b"),
-    "India demo ID": re.compile(r"\b\d{2}-\d{4}-\d{4}-\d{4}\b"),
     "bearer token": re.compile(r"\bBearer\s+[A-Za-z0-9._-]{20,}"),
     "JWT": re.compile(r"\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}"),
     "invitation token in a path": re.compile(r"/i/[A-Za-z0-9_-]{20,}"),
@@ -40,7 +39,7 @@ EVERYWHERE = {
     # put the AI key in a container log. Both AI Studio key shapes.
     "Google API key": re.compile(r"\b(AIza[0-9A-Za-z_\-]{30,45}|AQ\.[0-9A-Za-z_\-]{20,})"),
 }
-NAMES = ["Fatima", "Khalid", "Priya", "Rohan"]
+NAMES = ["Fatima", "Khalid"]
 # Keycloak's own admin and service accounts appear by design and aren't people.
 ALLOWED_EMAILS = re.compile(r"@(example\.(com|org)|samvid\.local|keycloak\.org)\b")
 

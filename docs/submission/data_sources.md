@@ -17,7 +17,10 @@
 | HGNC-style gene symbols | Naming genes such as HBB | No | **Not confirmed** |
 
 | Synthetic programme activity (`backend/app/ops/seed_metrics.py`) | The metrics dashboard: 360 invented people with invented journeys and scores | No, fully generated, with no account, ID or findings | Own work. No group is given worse odds on purpose, so any gap it shows is noise |
-| SURE test (Légaré et al., Can Fam Physician 2010) | A four-item decision check, in the team's adapted wording | No | **Not confirmed.** The authors make it available with citation; written permission still to be confirmed. Labelled "adapted, not validated in Hindi or Arabic" on screen |
+| SURE test (Légaré et al., Can Fam Physician 2010) | A four-item decision check, in the team's adapted wording | No | **Not confirmed.** The authors make it available with citation; written permission still to be confirmed. A footnote says it is adapted, and on a Hindi or Arabic page that the translation is unvalidated |
+| Fictional demo centres (`backend/packs/*/services.yaml`) | The centre finder: 9 in India, 6 in Abu Dhabi | No | Own work. **Invented names in real cities.** Each is marked `fictional: true` and labelled on screen; none has a phone, street or website; the pack loader refuses them in a reviewed pack |
+| Fictional counselling team (`backend/app/ops/seed_counsellors.py`) | Booking: three invented counsellors per country, with a week of times, about a third taken by unnamed, non-existent clients | No, fully generated, with no account | Own work. Labelled fictional beside each name. One session is placed over the moment the seed runs, so "in a session" can be shown |
+| HBB variant meanings (`backend/packs/*/panel.yaml`) | Naming sickle cell or beta thalassaemia from the exact change | No | Standard, widely documented meanings of well-known variants (HbS is c.20A>T; c.92+5G>C is IVS-I-5). **Placeholder until a clinician reviews the list**, like the rest of the panel |
 
 ### Services the prototype sends data to
 

@@ -6,9 +6,10 @@ import { FactList } from "@/components/risk/FactList";
 import { Visuals } from "@/components/risk/Visuals";
 import { ListenButton } from "@/components/layout/ListenButton";
 import { MarkViewed } from "@/components/forms/MarkViewed";
+import { NoReportYet } from "@/components/risk/NoReportYet";
 
 export default async function Result({ params }: { params: Promise<{ locale: string }> }) {
-  const { t } = await localeOf(params);
+  const { locale, t } = await localeOf(params);
   const [results, risk, profile, journey] = await Promise.all([
     api<MyResults>("/me/results"),
     api<MyRisk>("/me/risk"),
@@ -32,7 +33,10 @@ export default async function Result({ params }: { params: Promise<{ locale: str
           <Notice tone="care" title={t("result.contact_t")}>{t("result.contact_b")}</Notice>
         ) : null}
         {!report.withheld && !report.has_report ? (
-          <ClayCard title={t("result.no_report_t")}><p>{t("result.no_report_b")}</p></ClayCard>
+          <ClayCard title={t("result.no_report_t")}>
+            <p>{t("result.no_report_b")}</p>
+            <NoReportYet locale={locale} t={t} />
+          </ClayCard>
         ) : null}
         {!report.withheld && report.has_report && report.facts.length === 0 ? (
           <ClayCard title={t("result.nothing_t")}><p>{t("result.nothing_b")}</p></ClayCard>
@@ -42,7 +46,7 @@ export default async function Result({ params }: { params: Promise<{ locale: str
           <ClayCard>
             <div className="mb-3 flex justify-end"><ListenButton targetId="result-facts" /></div>
             <div id="result-facts">
-              <FactList facts={report.facts} conditions={report.conditions} />
+              <FactList facts={report.facts} conditions={report.conditions} exact={report.conditions_exact} />
             </div>
             <Visuals visuals={risk.data.visuals as unknown as Visual[]} detailed={level === "detailed"} />
             <p className="muted mt-4">{t("result.what_next")}</p>

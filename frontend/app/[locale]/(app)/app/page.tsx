@@ -7,6 +7,7 @@ import { ClayCard, Notice, PageTitle } from "@/components/ui/ClayCard";
 import { Stepper, type Step } from "@/components/ui/Stepper";
 import { CountUp } from "@/components/motion/CountUp";
 import { TilePattern } from "@/components/layout/TilePattern";
+import { NoReportYet } from "@/components/risk/NoReportYet";
 
 const KNOWN_CARE = new Set(["RESULT_RELEASED", "EDUCATION_VIEWED", "COMPREHENSION_CHECKED", "COUNSELLING_REQUESTED", "COUNSELLING_BOOKED", "COUNSELLING_DONE"]);
 
@@ -39,12 +40,13 @@ export default async function Dashboard({ params }: { params: Promise<{ locale: 
         <Stepper steps={steps} label={t("dash.title")} />
       </TilePattern>
       {report.pack.reviewed ? null : (
-        <div className="mb-6"><Notice>{t("demo.pack_unreviewed", { name: report.pack.code })}</Notice></div>
+        <div className="mb-6"><Notice>{t("demo.pack_unreviewed", { name: report.pack.name })}</Notice></div>
       )}
       <div className="stagger grid gap-4 md:grid-cols-2">
         <ClayCard title={t("dash.result_t")} accent={1}>
           <p>{t(resultText)}</p>
           {report.has_report ? <Link href={`/${locale}/app/result`} className="pill-primary mt-4">{t("dash.open_result")}</Link> : null}
+          {!report.has_report && !report.withheld ? <NoReportYet locale={locale} t={t} /> : null}
         </ClayCard>
         <ClayCard title={t("dash.care_t")} accent={3}>
           {open ? (

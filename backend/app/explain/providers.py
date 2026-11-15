@@ -24,7 +24,7 @@ from app.privacy.redaction import LlmRequest
 
 log = logging.getLogger(__name__)
 
-LANGUAGE_NAMES = {"en": "English", "hi": "Hindi", "ar": "Arabic"}
+LANGUAGE_NAMES = {"en": "English", "ar": "Arabic"}
 
 DRAFT_RULES = """You explain genetic carrier screening results for Samvid, a service that gives
 general education only. Follow every rule:

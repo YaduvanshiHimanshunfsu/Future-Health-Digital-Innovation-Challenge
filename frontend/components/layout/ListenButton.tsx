@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { hasOwnText } from "@/lib/i18n/config";
 import { useI18n } from "./I18nProvider";
 
 function localVoice(language: string): SpeechSynthesisVoice | null {
@@ -21,8 +20,7 @@ export function ListenButton({ targetId }: { targetId: string }) {
   const { t, locale } = useI18n();
   const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [speaking, setSpeaking] = useState(false);
-  // Arabic pages show English text until their own is reviewed, so they are read in English.
-  const language = hasOwnText(locale) ? locale : "en";
+  const language = locale;
 
   useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;

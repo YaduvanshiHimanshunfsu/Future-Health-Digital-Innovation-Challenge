@@ -26,7 +26,7 @@ KEYCLOAK = "http://127.0.0.1:8080"
 # By address: on Windows, "localhost" tries IPv6 first and adds about 2 s to every new connection.
 API = "http://127.0.0.1:8000"
 ADMIN_API = f"{KEYCLOAK}/admin/realms/samvid"
-ABU_DHABI, INDIA = "ae-abu-dhabi", "in-india"
+ABU_DHABI = "ae-abu-dhabi"
 
 # Username, the persona whose report they own, its country pack, and their role.
 PEOPLE = [
@@ -36,8 +36,6 @@ PEOPLE = [
     ("demo-x-man", "x_man", ABU_DHABI, "individual"),
     ("demo-uncertain", "uncertain", ABU_DHABI, "individual"),
     ("demo-no-findings", "no_findings", ABU_DHABI, "individual"),
-    ("demo-priya", "priya", INDIA, "individual"),
-    ("demo-rohan", "rohan", INDIA, "individual"),
     ("demo-no-report", None, ABU_DHABI, "individual"),
     ("demo-counsellor", None, ABU_DHABI, "counsellor"),
     ("demo-doctor", None, ABU_DHABI, "physician"),

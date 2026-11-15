@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { hasOwnText, type Locale } from "@/lib/i18n/config";
+import { isDraftTranslation, type Locale } from "@/lib/i18n/config";
 import { getT } from "@/lib/i18n/translate";
 import { Chip } from "@/components/ui/Chip";
 import { PageTransition } from "@/components/motion/PageTransition";
@@ -69,9 +69,9 @@ export function SiteShell({
         </div>
         <div aria-hidden="true" className="mosaic-strip" />
       </header>
-      {hasOwnText(locale) ? null : (
-        <p className="bg-saffron-tint px-4 py-2 text-center text-sm text-ink">{t("lang.ar_pending")}</p>
-      )}
+      {isDraftTranslation(locale) ? (
+        <p data-testid="draft-translation" className="bg-saffron-tint px-4 py-2 text-center text-sm text-ink">{t("lang.draft")}</p>
+      ) : null}
       <main id="content" data-reading={reading} className="mx-auto w-full max-w-page flex-1 px-4 py-8 md:px-10">
         {toolbar ? <div className="mb-6 flex flex-wrap items-center justify-end gap-2">{toolbar}</div> : null}
         <PageTransition>{children}</PageTransition>

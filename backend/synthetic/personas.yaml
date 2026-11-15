@@ -26,17 +26,3 @@ ae-abu-dhabi:
     uncertain_shared:   {a: uncertain, b: no_findings, relationship: second_cousins}
     partner_not_tested: {a: fatima, b: no_findings, relationship: unrelated, b_tested: false}
     x_father_only:      {a: no_findings_f, b: x_man, relationship: unrelated}
-
-in-india:
-  panel: demo-panel-in-v1
-  people:
-    priya:         {id: 00-0000-0000-0001, sex: F, findings: [[HBB, P, het, c.92+5G>C]]}
-    rohan:         {id: 00-0000-0000-0002, sex: M, findings: [[HBB, P, het, c.92+5G>C]]}
-    x_carrier_in:  {id: 00-0000-0000-0003, sex: F, findings: [[DMD, P, het, c.100del]]}
-    g6pd_man_in:   {id: 00-0000-0000-0004, sex: M, findings: [[G6PD, P, hemi, c.563C>T]]}
-    uncertain_in:  {id: 00-0000-0000-0005, sex: F, findings: [[SMN1, VUS, het, c.293A>G]]}
-    no_findings_in: {id: 00-0000-0000-0006, sex: M, findings: []}
-    gene_not_in_pack_in: {id: 00-0000-0000-0007, sex: F, findings: [[ABCA4, P, het, c.5882G>A]]}
-  couples:
-    at_risk_in:         {a: priya, b: rohan, relationship: unrelated}
-    relatives_in:       {a: priya, b: no_findings_in, relationship: first_cousins}

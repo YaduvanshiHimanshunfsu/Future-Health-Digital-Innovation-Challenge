@@ -9,5 +9,4 @@ Everything that differs by country lives here as settings, not code. See [docs/0
 | Folder | Use |
 |---|---|
 | `_template/` | Copy this to add a country |
-| `ae-abu-dhabi/` | First reference pack, in English, Arabic and Hindi, pending clinical and legal review |
-| `in-india/` | Illustrative second pack, in Hindi and English, not reviewed |
+| `ae-abu-dhabi/` | The one pack the prototype ships: Abu Dhabi, in English and Arabic, pending clinical and legal review |

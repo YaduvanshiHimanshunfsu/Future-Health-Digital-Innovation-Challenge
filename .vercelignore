@@ -1,0 +1,31 @@
+# Left out of the Vercel upload: none of this is needed to build or run either service, and the
+# backend function has a size limit. Same syntax as .gitignore, anchored to the repository root.
+
+# Local stack, launcher, documentation and the project log
+/infra/
+/scripts/
+/docs/
+/logs/
+/Run_Samvid.py
+/brain.md
+/report*.md
+/report*_assets/
+/stitch_*.zip
+
+# Tests and test data. backend/packs and backend/alembic stay: the API reads both at run time.
+/backend/tests/
+/backend/synthetic/
+/frontend/tests/
+/frontend/test-results/
+/frontend/playwright-report/
+/frontend/design-export/
+
+# Local environments and caches
+.venv/
+node_modules/
+.next/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.hypothesis/

@@ -1,4 +1,5 @@
 # qualified_human: counsellor | tele_genetics | trained_clinician | none. With none, the app says no service is listed.
 qualified_human: none
+# Each centre needs fictional: true or false. A real one also needs source_url and checked_on.
 centres: []
 funding_notes: []

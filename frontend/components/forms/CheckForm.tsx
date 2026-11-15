@@ -45,8 +45,6 @@ export function CheckForm({ questions, phase, testId }: { questions: InstrumentQ
         void submit();
       }}
     >
-      {/* The honest label, in the page's language. The API's own wording is the English record. */}
-      <p className="chip w-fit border-lilac bg-plum-tint text-plum-deep" data-testid="instrument-status">{t(`check.status_${questions.instrument}`)}</p>
       {questions.language_used !== locale ? <Notice>{t("check.language_note")}</Notice> : null}
       {questions.items.map((item, index) => (
         <fieldset key={item.id} className="rounded-field border border-line bg-porcelain p-4">
@@ -89,6 +87,15 @@ export function CheckForm({ questions, phase, testId }: { questions: InstrumentQ
         </div>
       )}
       {failed ? <Notice tone="problem">{t("error.generic")}</Notice> : null}
+      {/*
+        Where the questions come from, as a footnote rather than a badge: it's true and it stays, but
+        it's background, not the first thing to read. The English SURE wording is the published
+        test, adapted; a translation adds a step that nobody has validated yet.
+      */}
+      <p className="muted flex gap-2 border-t border-line pt-3 text-xs" data-testid="instrument-status">
+        <span aria-hidden="true">ⓘ</span>
+        {t(sure ? (locale === "en" ? "check.about_sure" : "check.about_sure_translated") : "check.about_teach_back")}
+      </p>
     </form>
   );
 }

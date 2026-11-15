@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     cors_origins: CommaList = []
     max_body_bytes: int = Field(default=1_000_000, gt=0, le=10_000_000)
 
-    supported_languages: CommaList = ["en", "ar", "hi"]
+    supported_languages: CommaList = ["en", "ar"]
     default_language: str = "en"
 
     oidc_issuer: AnyHttpUrl
@@ -79,7 +79,7 @@ class Settings(BaseSettings):
     llm_external_approved: bool = False
 
     packs_dir: Path = DEFAULT_PACKS_DIR
-    enabled_packs: CommaList = ["ae-abu-dhabi", "in-india"]
+    enabled_packs: CommaList = ["ae-abu-dhabi"]
     default_pack: str = "ae-abu-dhabi"
 
     # How far to trust an authenticated lab client's reports. "demo" treats them as attested for the

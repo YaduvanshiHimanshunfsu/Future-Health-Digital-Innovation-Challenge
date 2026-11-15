@@ -69,11 +69,11 @@ test("the reading level is saved, changes the page, and Detailed opens the sourc
   await page.goto("/en/app/result");
   const main = page.locator("main");
   await expect(main).toHaveAttribute("data-reading", "simple");
-  await expect(page.getByText(/^Source:/)).toHaveCount(0);
+  await expect(page.getByText(/^Method:/)).toHaveCount(0);
 
   await page.getByTestId("reading-level").getByText("Detailed").click();
   await expect(main).toHaveAttribute("data-reading", "detailed");
-  await expect(page.getByText(/^Source:/).first()).toBeVisible();
+  await expect(page.getByText(/^Method:/).first()).toBeVisible();
 
   await page.reload();
   await expect(main).toHaveAttribute("data-reading", "detailed");
@@ -199,4 +199,16 @@ test("the counsellor queue charts real counts and shows time left as a meter", a
   await counsellor.emulateMedia({ reducedMotion: "reduce" });
   const results = await new AxeBuilder({ page: counsellor }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
   expect(results.violations.map((v) => v.id)).toEqual([]);
+});
+
+test("a sickle cell change is named as sickle cell, not beta thalassaemia too", async ({ browser }) => {
+  // demo-fatima's report holds HBB c.20A>T, the sickle cell change (HbS).
+  const page = await newPage(browser);
+  await signInAndAgree(page, await freshPerson({ persona: "fatima" }));
+  await page.goto("/en/app/result");
+  const facts = page.locator("#result-facts");
+  await expect(facts).toContainText("Linked to: Sickle cell disease");
+  await expect(facts).not.toContainText("Beta thalassaemia");
+  await expect(facts).toContainText("sickle cell trait");
+  await expect(page.locator("main")).not.toContainText("c.20A>T");
 });

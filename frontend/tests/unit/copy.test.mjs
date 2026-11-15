@@ -6,7 +6,6 @@ import { test } from "node:test";
 
 const ROOT = resolve(import.meta.dirname, "../..");
 const en = JSON.parse(readFileSync(join(ROOT, "messages/en.json"), "utf-8"));
-const hi = JSON.parse(readFileSync(join(ROOT, "messages/hi.json"), "utf-8"));
 const ar = JSON.parse(readFileSync(join(ROOT, "messages/ar.json"), "utf-8"));
 
 function filesUnder(folder, found = []) {
@@ -39,27 +38,70 @@ for (const [name, pattern] of NEVER) {
   });
 }
 
-test("Hindi has the same keys and the same placeholders as English", () => {
-  assert.deepEqual(Object.keys(hi).sort(), Object.keys(en).sort());
+const ARABIC_SCRIPT = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+
+test("Arabic script appears only in messages/ar.json", () => {
+  // Approved by the user on 15 Nov 2026 for the interface text only (CLAUDE.md, rule 5). Code,
+  // tests and the other catalogues stay free of it, so every Arabic word is in one reviewable file.
+  const offenders = filesUnder(ROOT)
+    .filter((path) => !path.endsWith(join("messages", "ar.json")))
+    .filter((path) => ARABIC_SCRIPT.test(readFileSync(path, "utf-8")));
+  assert.deepEqual(offenders, []);
+});
+
+test("Arabic has the same keys and the same placeholders as English", () => {
+  assert.deepEqual(Object.keys(ar).sort(), Object.keys(en).sort());
   for (const key of Object.keys(en)) {
     const names = (text) => (text.match(/\{\w+\}/g) ?? []).sort();
-    assert.deepEqual(names(hi[key]), names(en[key]), key);
+    assert.deepEqual(names(ar[key]), names(en[key]), key);
   }
 });
 
-test("Hindi text is really Hindi, not English left behind", () => {
-  // Names, codes and short labels may stay in Roman letters. Sentences shouldn't.
-  const untranslated = Object.entries(hi).filter(
-    ([key, text]) => text === en[key] && text.split(" ").length > 2 && !key.startsWith("brand."),
+test("Arabic text is really Arabic, not English left behind", () => {
+  // Names such as "Samvid" may stay in Roman letters. A sentence must be in Arabic script.
+  const untranslated = Object.entries(ar).filter(
+    ([key, text]) => en[key].split(" ").length > 2 && !ARABIC_SCRIPT.test(text) && !key.startsWith("brand."),
   );
   assert.deepEqual(untranslated, []);
 });
 
-test("no Arabic or Urdu script anywhere in the frontend", () => {
-  assert.deepEqual(ar, {}, "Arabic text waits on the user's approval and a reviewer");
-  const script = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
-  const offenders = filesUnder(ROOT).filter((path) => script.test(readFileSync(path, "utf-8")));
-  assert.deepEqual(offenders, []);
+// The rules above, for Arabic. Written as escapes so this file holds no Arabic script.
+const NEVER_AR = [
+  // laa khatar ("no risk"), khaali min al-khatar ("free of risk")
+  ["certainty", /\u0644\u0627 \u062E\u0637\u0631|\u062E\u0627\u0644\u064D? \u0645\u0646 \u0627\u0644\u062E\u0637\u0631/],
+  // anta saleem / anti saleema ("you are healthy"): saleem is banned outright, as "healthy" is
+  ["certainty", /\u0633\u0644\u064A\u0645/],
+  // nansah, nusi ("we advise", "we recommend"), yajib 'alayk ("you must"), al-afdal laka ("best for you")
+  ["directing a decision", /\u0646\u0646\u0635\u062D|\u0646\u0648\u0635\u064A|\u064A\u062C\u0628 \u0639\u0644\u064A\u0643|\u0627\u0644\u0623\u0641\u0636\u0644 \u0644\u0643/],
+  // ghayr mutawafiq ("incompatible"), mu'ib ("defective")
+  ["stigma", /\u063A\u064A\u0631 \u0645\u062A\u0648\u0627\u0641\u0642|\u0645\u0639\u064A\u0628/],
+  // majjani ("free of charge")
+  ["unconfirmed cost", /\u0645\u062C\u0627\u0646/],
+];
+
+for (const [name, pattern] of NEVER_AR) {
+  test(`no Arabic wording of the kind: ${name}`, () => {
+    assert.deepEqual(Object.entries(ar).filter(([, text]) => pattern.test(text)), []);
+  });
+}
+
+test("Arabic never says 'carrier' in a way that can read as 'pregnant'", () => {
+  // hamil means both "pregnant" and "carrier" (CLAUDE.md). Every use must be followed by the word
+  // for "change" (taghayyur), as in hamil lil-taghayyur, "carrying the change".
+  const hamil = /(\S*\u062d\u0627\u0645\u0644\S*)(\s+\S+)?/g;
+  const bare = [];
+  for (const [key, text] of Object.entries(ar)) {
+    for (const match of text.matchAll(hamil)) {
+      if (!(match[2] ?? "").includes("\u062a\u063a\u064a\u0651\u0631")) bare.push([key, match[1]]);
+    }
+  }
+  assert.deepEqual(bare, []);
+});
+
+test("the Arabic wording rules can actually catch something", () => {
+  // laa khatar 'alayk ("there is no risk to you"), nansahuka ("we advise you")
+  assert.ok(NEVER_AR[0][1].test("\u0644\u0627 \u062E\u0637\u0631 \u0639\u0644\u064A\u0643"));
+  assert.ok(NEVER_AR[2][1].test("\u0646\u0646\u0635\u062D\u0643"));
 });
 
 test("the wording rules can actually catch something", () => {

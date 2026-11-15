@@ -13,8 +13,13 @@ export function factSentence(fact: Fact, t: Translate): string {
 }
 
 // A fixed time zone, so the server and the browser render exactly the same text.
+/** The tag Intl formats with, for a page language. */
+export function localeTag(locale: string): string {
+  return locale === "ar" ? "ar-AE" : "en-GB";
+}
+
 export function formatDate(value: string, locale: string): string {
-  return new Intl.DateTimeFormat(locale === "hi" ? "hi-IN" : "en-GB", {
+  return new Intl.DateTimeFormat(localeTag(locale), {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -23,7 +28,7 @@ export function formatDate(value: string, locale: string): string {
 }
 
 export function formatDateTime(value: string, locale: string): string {
-  return new Intl.DateTimeFormat(locale === "hi" ? "hi-IN" : "en-GB", {
+  return new Intl.DateTimeFormat(localeTag(locale), {
     year: "numeric",
     month: "short",
     day: "numeric",

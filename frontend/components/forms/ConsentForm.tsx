@@ -28,7 +28,7 @@ export function ConsentForm() {
     }
     await callApi("me", { method: "PATCH", body: { literacy_level: level } });
     // The language is a preference, and the country's pack may not offer it. That isn't an error.
-    if (locale !== "ar") await callApi("me", { method: "PATCH", body: { preferred_lang: locale } });
+    await callApi("me", { method: "PATCH", body: { preferred_lang: locale } });
     router.replace(`/${locale}/app`);
     router.refresh();
   }

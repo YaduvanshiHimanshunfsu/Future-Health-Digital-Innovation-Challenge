@@ -153,12 +153,6 @@ async def test_uncertain_and_x_linked_never_get_the_general_carrier_text(facts: 
     assert "carrier_basics" not in result.passage_ids
 
 
-async def test_hindi_gets_a_hindi_answer() -> None:
-    result = await answer("वाहक होने का मतलब क्या है?", "hi", "simple", CARRIER, PACK, TemplateOnly())
-    assert "वाहक" in result.text
-    assert result.language_used == "hi"
-
-
 async def test_arabic_gets_english_and_says_why() -> None:
     result = await answer(
         "madha ya'ni annani hamil lil-jin?", "ar", "simple", CARRIER, PACK, TemplateOnly()

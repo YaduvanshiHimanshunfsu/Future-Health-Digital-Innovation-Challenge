@@ -96,7 +96,7 @@ export async function removePeople() {
 /** The real browser flow, through Keycloak's own page. */
 export async function signIn(page: Page, person: Person, locale = "en") {
   await page.goto(`/${locale}/start`);
-  await page.getByRole("button", { name: /sign in \(demo\)|साइन इन/i }).click();
+  await page.getByRole("button", { name: /sign in \(demo\)/i }).click();
   await page.waitForURL(/localhost:8080/);
   await page.locator("#username").fill(person.username);
   await page.locator("#password").fill(person.password);
@@ -106,7 +106,7 @@ export async function signIn(page: Page, person: Person, locale = "en") {
 
 export async function signInAndAgree(page: Page, person: Person, locale = "en") {
   await signIn(page, person, locale);
-  await page.getByRole("button", { name: /I understand and agree|सहमत हूँ/ }).click();
+  await page.getByRole("button", { name: /I understand and agree/ }).click();
   await page.waitForURL(new RegExp(`/${locale}/app$`));
 }
 

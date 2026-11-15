@@ -729,6 +729,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/booking/counsellors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Counsellors
+         * @description The team in the person's country, with each one's status. Names, roles and languages only.
+         */
+        get: operations["list_counsellors_v1_booking_counsellors_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/booking/slots/{slot_id}/book": {
         parameters: {
             query?: never;
@@ -1045,6 +1065,11 @@ export interface components {
              */
             id: string;
             /**
+             * Counsellor Id
+             * Format: uuid
+             */
+            counsellor_id: string;
+            /**
              * Starts At
              * Format: date-time
              */
@@ -1199,27 +1224,55 @@ export interface components {
         };
         /** CentreOut */
         CentreOut: {
+            /** Id */
+            id: string;
+            /** Fictional */
+            fictional: boolean;
             /** Name */
             name: string;
+            /** City */
+            city: string;
             /** Region */
             region: string;
+            /** Kind */
+            kind: string;
             /** Services */
-            services: string;
+            services: string[];
+            /** Modes */
+            modes: string[];
+            /** Step Free */
+            step_free: boolean | null;
+            /** Lat */
+            lat: number;
+            /** Lon */
+            lon: number;
             /** Contact */
             contact: string | null;
             /** Source Url */
-            source_url: string;
+            source_url: string | null;
             /** Checked On */
-            checked_on: string;
+            checked_on: string | null;
         };
         /** CentresOut */
         CentresOut: {
             /** Pack */
             pack: string;
+            /** Pack Name */
+            pack_name: string;
             /** Pack Reviewed */
             pack_reviewed: boolean;
             /** Qualified Human */
             qualified_human: string;
+            /** Total */
+            total: number;
+            /** Fictional Count */
+            fictional_count: number;
+            /** Regions */
+            regions: string[];
+            /** Region Names */
+            region_names: {
+                [key: string]: string;
+            };
             /** Centres */
             centres: components["schemas"]["CentreOut"][];
             /** Funding Notes */
@@ -1305,6 +1358,28 @@ export interface components {
             contact: string;
             /** Hours */
             hours: string;
+        };
+        /** CounsellorOut */
+        CounsellorOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Display Name */
+            display_name: string;
+            /** Role */
+            role: string;
+            /** Languages */
+            languages: string[];
+            /** Fictional */
+            fictional: boolean;
+            /** Status */
+            status: string;
+            /** Next Open */
+            next_open: string | null;
+            /** Yours */
+            yours: boolean;
         };
         /** CountOut */
         CountOut: {
@@ -1629,6 +1704,13 @@ export interface components {
             conditions: {
                 [key: string]: string[];
             };
+            /**
+             * Conditions Exact
+             * @default {}
+             */
+            conditions_exact: {
+                [key: string]: boolean;
+            };
             pack: components["schemas"]["PackInfo"];
             /**
              * Withheld
@@ -1703,6 +1785,8 @@ export interface components {
         PackInfo: {
             /** Code */
             code: string;
+            /** Name */
+            name: string;
             /** Status */
             status: string;
             /** Reviewed */
@@ -1959,7 +2043,11 @@ export interface components {
         };
         /**
          * SlotOut
-         * @description What a person sees: when and how. Not who, until they've booked and met.
+         * @description When, how, and with which counsellor.
+         *
+         *     The counsellor was hidden until booking at first. The user chose on 15 Nov 2026 to show the team
+         *     and their availability, as booking services do. What stays hidden is anything about another
+         *     client: a busy counsellor is shown as busy, never with whom.
          */
         SlotOut: {
             /**
@@ -1967,6 +2055,11 @@ export interface components {
              * Format: uuid
              */
             id: string;
+            /**
+             * Counsellor Id
+             * Format: uuid
+             */
+            counsellor_id: string;
             /**
              * Starts At
              * Format: date-time
@@ -1989,6 +2082,11 @@ export interface components {
              * Format: uuid
              */
             id: string;
+            /**
+             * Counsellor Id
+             * Format: uuid
+             */
+            counsellor_id: string;
             /**
              * Starts At
              * Format: date-time
@@ -3432,6 +3530,37 @@ export interface operations {
             };
         };
     };
+    list_counsellors_v1_booking_counsellors_get: {
+        parameters: {
+            query?: {
+                case_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CounsellorOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     book_slot_v1_booking_slots__slot_id__book_post: {
         parameters: {
             query?: never;
@@ -3728,7 +3857,11 @@ export interface operations {
         parameters: {
             query?: {
                 pack?: string | null;
+                q?: string | null;
                 region?: string | null;
+                service?: ("genetic_counselling" | "carrier_screening" | "confirmatory_testing" | "prenatal_diagnosis" | "haemoglobin_clinic" | "family_testing") | null;
+                mode?: ("in_person" | "video") | null;
+                step_free?: boolean | null;
             };
             header?: never;
             path?: never;

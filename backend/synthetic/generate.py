@@ -323,7 +323,7 @@ def main() -> int:
     parser.add_argument("--packs-dir", type=Path, default=DEFAULT_PACKS_DIR)
     parser.add_argument("--pack", action="append", dest="packs", default=None)
     args = parser.parse_args()
-    for pack_code in args.packs or ["ae-abu-dhabi", "in-india"]:
+    for pack_code in args.packs or ["ae-abu-dhabi"]:
         report = generate(args.output, pack_code, args.people, args.seed, args.packs_dir)
         sys.stdout.write(f"{pack_code}: {report['people']} people, {report['scenarios']}\n")
     return 0

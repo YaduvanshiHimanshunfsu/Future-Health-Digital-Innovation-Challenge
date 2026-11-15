@@ -94,7 +94,7 @@ PHASES = [
     ("1", "Foundation: secure API, database, audit trail, local stack", "done"),
     ("2", "Risk engine, encryption, lab reports, country packs, synthetic data", "done"),
     ("3", "Consent, couple check, family invitations, access log, emergency access", "done"),
-    ("UI", "Web app from the Stitch design, in English and Hindi, wired to the backend", "done"),
+    ("UI", "Web app from the Stitch design, in English and Arabic, wired to the backend", "done"),
     (
         "UI+",
         "Motion library, chart kit, reading levels, listen, couple and pregnancy visuals",
@@ -119,7 +119,6 @@ DEMO_ACCOUNTS = [
     ("demo-x-carrier", "An X-linked result, with its own picture, and the Options page"),
     ("demo-uncertain", "An uncertain finding, with no number"),
     ("demo-no-report", "No report yet, which is never shown as a result"),
-    ("demo-priya", "The India pack, in Hindi"),
     ("demo-counsellor", "Takes cases from the queue, with time-left rings and a priority chart"),
     ("demo-doctor", "Emergency access to a case"),
     ("demo-auditor", "Reviews emergency access"),
@@ -788,6 +787,15 @@ def demo_data() -> None:
         warn("The synthetic metrics couldn't be added. The dashboard will show mostly '<10'.")
     else:
         ok("Synthetic programme activity added.")
+    # Run on every start, so the fictional team always has a week of times ahead of it.
+    note("Giving each country a fictional counselling team with a week of times...")
+    if (
+        run([*COMPOSE, "exec", "-T", "api", "python", "-m", "app.ops.seed_counsellors"], quiet=True)
+        != 0
+    ):
+        warn("The counselling team couldn't be added. Booking will show no open times.")
+    else:
+        ok("Fictional counselling team ready.")
 
 
 def where_to_look(show_password: bool) -> None:
