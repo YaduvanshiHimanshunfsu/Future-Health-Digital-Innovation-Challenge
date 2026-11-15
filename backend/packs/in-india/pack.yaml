@@ -1,7 +1,0 @@
-# Illustrative second pack, showing that settings change without code. Not reviewed.
-code: in-india
-name: India
-status: illustrative
-reviewers: []
-languages: [hi, en]
-default_language: hi

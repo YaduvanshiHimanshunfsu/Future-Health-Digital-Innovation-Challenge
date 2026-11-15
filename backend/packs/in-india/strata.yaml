@@ -1,5 +1,0 @@
-# Illustrative regions. Time targets differ from Abu Dhabi to show they're per country.
-regions: [north, south, east, west, central, north-east]
-age_bands: [18-24, 25-34, 35-44, 45+]
-genders: [woman, man, other, not-stated]
-sla_hours: {P1: 48, P2: 168, P3: 336, P4: 672}

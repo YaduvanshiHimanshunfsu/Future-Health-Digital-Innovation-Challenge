@@ -1,8 +1,0 @@
-# Demo only. The pattern matches the 14-digit ABHA health ID format.
-national_id_label: ABHA number
-national_id_pattern: '\b\d{2}-?\d{4}-?\d{4}-?\d{4}\b'
-national_id_fhir_system: urn:samvid:in:abha
-national_id_ignore: "- "
-phone_pattern: '(?:\+91[\s-]?)?[6-9]\d{9}\b'
-sign_in_adapter: demo
-records_adapter: none
