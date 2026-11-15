@@ -29,7 +29,9 @@ ADMIN_API = f"{KEYCLOAK}/admin/realms/samvid"
 ABU_DHABI = "ae-abu-dhabi"
 
 # Username, the persona whose report they own, its country pack, and their role.
+# demo123 is the primary demo account (username: demo123, password from DEMO_PASSWORD in infra/.env)
 PEOPLE = [
+    ("demo123", "fatima", ABU_DHABI, "individual"),
     ("demo-fatima", "fatima", ABU_DHABI, "individual"),
     ("demo-khalid", "khalid", ABU_DHABI, "individual"),
     ("demo-x-carrier", "x_carrier", ABU_DHABI, "individual"),
