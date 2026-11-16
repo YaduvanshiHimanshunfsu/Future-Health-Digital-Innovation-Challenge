@@ -1398,3 +1398,61 @@ was then stopped.
 - [ ] Delete the stale volume and let the zip run finish, to confirm the whole path (user, then Claude)
 - [ ] Consider whether two copies of the project on one machine should share a database at all.
       Sharing is the current design; the alternative is a project name per folder (Claude, if wanted)
+
+## #030 · 2026-11-16 · CI run #11: the `image` job died in "Set up job", from a missing letter
+
+- **Author:** Claude (Opus), directed by the user
+- **Phase:** 6.3 · **Checks:** V6.3.1
+
+### What we did
+
+Run #11 on `0b55177`: `clone`, `backend-checks`, `backend-tests`, `frontend` and `secrets` all
+green, `image` failed after **3 seconds**.
+
+Entry #021 had to guess at a CI failure because the logs were unreadable from here, and said so.
+This time the repository is public, so the run was read through the GitHub API instead:
+
+```
+job "image" → step "Set up job": failure, 0 seconds
+```
+
+**Zero seconds in "Set up job" means no step of ours ever ran.** GitHub resolves every `uses:` in
+a job before starting it, and one could not be resolved. Checking each of the eight action
+references in the workflow:
+
+| Reference | Resolves |
+|---|---|
+| `actions/checkout@v4`, `setup-node@v4`, `setup-python@v5`, `astral-sh/setup-uv@v5`, `gitleaks/gitleaks-action@v2` | Yes: they ran in other jobs in this very run |
+| `docker/setup-buildx-action@v3`, `docker/build-push-action@v6` | Yes, checked against the API |
+| **`aquasecurity/trivy-action@0.28.0`** | **404** |
+
+The project's tags are `v`-prefixed: `v0.36.0`, `v0.35.0`, … `v0.28.0`. Ours had no `v`. The
+unprefixed tags did once exist, and the release notes for `v0.35.0` record that they were re-cut
+after a tag-integrity scare, which is why a reference written earlier stopped resolving later.
+
+**Fixed to `aquasecurity/trivy-action@v0.36.0`**, the current stable release (22 Apr 2026), rather
+than just adding the letter to the old one: the action ships the Trivy binary, and a year-old
+binary risks not reading the current vulnerability database schema, which would be the next
+failure. Its `action.yaml` was checked first to confirm `image-ref`, `severity`, `ignore-unfixed`
+and `exit-code` all still exist and that `scan-type` still defaults to `image`.
+
+### Verification
+
+The job has never once succeeded, so its substance was unknown. Both of its real steps were run
+locally, exactly as the workflow runs them:
+
+- `docker build -t samvid-backend:ci backend` → exit 0.
+- Trivy with the same settings, including the ECR mirrors → **exit 0**. It detected Debian 13.7,
+  scanned 87 OS packages and every Python package, and reported **0 HIGH or CRITICAL**.
+
+So the job should pass once the action resolves. The workflow YAML parses and all six jobs are
+still present.
+
+**Not verified:** the run itself, on GitHub. **Worth knowing:** this job can still fail honestly
+later, because `exit-code: "1"` means a newly published CVE in `python:3.12-slim` fails the build.
+That is the job doing its work, not a fault, and the fix then is to rebuild on a patched base.
+
+### Follow-ups
+- [ ] Push and confirm `image` is green; it is the only job never yet seen to pass (user)
+- [ ] Consider pinning actions by commit SHA rather than tag. The trivy-action release notes refer
+      to a tag-integrity scare, and a moving tag like `@v4` is exactly what that threatens (user)

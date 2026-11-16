@@ -164,8 +164,11 @@ jobs:
           load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      # The tag carries a `v`. Without it GitHub cannot resolve the action, and the whole job dies
+      # in "Set up job" before a single step runs, which reads as a 3-second failure with no log.
+      # The project also removed its unprefixed tags, so `@0.28.0` stopped resolving at all.
       - name: Scan it for known vulnerabilities
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: samvid-backend:ci
           severity: CRITICAL,HIGH
