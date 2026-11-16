@@ -25,7 +25,7 @@ Future Health/
 │   ├── app/             Routes (P1 to P19, Story Mode)
 │   ├── components/      ui, layout, motion, risk, charts
 │   ├── lib/             API client, auth, i18n
-│   ├── messages/        English, Arabic and Hindi text
+│   ├── messages/        English and Arabic text
 │   └── tests/e2e/       Playwright
 ├── infra/               Compose, OpenFGA, Keycloak, Postgres
 ├── scripts/             Runbooks
@@ -189,7 +189,6 @@ Future Health/
 | `judge_directive.txt` [NEW] | Directiveness judge prompt. | 4.2 | R2 | H12 |
 | `router_system.txt` [NEW] | Router prompt. | 4.3 | R3 | C6 |
 | `system_ar.txt` | Arabic system prompt. | 4.3 | R1 | C5, H13 |
-| `system_hi.txt` [NEW] | Hindi system prompt. | 4.3 | R1 | C5, H13 |
 | `system_en.txt` | English system prompt. | 4.3 | R1 | C5, H13 |
 
 ## `backend/app/explain/validators/`
@@ -374,12 +373,12 @@ Future Health/
 | `test_crypto.py` | Encryption round trip and tamper checks. | 2.1 |  |  |
 | `test_engine_boundaries.py` [NEW] | Risk engine imports nothing from DB, API or LLM layers. | 2.4 |  |  |
 | `test_fairness.py` [NEW] | Equity gaps and suppression. | 5.4 |  | H11, M9 |
-| `test_redaction.py` [NEW] | English, Arabic and Hindi PII, plus failing closed. | 3.5 |  | H6 |
+| `test_redaction.py` [NEW] | English and Arabic PII, plus failing closed. | 3.5 |  | H6 |
 | `test_risk_engine.py` | Risk maths and invariants, including all V2.4 checks. | 2.4 |  | C3, C4, H1, H2, H3, H5 |
 | `test_router.py` [NEW] | Boundary routing. Includes the hamil (pregnant or carrier) pair. | 4.3 |  | C6 |
 | `test_state_machine.py` | Transitions, decline from each state, SLA. | 5.1 |  | H10 |
 | `test_triage.py` | Priorities for every persona. | 4.5 |  | C8 |
-| `test_validators.py` | Validators in English, Arabic and Hindi, including all V4.2 checks. | 4.2 |  | C5, H12, H13 |
+| `test_validators.py` | Validators in English and Arabic, including all V4.2 checks. | 4.2 |  | C5, H12, H13 |
 
 ## `docs/clinical/`
 
@@ -706,7 +705,7 @@ The folders below are the original plan. Building the frontend changed these fil
 | File | Purpose | Phase | Req | Issues |
 |---|---|---|---|---|
 | `ar.json` | Arabic UI text. Empty placeholder for now. | 1.6 |  | H13 |
-| `hi.json` [NEW] | Hindi UI text. Empty placeholder for now. | 1.6 |  | H13 |
+| `ar.json` [NEW] | Arabic UI text, drafted on 15 Nov 2026 without native-speaker review. | 1.6 |  | H13 |
 | `en.json` | English UI text. Empty placeholder for now. | 1.6 |  | H13 |
 
 ## `frontend/public/illustrations/`
@@ -763,7 +762,7 @@ The folders below are the original plan. Building the frontend changed these fil
 | `schema.py` [NEW] | Pack schema. | 2.6 |  | S9, G3, G4 |
 | `loader.py` [NEW] | Loads and validates the active pack. | 2.6 |  | S9, G1–G6 |
 
-## `backend/packs/_template/`, `ae-abu-dhabi/` and `in-india/` [NEW]
+## `backend/packs/_template/` and `ae-abu-dhabi/` [NEW]
 
 All three folders hold the same files. See `docs/07`.
 
@@ -785,7 +784,7 @@ All three folders hold the same files. See `docs/07`.
 |---|---|
 | `backend/app/asgi.py` | Entry point for the server |
 | `backend/app/models/enums.py` | Shared value lists and their database checks |
-| `backend/app/core/messages/` | Error messages in English and Hindi |
+| `backend/app/core/messages/` | Error messages in English |
 | `backend/app/ops/check_services.py` | Operator check of every dependency, including a real token |
 | `backend/tests/api/test_http_hardening.py`, `test_denied_audit.py` | Headers, limits, errors, denied-access auditing |
 | `backend/tests/unit/test_config.py`, `test_logging.py`, `test_i18n.py`, `test_rate_limit.py`, `test_schema.py` | Foundation tests |

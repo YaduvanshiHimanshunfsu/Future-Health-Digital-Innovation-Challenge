@@ -10,24 +10,24 @@
 
 | Document | Languages | Level | Version | Written by | Clinical review | Language review |
 |---|---|---|---|---|---|---|
-| `carrier_basics` | en, hi | simple | 1 | Team (AI-assisted) | Not yet | Hindi: not yet |
-| `recessive_inheritance` | en, hi | simple | 1 | Team (AI-assisted) | Not yet | Hindi: not yet |
-| `x_linked` | en, hi | simple | 1 | Team (AI-assisted) | Not yet | Hindi: not yet |
-| `related_couples` | en, hi | simple | 1 | Team (AI-assisted) | Not yet | Hindi: not yet |
-| `alpha_thal` | en, hi | simple | 1 | Team (AI-assisted) | Not yet | Hindi: not yet |
-| `beta_thal` | en, hi | simple | 1 | Team (AI-assisted) | Not yet | Hindi: not yet |
-| `sickle_cell` | en, hi | simple | 1 | Team (AI-assisted) | Not yet | Hindi: not yet |
-| `cystic_fibrosis` | en, hi | simple | 1 | Team (AI-assisted) | Not yet | Hindi: not yet |
-| `sma` | en, hi | simple | 1 | Team (AI-assisted) | Not yet | Hindi: not yet |
-| `cah` | en, hi | simple | 1 | Team (AI-assisted) | Not yet | Hindi: not yet |
-| `g6pd_def` | en, hi | simple | 1 | Team (AI-assisted) | Not yet. The G6PD rule also waits on a counsellor | Hindi: not yet |
-| `dmd` | en, hi | simple | 1 | Team (AI-assisted) | Not yet | Hindi: not yet |
+| `carrier_basics` | en | simple | 1 | Team (AI-assisted) | Not yet | |
+| `recessive_inheritance` | en | simple | 1 | Team (AI-assisted) | Not yet | |
+| `x_linked` | en | simple | 1 | Team (AI-assisted) | Not yet | |
+| `related_couples` | en | simple | 1 | Team (AI-assisted) | Not yet | |
+| `alpha_thal` | en | simple | 1 | Team (AI-assisted) | Not yet | |
+| `beta_thal` | en | simple | 1 | Team (AI-assisted) | Not yet | |
+| `sickle_cell` | en | simple | 1 | Team (AI-assisted) | Not yet | |
+| `cystic_fibrosis` | en | simple | 1 | Team (AI-assisted) | Not yet | |
+| `sma` | en | simple | 1 | Team (AI-assisted) | Not yet | |
+| `cah` | en | simple | 1 | Team (AI-assisted) | Not yet | |
+| `g6pd_def` | en | simple | 1 | Team (AI-assisted) | Not yet. The G6PD rule also waits on a counsellor | |
+| `dmd` | en | simple | 1 | Team (AI-assisted) | Not yet | |
 
-Arabic has no documents. Arabic text waits on the user's approval and a reviewer (CLAUDE.md rule 5), so Arabic questions get the English answer with a note saying so.
+English only. The Arabic interface was drafted on 15 Nov 2026, but these are clinical passages: they wait on a reviewer, so an Arabic question gets the English answer with a note saying so. The Hindi set was removed on 16 Nov 2026 with the India pack.
 
 ## Coverage (V4.1.6)
 
-All 12 documents exist in English and Hindi at the Simple level. No language has Standard or Detailed documents yet. Retrieval never crosses levels (V4.1.2), so at those levels the answer is the reviewed template with no retrieved passage. It's still correct, just less detailed.
+All 12 documents exist in English at the Simple level. No language has Standard or Detailed documents yet. Retrieval never crosses levels (V4.1.2), so at those levels the answer is the reviewed template with no retrieved passage. It's still correct, just less detailed.
 
 ## Risk wording per condition (V4.1.7)
 

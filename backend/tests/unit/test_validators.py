@@ -1,4 +1,4 @@
-"""Checks every answer must pass. Samples in Hindi and Roman-letter Arabic are the team's own, and
+"""Checks every answer must pass. Samples in Roman-letter Arabic are the team's own, and
 need native speakers to write the real ones (V4.2.8). Arabic meanings are given beside each sample."""
 
 from fractions import Fraction

@@ -247,7 +247,7 @@ this document, and every test name and file path cited in the records resolves t
 | **1** | Registered, scope and clinical rules agreed, an empty but secure system runs locally with a working audit log | **Met, except "clinical rules agreed".** They are drafted and unreviewed: no clinician has signed off the rules, the G6PD handling or "must inform". Everything else is built and tested |
 | **2** | A synthetic lab result goes in, encrypted, and the correct risk appears on screen, with every number traceable to a tested rule | **Met.** 100% line and branch coverage on the risk engine, no plaintext gene names in a real database dump, and the result on screen in a browser. Caveat: "correct" means it matches the team's own hand-worked answers, not a second person's (V2.4.12) |
 | **3** | People control exactly who sees what, and tests prove nothing leaks, including through the couple match | **Met.** 81 deliberate rule breaks were all caught, a marker gene is scanned for across every response, log, audit row and AI context, and OpenFGA was stopped for real |
-| **4** | Safe, non-directive answers in English, Arabic and Hindi, and anything complex reaches a real counsellor | **Partly met.** Safe and non-directive holds: 0 wrong figures, directive, stigmatising or falsely certain answers in 192 evaluated answers. Two gaps: **Arabic has no text of its own** (Arabic pages answer in English and say so, though Arabic questions in Roman letters are understood), and **"anything complex" is not yet reliable** — 5 of 59 hold-out questions meant for a person still got an automatic answer |
+| **4** | Safe, non-directive answers in English and Arabic, and anything complex reaches a real counsellor | **Partly met.** Safe and non-directive holds: 0 wrong figures, directive, stigmatising or falsely certain answers in 192 evaluated answers. Two gaps: **Arabic has no text of its own** (Arabic pages answer in English and say so, though Arabic questions in Roman letters are understood), and **"anything complex" is not yet reliable** — 5 of 59 hold-out questions meant for a person still got an automatic answer |
 | **5** | The whole journey runs from result to referral on screen, and the metrics show what happened, broken down fairly | **Met.** Result to booking to counselling to a FHIR referral, driven entirely from the screens in a browser test, and the dashboards suppress any group under 10 people, plus any group that would let a suppressed one be worked out |
 | **6** | Submit on 19 Nov with honest proof | **Not yet, and not the build's to finish.** The proof is built: evaluations per language with every failure listed, every scanner run and saved, the checklists completed, and all submission documents written. Submitting, tagging, the video and the human-run checks need the team |
 
@@ -275,11 +275,11 @@ Phases 1 to 3. All later checks are open.
 | V1.2.3 | **Done** | Article map in the legal baseline |
 | V1.2.4 | Open | Contacts deliberately empty until verified |
 | V1.2.5 | Partly | Threat model covers these cases. Reviewer sign-off missing |
-| V1.2.6 | **Done** | India sections, labelled unreviewed |
+| V1.2.6 | **Moot** | The India pack was dropped on 16 Nov 2026 |
 | V1.2.7 | **Done** | `risk_rules_review.md`. Clinician review is V2.4.12 |
 | V1.2.8 | Open | Needs a counsellor or M42 |
 | V1.2.9 | **Done** | Draft table in the legal baseline |
-| V1.2.10 | Open | Needs Arabic and Hindi reviewers |
+| V1.2.10 | Open | Needs Arabic reviewers |
 | V1.3.1 | Partly | Clean rebuild works, now including the web app, so `docker compose up` gives the whole demo. Second person still needed |
 | V1.3.2 | **Done** | `check_services`: all reachable, and a real Keycloak token verified |
 | V1.3.3 | **Done** | Planted token blocked by the gitleaks hook, exit 1 |
@@ -300,9 +300,9 @@ Phases 1 to 3. All later checks are open.
 | V1.5.7 | **Done** | `tests/api/test_ingestion.py`: ingestion writes its audit row last, and the chain verifies with concurrent deliveries |
 | V1.6.1 | **Done** | Calculated table in `frontend/README.md` |
 | V1.6.2 | **Done** | The Stitch export broke these rules, so its words weren't used. `frontend/tests/unit/copy.test.mjs` enforces them on every word the app shows |
-| V1.6.3 | Open | Hindi needs a native speaker. Arabic text waits on approval and a reviewer |
+| V1.6.3 | Open | The Arabic interface was drafted on 15 Nov 2026 and needs a native speaker |
 | V1.6.4 | **Done** | `frontend/design-export/DESIGN.md`, implemented in `tailwind.config.ts` |
-| V1.6.5 | Partly | Screens for Phases 1 to 3 built from the Stitch layouts, in English and Hindi. Later screens are honest placeholders |
+| V1.6.5 | Partly | Screens for Phases 1 to 3 built from the Stitch layouts, in English and Arabic. Later screens are honest placeholders |
 
 ### Phase 2 evidence
 
@@ -374,7 +374,7 @@ Phases 1 to 3. All later checks are open.
 | V3.5.1 | **Done** | `test_a_counsellor_viewing_a_case_shows_in_the_subjects_log`. Real assignment arrives in 4.5 |
 | V3.5.2 | **Done** | `tests/api/test_transparency.py`, and in a real browser through to review |
 | V3.5.3 | **Done** | `test_if_redaction_fails_no_llm_call_happens` |
-| V3.5.4 | Partly | English, Hindi, Romanised Arabic and Gulf dialect samples pass, written by the author. Native speakers still need to write the real samples, and Arabic script waits on approval |
+| V3.5.4 | Partly | English, Arabic, Romanised Arabic and Gulf dialect samples pass, written by the author. Native speakers still need to write the real samples, and Arabic script waits on approval |
 | V3.5.5 | **Done** | `test_only_listed_fields_reach_the_llm` |
 
 ### Phase 4 evidence
@@ -385,7 +385,7 @@ Phases 1 to 3. All later checks are open.
 
 **The early evaluation found a serious gap.** The first run of `scripts/eval_router.py` showed that the keyword router recognised only the phrasings it was written from. 28 of 84 questions meant for a person, including "I don't want to live anymore", got the automatic education answer, because education was the fallback for anything unrecognised. Three changes followed:
 - **Education is no longer the fallback.** Only a message naming a topic Samvid explains is answered automatically. Anything else goes to a person, with the same support line as distress.
-- **Wider rules in all three languages.**
+- **Wider rules in both languages.**
 - **A bug in the Arabic rules is fixed.** Roman Arabic is compared after repeated letters are collapsed, so any rule spelled with a double letter could never match, including the carrier context "carrier". A test now guards against it.
 
 Those 84 questions then became the development set, so their score now shows regressions only. A **hold-out set of 59 questions**, written afterwards and never used for tuning, gives the honest figure:
@@ -401,13 +401,13 @@ Those 84 questions then became the development set, so their score now shows reg
 |---|---|---|
 | V4.1.1 | **Done** | `app/kb/ingest.py` refuses a file without front matter: `tests/unit/test_kb.py` |
 | V4.1.2 | **Done** | `test_kb.py`: retrieval never crosses language or level |
-| V4.1.3 | Not yet | No native speaker has read the Hindi; no Arabic content exists. `docs/clinical/content_review_log.md` |
+| V4.1.3 | Not yet | The knowledge base is English only; Arabic clinical passages wait on a reviewer. `docs/clinical/content_review_log.md` |
 | V4.1.4 | **Done, as drafts** | Every document is `status: draft` and the log says so. No clinician yet |
 | V4.1.5 | **Done** | Licence table in the review log: all team-written |
-| V4.1.6 | **Done** | Coverage table in the review log: 12 documents, English and Hindi, Simple level |
+| V4.1.6 | **Done** | Coverage table in the review log: 12 documents, English and Arabic, Simple level |
 | V4.1.7 | Partly | No document states a chance; figures come from the engine. Wording for reduced penetrance waits on a clinician |
 | V4.1.8 | **Done** | No faith or culture content exists; the log records that it's left out |
-| V4.2.1 to V4.2.5, V4.2.8 | **Done** | `tests/unit/test_validators.py`. The Hindi samples were written by the team, not a Hindi speaker, so V4.2.8 is only partly met |
+| V4.2.1 to V4.2.5, V4.2.8 | **Done** | `tests/unit/test_validators.py`. The Arabic samples were written by the team, not an Arabic speaker, so V4.2.8 is only partly met |
 | V4.2.6 | Partly | All 24 knowledge-base documents pass every validator (0 blocked), but they were written to pass. A neutral sample is Phase 6 |
 | V4.2.7 | **Done** | `tests/unit/test_templates.py`: every template passes every validator |
 | V4.3.1, V4.3.2, V4.3.10 | **Done** | `tests/unit/test_router.py`, and on screen in `phase4.spec.ts` |
@@ -444,7 +444,7 @@ The design spec's motion library, controls and visuals were stubs until now. The
 | Queue chart and time-left meters from real data | Counsellor queue and case | `experience.spec.ts` compares the chart's table with the listed cases; axe |
 | Counts never animate a chance, and charts never carry genetic results | Code rule | `copy.test.mjs` |
 
-**Found by these tests:** the dashboard announced two "current" steps at once (fixed: only the first is announced), and the counsellor's case summary showed raw API labels such as `two_copies`, in English even on the Hindi page (fixed: translated labels).
+**Found by these tests:** the dashboard announced two "current" steps at once (fixed: only the first is announced), and the counsellor's case summary showed raw API labels such as `two_copies`, in English even on a translated page (fixed: translated labels).
 
 ### Phase 5 evidence
 
@@ -472,7 +472,7 @@ The design spec's motion library, controls and visuals were stubs until now. The
 | V5.2.5 | **Done** | `test_sending_a_referral_moves_the_case_and_traces_the_step` (FHIR reference on the step), and on screen in `phase5.spec.ts` |
 | V5.2.6 | **Done** | `test_the_centre_finder_needs_no_account_and_never_invents_entries`; both packs' lists are honestly empty |
 | V5.3.1 | **Done** | `test_scoring_is_right_on_known_answers` |
-| V5.3.2 | Not yet | No back-translation note: no Hindi speaker has checked the items, and there are no Arabic items |
+| V5.3.2 | Not yet | The questions are English only, so there is nothing to back-translate yet |
 | V5.3.3 | **Done** | `test_two_missed_checks_bring_in_a_counsellor` |
 | V5.3.4 | Partly | Noted in `app/assessments/instruments.py`: teach-back is our own; SURE's permission is still to be confirmed in writing; MMIC and GCOS aren't offered |
 | V5.3.5 | **Done** | The label is in the API response and on screen in both languages (`phase5.spec.ts`) |
@@ -485,7 +485,7 @@ The design spec's motion library, controls and visuals were stubs until now. The
 | V5.4.7 | **Done** | `synthetic: true` in every response, and the banner on screen (`phase5.spec.ts`) |
 | V5.4.8 | **Done** | `test_no_metric_treats_a_choice_as_success`; the funnel is labelled "reach, not success" |
 | V5.4.9 | **Done** | `test_alerts_use_the_thresholds_the_plan_sets` |
-| V5.5.1 | Partly | The journey passes in English; Hindi pages are covered by the accessibility run. Arabic has no text of its own yet |
+| V5.5.1 | Partly | The journey passes in English; Arabic pages are covered by the accessibility run. The backend's own text has no Arabic yet |
 | V5.5.2 | **Done** | `demo_journey.spec.ts`: no tokens in browser storage |
 | V5.5.3 | **Done** | axe on every new screen in `phase5.spec.ts` |
 | V5.5.4 | **Done** | From Phase 3: revoke waits for the server |
@@ -493,7 +493,7 @@ The design spec's motion library, controls and visuals were stubs until now. The
 | V5.5.6 | Partly | `python Run_Samvid.py --reset` then a start rebuilds everything. Not timed yet |
 | V5.5.7 | **Done** | `lib/api/schema.ts` is generated by `npm run api:types`; types come from it |
 | V5.5.8 | **Done** | Sign-in is outside the role guard; menus follow roles and the API decides (`test_bola.py`) |
-| V5.5.9 | Partly | Packs change the options (`test_options_differ_by_pack`) and the centre finder (`phase5.spec.ts`). No browser test signs in as an India person yet |
+| V5.5.9 | Partly | The options and the centre finder come from the pack (`test_options_come_from_the_pack`, `phase5.spec.ts`), and `test_country_packs.py` switches to a second country built from the template. No browser test signs in as an India person yet |
 
 ### Phase 6 evidence (10 Nov 2026, in progress)
 
@@ -502,7 +502,7 @@ Phase 6 is partly work for people: native-speaker items, human scoring, voluntee
 | Check | Status | Evidence |
 |---|---|---|
 | V6.1.1 | **Met on the test set** | 0 wrong figures in 192 evaluated answers (`docs/evaluation/answers_eval_template.md`, `answers_eval_ollama.md`) |
-| V6.1.2 | **Not met** | Clinical questions reaching a person on the hold-out set, with Ollama: English 5/6, Hindi 2/6, Arabic 4/5 (`router_model_eval_ollama.md`) |
+| V6.1.2 | **Not met** | Clinical questions reaching a person on the hold-out set, with Ollama: English 5/6, Arabic 4/5, measured before the Hindi items were removed on 16 Nov 2026 (the rules did not change) (`router_model_eval_ollama.md`) |
 | V6.1.3 | Not yet | Needs two scorers; the sheet is ready (`human_scoring_sheet.md`) |
 | V6.1.4 | **Done** | Every table is per language (`safety_and_accuracy_report.md`) |
 | V6.1.5 | **Done** | Generated reports list every failing item with its answer text |
@@ -523,7 +523,7 @@ Phase 6 is partly work for people: native-speaker items, human scoring, voluntee
 | V6.4.7 | **Done** | `data_sources.md` updated with the metrics seed, SURE, Gemini, Ollama and browser speech |
 | V6.4.8 | **Done** | Assumptions, dependencies and limitations each have a section |
 | V6.4.9 | **Done** | `maturity_statement.md` separates before 5 Nov from what was built |
-| V6.4.10 | **Done** | Hindi review status stated in the limitations |
+| V6.4.10 | **Done** | Language coverage and the Arabic review status stated in the limitations |
 | V6.5.x | Partly | Demo script, deck outline and judge Q&A written; video, deck slides and rehearsal need the team |
 | V6.6.x | Not yet | Submission, tag and confirmation need the team; checklist ready |
 

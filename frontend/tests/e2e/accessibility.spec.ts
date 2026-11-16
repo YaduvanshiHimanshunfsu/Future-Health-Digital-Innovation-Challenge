@@ -26,7 +26,7 @@ test("signed-in pages have no WCAG AA problems, on desktop and at phone width", 
   await signInAndAgree(page, await freshPerson({ persona: "x_carrier" }));
   for (const width of [1280, 390]) {
     await page.setViewportSize({ width, height: 900 });
-    for (const path of ["/en/app", "/en/app/result", "/en/app/partner", "/en/app/family", "/en/app/privacy", "/hi/app/result", "/en/app/ask", "/en/app/options", "/hi/app/options"]) {
+    for (const path of ["/en/app", "/en/app/result", "/en/app/partner", "/en/app/family", "/en/app/privacy", "/ar/app/result", "/en/app/ask", "/en/app/options", "/ar/app/options"]) {
       await page.goto(path);
       await clean(page, `${path} at ${width}`);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -38,7 +38,8 @@ test("signed-in pages have no WCAG AA problems, on desktop and at phone width", 
 test("visuals have a label and a table, and read the same right to left", async ({ page }) => {
   await page.goto("/ar/learn/inheritance");
   await expect(page.getByRole("img").first()).toHaveAttribute("aria-label", /25/);
-  await page.getByText("Show this as a table").first().click();
+  // The page is in Arabic, so the control is found by what it is, not by its English words.
+  await page.locator("details > summary").first().click();
   await expect(page.getByRole("table").first()).toBeVisible();
   await clean(page, "visuals rtl");
 });
@@ -54,7 +55,7 @@ test("outcome colours actually ship: plum, turquoise and sand, never red or gree
   // The build once dropped these classes, leaving an empty grid that every other test passed.
   await page.goto("/en/learn/inheritance");
   const colours = await page.evaluate(() =>
-    ["two_copies", "carrier", "neither"].map((key) => {
+    ["two_copies", "carrier", "neither", "inherits_change", "does_not_inherit"].map((key) => {
       const probe = document.createElement("span");
       probe.className = `outcome-${key}`;
       document.body.append(probe);
@@ -63,8 +64,17 @@ test("outcome colours actually ship: plum, turquoise and sand, never red or gree
       return colour;
     }),
   );
-  expect(colours).toEqual(["rgb(122, 79, 214)", "rgb(20, 168, 155)", "rgb(233, 223, 207)"]);
-  const icons = page.locator("figure [role=img] span");
+  // Plum, turquoise and sand only. A dominant outcome is no more good or bad news than any
+  // other, so it reuses plum rather than introducing a colour that reads as a verdict.
+  expect(colours).toEqual([
+    "rgb(122, 79, 214)",
+    "rgb(20, 168, 155)",
+    "rgb(233, 223, 207)",
+    "rgb(122, 79, 214)",
+    "rgb(233, 223, 207)",
+  ]);
+  // The page now teaches both patterns, so there are two arrays. Count the icons in the first.
+  const icons = page.locator("figure [role=img]").first().locator("span");
   await expect(icons).toHaveCount(100);
   const box = await icons.first().boundingBox();
   expect(box?.width ?? 0).toBeGreaterThan(4);

@@ -24,9 +24,9 @@ Demo accounts come from `scripts/seed_demo.py`. Their password is `DEMO_PASSWORD
 | Tokens | Kept in an encrypted, HttpOnly cookie. Browser code never sees one, and calls go through `/api/proxy/*`, which adds the token |
 | Proxy | Allows a fixed list of API paths, refuses unsafe path segments, and refuses changes sent from another site |
 | Security headers | A per-request nonce CSP with `strict-dynamic`, no framing, `no-referrer` for invitation links, and `no-store` on signed-in pages |
-| Words | Every word comes from `messages/`. `tests/unit/copy.test.mjs` enforces the wording rules, Hindi completeness, and no Arabic script |
+| Words | Every word comes from `messages/`. `tests/unit/copy.test.mjs` enforces the wording rules, Arabic completeness, and keeps Arabic script to `messages/ar.json` |
 | Numbers | Only from the API. A test fails if a component does arithmetic on a chance |
-| Languages | English and Hindi. Arabic has a right-to-left layout with English words until its text is approved and reviewed |
+| Languages | English, and Arabic right to left. The Arabic was drafted on 15 Nov 2026 and no native speaker has reviewed it, which every Arabic page says |
 | Types | `lib/api/schema.ts` is generated from the API with `npm run api:types` |
 
 ## Tests
@@ -34,7 +34,7 @@ Demo accounts come from `scripts/seed_demo.py`. Their password is `DEMO_PASSWORD
 | Command | What it checks |
 |---|---|
 | `npm run typecheck` | TypeScript, strict |
-| `npm run test:copy` | Wording rules, Hindi, no Arabic script, no chance arithmetic |
+| `npm run test:copy` | Wording rules in English and Arabic, Arabic script only in `messages/ar.json`, no chance arithmetic |
 | `npm run test:e2e` | Real browser against the real stack: every journey, accessibility with axe, security of the session and proxy |
 
 ## Colour contrast

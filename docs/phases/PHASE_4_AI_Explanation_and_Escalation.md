@@ -2,7 +2,7 @@
 
 **Dates:** 12–14 Nov 2026 · **Build steps:** `backend.md` §9 steps 17–21 · **Requirements:** R1, R2, R3
 
-**Phase goal:** people get safe, non-directive answers in English, Arabic and Hindi, and anything complex reaches a real counsellor.
+**Phase goal:** people get safe, non-directive answers in English and Arabic, and anything complex reaches a real counsellor.
 
 **Build order matters:** validators come before LLM output, and templates come before the LLM, so the safety net exists first.
 
@@ -13,7 +13,7 @@
 **Goal:** a small body of accurate, licensed, versioned content.
 
 **Objectives**
-- O4.1.1 T1 conditions covered in English, Arabic and Hindi at the agreed levels.
+- O4.1.1 T1 conditions covered in English and Arabic at the agreed levels.
 - O4.1.2 Every document shows source, version and review status.
 - O4.1.3 Reuse rights checked.
 
@@ -30,7 +30,7 @@
 |---|---|---|
 | V4.1.1 | Each file has source, reviewer status and version | Lint run on front matter |
 | V4.1.2 | Retrieval never returns another language or level | Test |
-| V4.1.3 | Arabic and Hindi content is checked by native speakers | Name in the review log |
+| V4.1.3 | Arabic content is checked by native speakers | Name in the review log |
 | V4.1.4 | Clinician reviewed T1 content, or it's labelled as a draft | Review log |
 | V4.1.5 | Licence noted for each source | Table in the review log |
 | V4.1.6 | A coverage table shows T1 conditions complete in each language at the Simple level | Review log |
@@ -45,12 +45,12 @@
 
 **Objectives**
 - O4.2.1 Numbers are tied to meaning, not merely present.
-- O4.2.2 Validators work as well in each pack's languages and dialects as in English, including Arabic, Gulf dialect and Hindi.
+- O4.2.2 Validators work as well in each pack's languages and dialects as in English, including Arabic and Gulf dialect.
 - O4.2.3 Normal text isn't over-blocked.
 - O4.2.4 Failure falls back safely.
 
 **Work** (step 18)
-- Fact-ID placeholder approach, approved general-facts set, Arabic and Hindi number words.
+- Fact-ID placeholder approach, approved general-facts set, Arabic number words.
 - Lexicon and directive patterns from 1.2, plus an LLM judge.
 - Add "you are healthy" style certainty to the diagnosis checks.
 
@@ -65,7 +65,7 @@
 | V4.2.3 | "You carry one changed copy" passes | Same |
 | V4.2.4 | `lazim tsawwun` and "It would be best to" are flagged | Same |
 | V4.2.5 | "You are healthy" is flagged | Same |
-| V4.2.8 | Hindi stigma, directive and number-word samples, written by a Hindi speaker, are handled correctly | Same |
+| V4.2.8 | Arabic stigma, directive and number-word samples, written by an Arabic speaker, are handled correctly | Same |
 | V4.2.6 | Over-blocking on approved content is under an agreed limit | Rate reported from a clean sample |
 | V4.2.7 | Fallback templates themselves pass all validators | Test over every template |
 
@@ -83,7 +83,7 @@
 - O4.3.5 Template mode works with no LLM.
 
 **Work** (step 19)
-- Router with reviewed Arabic and Hindi patterns and a conservative merge.
+- Router with reviewed Arabic patterns and a conservative merge.
 - Graph: redact, route, retrieve, generate, validate, fallback.
 - Close DB work before LLM calls; set one overall deadline.
 - Respond once validated (no token streaming).
@@ -104,7 +104,7 @@
 | V4.3.7 | Works with LLM provider set to `template` | Test |
 | V4.3.8 | VUS and X-linked users never get the general carrier template | Test |
 | V4.3.9 | Answers render as plain text | Frontend test |
-| V4.3.10 | A Hindi question about carrier status gets an education answer, and a Hindi pregnancy question goes to a human | Eval set |
+| V4.3.10 | An Arabic question in Roman letters about carrier status gets an education answer, and an Arabic pregnancy question goes to a human | Eval set |
 | V4.3.11 | The LLM client has no tools, and no database transaction is open during a call | Test |
 | V4.3.12 | A coercion message reaches a human, in each language | Eval set |
 | V4.3.13 | No answer text reaches the client before validation finishes | Test |
@@ -173,7 +173,7 @@
 ## Phase 4 exit gate
 
 - [x] Arabic "carrier" question gets an education answer on screen (`phase4.spec.ts`)
-- [x] Clinical question gets a refusal and booking offer, in all three languages (`phase4.spec.ts`)
+- [x] Clinical question gets a refusal and booking offer, in both languages (`phase4.spec.ts`)
 - [x] Chat works with the LLM switched off (template mode is the default; `test_chat_works_with_no_model`)
 - [x] P2 case reaches a counsellor's screen (`phase4.spec.ts`, `experience.spec.ts`)
 - [x] Early eval run done, with failures logged (`docs/evaluation/router_early_eval.md`). It found a serious gap, now narrowed but **not closed**: see brain.md #017

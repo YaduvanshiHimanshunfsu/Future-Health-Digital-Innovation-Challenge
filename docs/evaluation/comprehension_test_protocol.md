@@ -9,7 +9,7 @@ To find out, in a small first test, whether people understand a carrier result b
 ## Who
 
 - **15 to 30 adult volunteers**, aged 18 or over, reached through the team's own networks (a convenience sample, stated as such).
-- English and Hindi, and Arabic only once Arabic text exists. Aim for a spread of reading levels.
+- English, and Arabic now that the interface has Arabic text. Aim for a spread of reading levels.
 - Not invited: anyone who has a genetic condition in their close family, is pregnant, or is going through carrier screening now. The topic could be upsetting, and their real situation must not be mixed with a fictional one.
 
 ## Consent

@@ -9,8 +9,8 @@
 2. **No implementation code until the user explicitly asks.** Files are documentation-only stubs for now. When asked, implement only what was named, then remove that file's `STUB` header.
 3. **Don't commit or push unless asked.**
 4. **Follow the plan.** Work from [docs/phases/](docs/phases/00_PHASE_OVERVIEW.md). A sub-phase is done only when its cross-verification checks have evidence.
-5. **No Arabic or Urdu script in project files, with one exception.** Write in English, and spell any Arabic examples in Roman letters with their meaning. The exception: the user approved Arabic interface text on 15 Nov 2026, so Arabic script may appear in `frontend/messages/ar.json` and nowhere else (a wording test enforces this). Ask the user before adding Arabic anywhere else, including backend text and test data. Never write Arabic for "carrier" as bare *hamil*, which also means "pregnant". Hindi may be written in Devanagari.
-6. **Global by design.** Nothing country-specific goes in the core. It goes in a country pack (see [docs/07](docs/07_Global_Design_and_Country_Packs.md)), with Abu Dhabi as the first reference pack and India as an illustrative second pack. Don't claim a country is supported without a reviewed pack.
+5. **No Arabic or Urdu script in project files, with one exception.** Write in English, and spell any Arabic examples in Roman letters with their meaning. The exception: the user approved Arabic interface text on 15 Nov 2026, so Arabic script may appear in `frontend/messages/ar.json` and nowhere else (a wording test enforces this). Ask the user before adding Arabic anywhere else, including backend text and test data. Never write Arabic for "carrier" as bare *hamil*, which also means "pregnant". The prototype ships no Hindi: the India pack and its text were removed on 16 Nov 2026.
+6. **Global by design, Abu Dhabi only in practice.** Nothing country-specific goes in the core. It goes in a country pack (see [docs/07](docs/07_Global_Design_and_Country_Packs.md)). Since 16 Nov 2026 the prototype ships one pack, Abu Dhabi, in English with an Arabic translation; `_template/` is what a second country would start from. Don't claim a country is supported without a reviewed pack.
 7. **Close the listed issues.** Each stub's header lists issue IDs from the [review](docs/04_Project_Review_Issues_and_Improvements.md). The spec's code has known bugs, so don't copy it unchanged.
 
 ## Work split and code standard
@@ -46,7 +46,7 @@ The team is registered (confirmed by the user on 5 Nov 2026). Prototype due **20
 - **Fail closed.** Authorisation, redaction or validation errors mean deny or a safe fallback.
 - **AI answers stay on the education side of the boundary.** Clinical questions and distress go to humans.
 - **Synthetic data only.** No real genetic or personal data anywhere. Label demo numbers as synthetic. Declare every data source in [docs/submission/data_sources.md](docs/submission/data_sources.md).
-- **Every supported language is first-class.** Test every text rule in each language and dialect, including Arabic, Gulf dialect and Hindi, for example `hamil` means both "pregnant" and "carrier".
+- **Every supported language is first-class.** Test every text rule in English and Arabic, including Gulf dialect: `hamil` means both "pregnant" and "carrier", so a carrier is always *hamil lil-taghayyur*.
 - **Don't overclaim.** Pitch and docs must match what the code does, and mocks are labelled as mocks.
 
 ## Environment notes

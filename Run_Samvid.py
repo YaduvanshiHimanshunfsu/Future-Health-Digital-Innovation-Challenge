@@ -114,10 +114,13 @@ PHASES = [
 ]
 
 DEMO_ACCOUNTS = [
+    ("demo123", "The primary demo account: a carrier, with its own person"),
     ("demo-fatima", "A carrier. Link with demo-khalid on the Partner page, then try Ask Samvid"),
     ("demo-khalid", "Shares a finding with demo-fatima"),
     ("demo-x-carrier", "An X-linked result, with its own picture, and the Options page"),
     ("demo-uncertain", "An uncertain finding, with no number"),
+    ("demo-dominant", "A dominant change: no carriers, and a 50% chance each pregnancy"),
+    ("demo-xl-dominant", "X-linked dominant, where sons and daughters differ"),
     ("demo-no-report", "No report yet, which is never shown as a result"),
     ("demo-counsellor", "Takes cases from the queue, with time-left rings and a priority chart"),
     ("demo-doctor", "Emergency access to a case"),
@@ -538,6 +541,40 @@ def prerequisites(auto: bool) -> bool:
 # --- Settings and the AI key -----------------------------------------------------------------------
 
 
+def old_data_exists() -> bool:
+    """A database volume from an earlier copy, which this copy's new settings cannot open.
+
+    Every copy of the project runs as the Compose project "samvid", so they share one database
+    volume, while the passwords in infra/.env are random per copy. A fresh settings file therefore
+    cannot open a database an earlier one created, and PostgreSQL refuses the connection. Left
+    alone it surfaces minutes later as "migrate didn't complete successfully", which says nothing
+    about the cause, so this is checked before anything is built.
+    """
+    found = subprocess.run(  # noqa: S603 - fixed argument list
+        ["docker", "volume", "ls", "--quiet", "--filter", "name=^samvid_pgdata$"],  # noqa: S607
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return bool(found.stdout.strip())
+
+
+def clear_old_data(auto: bool) -> bool:
+    warn("There's a database here from an earlier copy of Samvid.")
+    say()
+    say("  Its passwords were in that copy's infra/.env, and this copy has just made new ones,")
+    say("  so nothing here can open it. Everything in it is demo data about fictional people.")
+    say()
+    if not ask("Delete the old demo data and start fresh?", "y", auto):
+        bad("Left alone. Either restore the old infra/.env here, or run with --reset.")
+        return False
+    if run([*COMPOSE, "down", "-v", "--remove-orphans"], quiet=True) != 0:
+        warn("Couldn't remove it. Try: python Run_Samvid.py --reset")
+        return False
+    ok("Old demo data removed.")
+    return True
+
+
 def ensure_env() -> None:
     # Creates infra/.env on a first run, and fills in settings added since. Never changes a value.
     run([sys.executable, str(ROOT / "scripts" / "generate_env.py")], quiet=True)
@@ -724,6 +761,7 @@ def build_and_start(build: bool) -> bool:
     if build:
         command.insert(len(COMPOSE) + 2, "--build")
     if run(command) != 0:
+        _explain_failure()
         return False
     say()
     for name, url in (
@@ -744,6 +782,24 @@ def build_and_start(build: bool) -> bool:
             "Browsers may reach it instead of this app."
         )
     return True
+
+
+def _explain_failure() -> None:
+    """Turns the one failure people actually hit into a sentence that says what to do."""
+    logs = subprocess.run(  # noqa: S603 - fixed argument list
+        [*COMPOSE, "logs", "--no-color", "--tail", "40", "migrate", "postgres"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        check=False,
+    )
+    if "password authentication failed" in logs.stdout:
+        say()
+        bad("The database here was made by an earlier copy, with different passwords.")
+        say("  Everything in it is demo data, so the fix is to delete it and start again:")
+        say(f"      {bold()}python Run_Samvid.py --reset{reset()}")
+        say(f"  {dim()}Then run the launcher again.{reset()}")
 
 
 def demo_data() -> None:
@@ -1139,7 +1195,11 @@ def main() -> int:
         if not prerequisites(args.yes):
             return 1
         step("Settings")
+        # Checked before the settings are written, so "is this the first run here" is still true.
+        stale = first_run and old_data_exists()
         ensure_env()
+        if stale and not clear_old_data(args.yes):
+            return 1
         ok("infra/.env is ready. It holds this machine's passwords and keys, and git ignores it.")
         ai_setup(args.yes, args.setup)
         models()

@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const config: NextConfig = {
-  output: "standalone",
+  // Standalone is for the Docker image, which copies `.next/standalone`. Vercel builds and
+  // runs the app its own way, and the extra copy only confuses it, so it is left off there.
+  output: process.env.VERCEL ? undefined : "standalone",
   poweredByHeader: false,
   reactStrictMode: true,
   // The content security policy is set per request in middleware.ts, because it carries a nonce.

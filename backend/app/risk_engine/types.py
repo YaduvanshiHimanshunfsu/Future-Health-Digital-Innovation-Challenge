@@ -17,7 +17,15 @@ class Zygosity(StrEnum):
 
 class Inheritance(StrEnum):
     AUTOSOMAL_RECESSIVE = "AR"
+    # X-linked recessive. The name is kept for the packs and reports already written against it.
     X_LINKED = "XL"
+    AUTOSOMAL_DOMINANT = "AD"
+    X_LINKED_DOMINANT = "XLD"
+
+
+# One changed copy is enough, so nobody is "a carrier": the person may be affected themselves.
+DOMINANT = frozenset({Inheritance.AUTOSOMAL_DOMINANT, Inheritance.X_LINKED_DOMINANT})
+ON_THE_X = frozenset({Inheritance.X_LINKED, Inheritance.X_LINKED_DOMINANT})
 
 
 class Sex(StrEnum):
@@ -49,6 +57,9 @@ class Scenario(StrEnum):
     COUPLE_ONE_CARRIER_TESTED_NEGATIVE = "couple_one_carrier_tested_negative"
     COUPLE_ONE_CARRIER_UNTESTED = "couple_one_carrier_untested"
     CONSANGUINITY_BACKGROUND = "consanguinity_background"
+    # Dominant patterns: the chance is about passing the change on, not about sharing one.
+    AD_SELF = "ad_self"
+    XLD_SELF = "xld_self"
 
 
 class Flag(StrEnum):
@@ -79,6 +90,12 @@ class Label(StrEnum):
     DAUGHTER_NEITHER = "daughter_neither"
     REVIEW = "review"
     BACKGROUND = "background"
+    # Dominant inheritance. "Inherits the change" is not "will be affected": how much a changed
+    # copy affects someone varies, and only a clinician can say what it means for them.
+    INHERITS_CHANGE = "inherits_change"
+    DOES_NOT_INHERIT = "does_not_inherit"
+    SON_INHERITS = "son_inherits"
+    DAUGHTER_INHERITS = "daughter_inherits"
 
 
 class Viewer(StrEnum):

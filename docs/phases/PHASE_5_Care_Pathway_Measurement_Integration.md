@@ -81,8 +81,8 @@
 - O5.3.3 Failing twice offers help without judgement.
 
 **Work** (step 23)
-- Teach-back items reviewed by a counsellor, and by Arabic and Hindi speakers.
-- Adapted MMIC and SURE, marked as "adapted, not validated in Arabic or Hindi" unless a validated version is found.
+- Teach-back items reviewed by a counsellor, and by Arabic speakers.
+- Adapted MMIC and SURE, marked as "adapted, not validated in Arabic" unless a validated version is found.
 - Paired pre and post scoring.
 
 **Files:** `backend/app/assessments/*`, `backend/app/api/v1/assessments.py`, `frontend/app/[locale]/(app)/app/check/`
@@ -92,7 +92,7 @@
 | ID | Check | Evidence |
 |---|---|---|
 | V5.3.1 | Scoring correct on known answers | Unit test |
-| V5.3.2 | Arabic, Hindi and English items mean the same | Back-translation note |
+| V5.3.2 | English and Arabic items mean the same | Back-translation note |
 | V5.3.3 | Two failures create a P3 case | Test |
 | V5.3.4 | Licence or permission for each instrument is noted | Note in the file |
 | V5.3.5 | Adapted instruments are labelled as adapted on screen and in reports | Screenshot |
@@ -143,7 +143,7 @@
 - O5.5.1 Typed client generated from the API.
 - O5.5.2 T1 screens are wired up.
 - O5.5.3 Tokens stay server-side.
-- O5.5.4 Right-to-left and left-to-right languages work on the main path, using Arabic and Hindi.
+- O5.5.4 Right-to-left and left-to-right languages work on the main path, using Arabic.
 
 **Work** (step 24)
 - Generate the client, BFF proxy and login.
@@ -160,7 +160,7 @@
 6. A counsellor claims the case and advances it to referral.
 7. Fatima stops a share and sees it in her access log.
 8. An admin sees the metrics, with an equity breakdown.
-9. Switching to the India pack changes the language to Hindi, and changes the options and contacts, with no code change.
+9. ~~Switching to the India pack~~ **Dropped on 16 Nov 2026:** one pack ships. The loader's tests prove a second country changes the options and contacts, with no code change.
 
 **Files:** `frontend/lib/*`, `frontend/app/api/proxy/`, `frontend/middleware.ts`, `frontend/tests/e2e/*`, `scripts/seed_demo.md`
 **Issues to close:** M2, S8, G8
@@ -168,7 +168,7 @@
 **Cross-verification**
 | ID | Check | Evidence |
 |---|---|---|
-| V5.5.1 | The journey passes in English, Arabic and Hindi | Playwright report |
+| V5.5.1 | The journey passes in English and Arabic | Playwright report |
 | V5.5.2 | No tokens in browser storage | Automated check |
 | V5.5.3 | axe has no serious issues on T1 screens | Report |
 | V5.5.4 | Consent revoke waits for the server | Test with a delayed response |
@@ -182,7 +182,7 @@
 
 ## Phase 5 exit gate
 
-- [ ] Demo journey passes in all three languages. **Partly:** it passes in English on screen, and Hindi screens pass the accessibility run. Arabic has no text of its own until its text is approved
+- [ ] Demo journey passes in both languages. **Partly:** it passes in English on screen, and Arabic screens pass the accessibility run. Arabic has no text of its own until its text is approved
 - [x] Dashboard numbers trace to events: each measure names its source rows (`sources` in `/v1/analytics/overview`)
 - [x] Fairness and time-to-referral tests pass (`tests/unit/test_fairness.py`, `tests/api/test_analytics.py`)
 - [ ] Rehearsal run done with a recorded backup. **Not yet:** it needs a person to run and record it

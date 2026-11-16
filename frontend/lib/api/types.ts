@@ -42,6 +42,8 @@ export type IconArrayVisual = {
 };
 export type PunnettVisual = {
   type: "punnett";
+  /** Which letters the square uses: on a dominant square the capital is the changed copy. */
+  pattern: "recessive" | "dominant";
   gene: string | null;
   parent_a: string[];
   parent_b: string[];

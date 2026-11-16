@@ -14,7 +14,7 @@ from synthetic.generate import (
     tree_digest,
 )
 
-PACKS = ["ae-abu-dhabi", "in-india"]
+PACKS = ["ae-abu-dhabi"]
 
 
 def test_same_seed_gives_identical_output(tmp_path: Path) -> None:
@@ -27,8 +27,8 @@ def test_same_seed_gives_identical_output(tmp_path: Path) -> None:
 
 
 def test_different_seed_gives_different_output(tmp_path: Path) -> None:
-    generate(tmp_path / "a", "in-india", 200, 1, DEFAULT_PACKS_DIR)
-    generate(tmp_path / "b", "in-india", 200, 2, DEFAULT_PACKS_DIR)
+    generate(tmp_path / "a", "ae-abu-dhabi", 200, 1, DEFAULT_PACKS_DIR)
+    generate(tmp_path / "b", "ae-abu-dhabi", 200, 2, DEFAULT_PACKS_DIR)
     assert tree_digest(tmp_path / "a") != tree_digest(tmp_path / "b")
 
 

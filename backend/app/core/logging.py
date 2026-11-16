@@ -27,7 +27,7 @@ SENSITIVE_KEYS = frozenset(
     }
 )
 
-# Formats that hold in any country. \d also matches Devanagari and Arabic-Indic digits, so numbers
+# Formats that hold in any country. \d also matches Arabic-Indic digits, so numbers
 # typed in a local script are caught too. Country packs add their own patterns at start-up.
 _BASE_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+"), "[EMAIL]"),

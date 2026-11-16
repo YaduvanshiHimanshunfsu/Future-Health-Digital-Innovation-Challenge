@@ -77,6 +77,15 @@ jobs:
       - run: uv run mypy
       - run: uv run bandit -q -r app -c pyproject.toml
       - run: uv run pip-audit
+      # Vercel's Python builder installs from requirements.txt, not from uv.lock, so the two have
+      # to agree. Regenerate with the same command when a dependency changes.
+      - name: requirements.txt still matches uv.lock
+        # Comment lines are dropped from both sides: uv writes the output path into the file's
+        # own header, so comparing them whole always differs, however current the file is.
+        run: |
+          uv export --no-dev --no-emit-project --format requirements-txt             | grep -v '^#' > /tmp/expected.txt
+          grep -v '^#' requirements.txt > /tmp/actual.txt
+          diff -u /tmp/actual.txt /tmp/expected.txt
 
   # The test suite. The API tests start real Postgres, Redis and OpenFGA containers through
   # testcontainers, so this needs Docker and takes a while.

@@ -8,7 +8,7 @@ A general chatbot writes its own numbers, has no clinical boundary, keeps no aud
 
 ## How do you avoid coercion?
 
-Options are shown with equal weight and no ranking or "recommended" badge, and the person's values never change them (a test proves options don't depend on values). Wording rules block directive language in English and Hindi. Messages about pressure from family go to a person. No metric counts a marriage or any one choice as success: there's a test for that too.
+Options are shown with equal weight and no ranking or "recommended" badge, and the person's values never change them (a test proves options don't depend on values). Wording rules block directive language in English and Arabic. Messages about pressure from family go to a person. No metric counts a marriage or any one choice as success: there's a test for that too.
 
 ## Is it really PSI?
 

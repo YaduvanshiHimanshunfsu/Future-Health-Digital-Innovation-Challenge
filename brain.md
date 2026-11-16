@@ -1145,3 +1145,256 @@ Seven faults the user found by hand, all fixed and checked in a real browser:
 - [ ] Country, city, centre names and pack notes are English on Hindi and Arabic pages: they come
       from the packs. Translating them means per-language pack fields (Claude, if wanted)
 - [ ] Decide the Vercel questions from #025 (user)
+
+## #027 · 2026-11-16 · Abu Dhabi only: India and Hindi removed, English by default with Arabic
+
+- **Author:** Claude (Opus), directed by the user
+- **Phase:** 2.6, 6.3 · **Checks:** V2.6.1, V2.6.2, V2.6.6, V2.6.8, V6.3.1 · Reverses part of #014
+
+### What we did
+
+The user's instruction: "remove all India and Hindi angle; it should be completely for Abu Dhabi
+only; English should be by default but have Arabic lang for translation."
+
+**Removed:** the `in-india` pack, its personas and synthetic output, the Hindi knowledge base (12
+documents), `messages/hi.json` (693 strings), the Hindi error catalogue, template, system prompt
+and safe-word list, the Hindi router and validator patterns, the Hindi assessment items, and the
+Hindi rows from the three evaluation sets (96→64, 84→56, 59→39 items).
+
+**Kept, and now the whole of it:** English by default, Arabic as the translation. `LOCALES` is
+`["en", "ar"]`, `supported_languages` is `["en", "ar"]`, `enabled_packs` is `["ae-abu-dhabi"]`.
+
+**The pack framework stays, and is still tested.** Abu Dhabi is the only shipped pack, so the
+checks that a setting is read from the pack rather than fixed in code needed somewhere to switch
+to. `other_country()` in `test_country_packs.py` builds that second country from `_template/`:
+different languages, options, identity label, qualified human, gene table, regions and time
+targets. V2.6.1, V2.6.2, V2.6.6 and V2.6.8 are all still proved against a real second country,
+and the template staying loadable is now tested, which it wasn't.
+
+**At the API, three checks changed shape** because a second country can't be enabled there: the
+options list is now checked against the pack's own file (`test_options_come_from_the_pack`), and
+the care deadline against the pack's own `sla_hours`. **One test was deleted outright:**
+`test_partners_in_different_countries_get_no_result`. A couple spanning two countries can't be
+built with one pack. The behaviour still exists in the engine; the coverage does not.
+
+### Why, and what was decided along the way
+
+- **The second pack was costing more than it proved.** One unreviewed country already needs
+  clinical and legal review before 20 Nov; a second, less complete one argued against the point
+  it was meant to make. `_template/` carries the structure at no review cost.
+- **Backend text stays English, on purpose.** The user approved Arabic for the interface
+  (#026), and CLAUDE.md rule 5 says to ask before adding Arabic anywhere else. The backend's
+  error messages, clinical templates and knowledge base are still English, so an Arabic reader
+  sees an Arabic interface with English clinical answers and a line saying so. **This is a real
+  gap, named in the limitations and left for the user to decide**, not papered over.
+- **A question in a script no rule reads now goes to a person with the crisis contacts.**
+  `has_arabic_script` became `has_unread_script` (any non-Latin letter), and `graph.py` treats
+  that like "unclear": it could be distress in words the rules can't read.
+- **The evaluation reports were regenerated, not edited.** `router_early_eval.md` was rebuilt
+  from the trimmed sets: English and Arabic numbers are **identical** to before, so the routing
+  itself did not change; only the Hindi column and the miss counts (38→26 misses, 10→6 dangerous)
+  differ. The two Ollama reports need a model to regenerate and Ollama is not running here, so
+  each carries a dated "superseded" banner rather than looking current.
+
+### Verification
+
+- **823 backend tests pass**, the whole suite, against real Postgres, Redis and OpenFGA.
+- 23 frontend wording tests pass, the type check is clean, and `scripts/check_clone.py` passes.
+- ruff, `ruff format --check`, `mypy --strict` and bandit are clean across the backend, the
+  launcher and all six scripts.
+- A repository-wide scan for "India", "Hindi" and "Devanagari" leaves only: the deliberate
+  "dropped on 16 Nov" notes, the two superseded evaluation banners, past `brain.md` entries
+  (append-only), `DESIGN.md` (the Stitch export, kept unchanged by design), and `DEVANAGARI` in
+  the launcher, which is the project's own name संविद्.
+- 40 documents were updated: README, CLAUDE.md, docs/01–07, all six phase plans,
+  CROSS_VERIFICATION, every submission document, the clinical and compliance files, and the
+  Stitch brief.
+
+- **All 51 browser tests pass** against the rebuilt stack, after three were corrected: the signed-in accessibility loop
+  still visited `/hi` pages, the right-to-left visuals test clicked an English label on a page that
+  is now Arabic (it finds the control by what it is instead), and `demo_journey` still expected
+  "Beta thalassaemia" on Fatima's result, which entry #026 deliberately changed to sickle cell
+  disease. That last one was a miss in #026, caught here.
+- **Looked at on screen:** the sign-in page in English and Arabic, the centre finder, and the
+  Arabic home page. The language switch offers English and Arabic only, and the country picker is
+  gone now that one country is set up.
+
+**Known and not fixed:** names that come from the pack stay English on an Arabic page, so the
+sign-in notice reads "Abu Dhabi" in Latin inside an Arabic sentence. The fix is a translated name
+in the pack, which means Arabic script in a backend file, which rule 5 says to ask about first.
+
+### Follow-ups
+- [ ] **Decide on backend Arabic** (rule 5 says ask): error messages are a small, safe addition;
+      clinical templates and the knowledge base need a reviewer first (user)
+- [ ] Re-run the browser suite and look at the Arabic screens (Claude, next)
+- [ ] Regenerate the two Ollama evaluation reports with Ollama running, and drop their banners
+- [ ] A native Arabic speaker reviews `ar.json` and the lexicon (user)
+
+## #028 · 2026-11-16 · Dominant inheritance in the engine, and the repository made deployable
+
+- **Author:** Claude (Opus), directed by the user
+- **Phase:** 2.4, 2.6, 6.3 · **Checks:** V2.4.x (new patterns), V6.3.1
+
+### What we did
+
+**1. Two inheritance patterns the engine could not express.** The user sent handwritten genetics
+notes and asked for the demo database to cover them. Until today `Inheritance` was `AR` and `XL`
+(X-linked recessive) only, so a dominant finding fell through to "gene not in the pack" and
+produced no number at all. Added `AD` and `XLD`, with the rule that matters most: **a dominant
+change has no carriers.** One changed copy is enough, so the person may be affected themselves.
+Calling them "a carrier" would have been the same class of error as the sickle cell wording in
+#026.
+
+| Situation | What the engine now says |
+|---|---|
+| One changed copy, autosomal dominant | Goes to a clinician for their own health, plus 50% / 50% per pregnancy |
+| Two changed copies, autosomal dominant | Clinician, plus every child inherits a copy |
+| X-linked dominant, mother | Clinician, plus 50% of sons and 50% of daughters |
+| **X-linked dominant, father** | Clinician, plus **0% of sons and 100% of daughters** |
+| A VUS in a dominant gene | No number, as everywhere else |
+
+The father case is the point of the pattern: he has one X and gives it to every daughter and to
+no son. It is also the case a square drawn for a mother cannot show.
+
+**Wording held to the project's rules, not the textbook's.** The notes say "Affected → 50%". The
+engine says "50% chance in each pregnancy that a child inherits the changed copy", because
+inheriting a copy is not the same as being ill, and saying otherwise would be a diagnosis. The
+`possible_affected` fact carries that conversation to a clinician instead.
+
+**In a couple check a dominant gene is never a shared finding.** The risk comes from the one
+parent who has it, so there is nothing to combine; combining would be the wrong arithmetic as well
+as the wrong story. If both partners have a change in the same dominant gene, it goes to a
+counsellor rather than producing a figure.
+
+**2. The visible side.** A dominant Punnett square (Aa × aa) that matches the user's page, drawn
+with the usual convention where the capital letter is the changed copy. That is the opposite of
+the recessive square already in the app, so each square now carries a `pattern` and prints its own
+explanation of its letters rather than sharing one sentence. `LDLR` (familial
+hypercholesterolaemia) and `PHEX` (X-linked hypophosphataemia) joined the Abu Dhabi panel as
+placeholders, with two knowledge-base documents, three demo personas and two demo accounts
+(`demo-dominant`, `demo-xl-dominant`). A new section on the inheritance page teaches the pattern.
+Wording is in English and Arabic.
+
+**3. Deployment.** `output: "standalone"` in `next.config.ts` is for the Docker image and
+confuses Vercel, so it is now off when `VERCEL` is set. Vercel's Python builder installs from
+`requirements.txt` rather than `uv.lock`, so one is exported from the lock, and **CI fails if the
+two drift**. `docs/deploy_vercel.md` says plainly what Vercel can and cannot run.
+
+### Why
+
+- **The knowledge-base rule refused the first draft of both documents.** `free_numbers` bans bare
+  number words, and "what it means for one person" tripped it. The rule is blunt on purpose, and
+  rewording was the right answer rather than widening it.
+- **`requirements.txt` is generated, never hand-edited.** Two sources of dependency truth drift
+  silently, so the CI diff is the whole point of adding it.
+
+### Verification
+
+- **831 backend tests pass**, including nine new ones covering: no carrier wording for a dominant
+  change, the 50/50 split, two copies, the mother and father X-linked cases, a dominant VUS, that
+  a dominant gene never becomes a shared recessive finding, and that the holder's fact stays
+  visible to the holder alone.
+- The engine's output was read by hand against the user's notes and matches cell for cell,
+  including the 0% / 100% father case.
+- Frontend type check, 23 wording tests, ruff, format, mypy strict and bandit all clean.
+- **A zip built the way GitHub builds one** extracts to 547 files, passes `check_clone.py`, and
+  its frontend builds with `VERCEL=1` set, which is the build Vercel runs.
+- `vercel.json` parses; the upload would carry 390 of 547 tracked files, with docs, infra,
+  scripts and tests left out.
+
+**Not verified:** nothing has been deployed to Vercel, and no Vercel CLI exists here. The end-to-end
+launcher run from the extracted zip is recorded in the next entry.
+
+**Two things the browser suite caught afterwards**, both mine:
+
+- The new teaching section put a second icon array on the inheritance page, so the test that
+  counts 100 icons found 200. It now counts the first array, and also checks the colours of the
+  two new outcomes, which it did not cover before.
+- **The new outcome was terracotta, which reads as red.** Outcome colours are plum, turquoise and
+  sand on purpose: an outcome is never good or bad news, and red and green are also the commonest
+  pair to confuse. "Inherits the change" is now plum, the colour already used for the outcome that
+  carries the change, kept apart by the opposite stripe direction.
+
+### Follow-ups
+- [ ] A clinician reviews the two new conditions, their wording, and the LDLR and PHEX placeholder
+      frequencies (user)
+- [ ] Decide where PostgreSQL, Redis, Keycloak, OpenFGA and the worker will run before any Vercel
+      deploy; `docs/deploy_vercel.md` lists what each needs (user)
+- [ ] A native Arabic speaker reviews the new Arabic wording along with the rest of `ar.json`
+
+## #029 · 2026-11-16 · The zip ran and failed: one database volume for every copy of the project
+
+- **Author:** Claude (Opus), directed by the user
+- **Phase:** 6.3 · **Checks:** V1.3.1, V6.4.1
+
+### What happened
+
+The user asked for a copy anyone can download and run with `python Run_Samvid.py`. A zip was built
+the way GitHub builds one, extracted into an empty folder, and run. **It failed**, three minutes
+in, with `service "migrate" didn't complete successfully: exit 1`.
+
+The cause is in the logs, not in the message:
+
+```
+asyncpg.exceptions.InvalidPasswordError: password authentication failed for user "samvid_owner"
+```
+
+`infra/docker-compose.yml` sets `name: samvid`, so **every copy of the project on one machine is
+the same Compose project and shares one `samvid_pgdata` volume**, while `infra/.env` holds random
+passwords generated per copy. A fresh copy therefore writes passwords that cannot open the
+database an earlier copy created. Anyone who has run Samvid before, then downloads the zip, hits
+this. So does anyone with two clones. The three-minute wait before the failure makes it worse.
+
+### What we did
+
+- **Caught before anything is built.** The launcher now checks, at the settings step, whether this
+  is a first run here while a `samvid_pgdata` volume already exists. That combination cannot work,
+  so it says so in plain words, explains the data is demo data about fictional people, and offers
+  to delete it.
+- **A safety net for every other route to the same failure.** If the stack fails to start at all,
+  the launcher reads the `migrate` and `postgres` logs, and on `password authentication failed`
+  prints the cause and the one command that fixes it, instead of the generic "something didn't
+  start".
+
+**What each layer actually covers, found by hitting the gap.** The up-front check fires only on a
+first run here, so it catches the common case: download a copy, meet a volume an earlier copy
+made. It does **not** catch the mirror image, an existing copy whose `infra/.env` no longer
+matches a volume that some *other* copy has since recreated. That happened on this machine
+straight after the zip test, and the up-front check stayed quiet because `infra/.env` already
+existed. The safety net caught it and printed the fix, which is how it was confirmed to work in a
+real failure rather than a simulated one. Closing the gap properly would mean tracking which
+settings file created the volume, and a vaguer "you might have stale data" warning would be worse
+than the clear failure, so the two layers stand as they are.
+- **Fixed a teammate's demo account on the way.** `aad4513` added `demo123` pointing at Fatima's
+  persona, which `demo-fatima` already uses. One national ID links to one login by design (there
+  is a test for it), so whichever signed in second would have been refused as already linked.
+  `demo123` now has its own person, a sickle cell carrier like Fatima, and both accounts work.
+
+### Verification
+
+- `old_data_exists()` returns True against the real leftover volume, with no settings file
+  present, which is exactly the state that failed.
+- `_explain_failure()` was run against the failed containers and printed the cause and the
+  `--reset` command.
+- 11 synthetic tests pass with the new person, and all 18 persona IDs are still unique.
+- The zip itself is sound: 547 files, `check_clone.py` passes inside it, `npm ci` and a
+  `VERCEL=1` production build both succeed from it.
+
+**Also caught here:** the CI guard added in #028 for `requirements.txt` would have failed on its
+first push. `uv export` writes the output path into the file's own header, so comparing the two
+files whole always differs however current the file is. The step now drops comment lines from
+both sides, and was run locally to confirm it passes.
+
+**The volume was deleted with the user's agreement, and the zip then ran end to end.** All seven
+steps of the launcher completed from the extracted zip: prerequisites, settings, AI model, build,
+demo accounts, where to go, live activity. The web app, API and sign-in all reported ready, the
+fictional counselling team seeded, and `demo-dominant` and `demo-xl-dominant` were signed into in
+a real browser. `demo-dominant` shows the Aa x aa square, 50% / 50%, and the clinician line;
+`demo-xl-dominant` shows 50% of sons and 50% of daughters. Neither page calls the person a
+carrier: the only use of the word is the square's own line saying there are none. The test stack
+was then stopped.
+
+### Follow-ups
+- [ ] Delete the stale volume and let the zip run finish, to confirm the whole path (user, then Claude)
+- [ ] Consider whether two copies of the project on one machine should share a database at all.
+      Sharing is the current design; the alternative is a project name per folder (Claude, if wanted)

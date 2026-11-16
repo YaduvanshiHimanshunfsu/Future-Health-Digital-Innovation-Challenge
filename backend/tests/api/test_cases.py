@@ -169,19 +169,18 @@ async def test_options_come_from_the_pack_with_equal_fields_and_no_ranking(stack
     assert "recommend" not in text and "best" not in text
 
 
-async def test_options_differ_by_pack(stack: Stack) -> None:
-    """V4.4.5."""
-    from tests.api.helpers import INDIA
+async def test_options_come_from_the_pack(stack: Stack) -> None:
+    """V4.4.5. The options are the pack's own list, not one written into the code.
 
-    abu_dhabi = await stack.sign_in("ad")
-    india = await stack.sign_in("in", pack=INDIA)
-    first = {
-        o["key"] for o in (await stack.http.get("/v1/options", headers=abu_dhabi)).json()["options"]
+    That a second country's list differs is checked where a second country can exist, in
+    tests/unit/test_country_packs.py.
+    """
+    person = await stack.sign_in("ad")
+    shown = {
+        o["key"] for o in (await stack.http.get("/v1/options", headers=person)).json()["options"]
     }
-    second = {
-        o["key"] for o in (await stack.http.get("/v1/options", headers=india)).json()["options"]
-    }
-    assert first != second
+    assert shown
+    assert shown == {option.key for option in stack.pack.options.options}
 
 
 def test_values_can_never_change_the_options() -> None:

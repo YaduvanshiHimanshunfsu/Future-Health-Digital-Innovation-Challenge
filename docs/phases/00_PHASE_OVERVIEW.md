@@ -15,7 +15,7 @@ This is the master plan. Each phase has its own file with sub-phases, goals, obj
 | **1** | [Foundation, decisions, compliance](PHASE_1_Foundation.md) | 5–6 Nov | Registered, scope locked, stack running, audit chain working |
 | **2** | [Genomic data and risk engine](PHASE_2_Genomic_Data_and_Risk_Engine.md) | 7–9 Nov | Correct risk numbers on screen from synthetic results |
 | **3** | [Privacy fabric and family sharing](PHASE_3_Privacy_and_Family_Sharing.md) | 10–11 Nov | Consent, couple match and invitations proven private |
-| **4** | [AI explanation and human escalation](PHASE_4_AI_Explanation_and_Escalation.md) | 12–14 Nov | Safe chat in English, Arabic and Hindi, with cases reaching a counsellor |
+| **4** | [AI explanation and human escalation](PHASE_4_AI_Explanation_and_Escalation.md) | 12–14 Nov | Safe chat in English and Arabic, with cases reaching a counsellor |
 | **5** | [Care pathway, measurement, integration](PHASE_5_Care_Pathway_Measurement_Integration.md) | 15–17 Nov | Full demo journey works, with metrics |
 | **6** | [Evaluation, hardening, submission](PHASE_6_Evaluation_and_Submission.md) | 18–20 Nov | **Submitted on 19 Nov**, with 20 Nov as buffer |
 
@@ -48,7 +48,7 @@ These are recommendations, pending your confirmation of team size.
 
 | Tier | Meaning | Items |
 |---|---|---|
-| **T1 Must work for real** | The demo fails without it | Country pack framework, the Abu Dhabi reference pack and a small India pack, content in English, Arabic and Hindi at the Simple level, synthetic results, risk engine, risk visuals, templates in all three languages, chat with validators and boundary, couple match, consent and revoke, access log, triage queue with assignment, pathway to referral, teach-back, outcomes and equity dashboard, audit chain |
+| **T1 Must work for real** | The demo fails without it | Country pack framework, the Abu Dhabi reference pack and the empty template, content in English and Arabic at the Simple level, synthetic results, risk engine, risk visuals, templates in both languages, chat with validators and boundary, couple match, consent and revoke, access log, triage queue with assignment, pathway to referral, teach-back, outcomes and equity dashboard, audit chain |
 | **T2 Build if on schedule** | Strong additions | Standard and Detailed reading levels, LLM generation (templates are the fallback), invitations, options and values, co-pilot summary, break-glass, booking, centre finder, right-not-to-know flow, Story Mode |
 | **T3 Labelled mock or roadmap** | Say so openly | UAE PASS, Malaffi, lab mTLS and JWS, real SMS, Vault, cross-institution PSI, differential privacy, voice, content-governance UI, Jais self-hosting, HAPI FHIR server, mobile and Arabic variants of T2 screens |
 

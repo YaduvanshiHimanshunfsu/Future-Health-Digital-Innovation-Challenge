@@ -125,12 +125,12 @@ async def test_openai_compatible_services_get_a_bearer_key() -> None:
 
 
 def test_the_model_never_sees_a_figure_only_placeholders() -> None:
-    system, user = draft_messages(REQUEST, ["passage"], "hi")
+    system, user = draft_messages(REQUEST, ["passage"], "ar")
     payload = json.loads(user)
     assert payload["placeholders_you_may_use"] == ["{fact:couple_shared_ar:HBB:two_copies}"]
     assert "25" not in user
     assert all("percent" not in fact and "one_in" not in fact for fact in payload["facts"])
-    assert "Hindi" in system
+    assert "Arabic" in system
 
 
 @pytest.mark.parametrize(

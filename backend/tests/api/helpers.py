@@ -17,7 +17,6 @@ from synthetic.generate import SyntheticPerson, build_bundle, load_personas
 from tests.conftest import IdentityProvider
 
 AD = "ae-abu-dhabi"
-INDIA = "in-india"
 
 
 def with_binary_columns_decoded(dump: str) -> str:

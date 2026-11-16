@@ -12,7 +12,7 @@ def rows(group: str, n: int, hits: int) -> list[tuple[str | None, bool]]:
 
 def test_the_real_spread_is_reported() -> None:
     """V5.4.1. 80% against 50% is a 30-point gap. The original spec reported 2.0 here."""
-    result = gap("lang", [*rows("en", 20, 16), *rows("hi", 20, 10)])
+    result = gap("lang", [*rows("en", 20, 16), *rows("ar", 20, 10)])
     assert result.gap_pp == 30.0
     assert result.alert
 
@@ -33,9 +33,9 @@ def test_a_hand_worked_example_matches() -> None:
 
 def test_alerts_use_the_thresholds_the_plan_sets() -> None:
     """V5.4.9: 5 points between languages, 10 between reading levels."""
-    four = [*rows("en", 50, 40), *rows("hi", 50, 38)]
+    four = [*rows("en", 50, 40), *rows("ar", 50, 38)]
     assert gap("lang", four).gap_pp == 4.0 and not gap("lang", four).alert
-    assert gap("lang", [*rows("en", 20, 16), *rows("hi", 20, 15)]).alert
+    assert gap("lang", [*rows("en", 20, 16), *rows("ar", 20, 15)]).alert
     assert not gap("literacy", [*rows("simple", 20, 16), *rows("standard", 20, 15)]).alert
 
 

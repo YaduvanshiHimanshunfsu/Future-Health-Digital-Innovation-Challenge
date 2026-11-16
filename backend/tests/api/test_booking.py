@@ -227,12 +227,10 @@ async def test_the_centre_finder_needs_no_account_and_marks_every_invented_entry
         assert (centre["contact"], centre["source_url"], centre["checked_on"]) == (None, None, None)
     # No real centre is shown, so there is no check date to report.
     assert body["as_of"] is None
-    india = (await stack.http.get("/v1/centres?pack=in-india")).json()
-    assert india["qualified_human"] == "none"
+    assert body["qualified_human"] == "counsellor"
     # The notice on screen reads "{name} settings are a draft", so the name has to come with it.
-    assert (india["pack"], india["pack_name"]) == ("in-india", "India")
-    # Proper names of regions come from the pack; India's regions are generic and translated.
-    assert india["region_names"] == {}
+    assert (body["pack"], body["pack_name"]) == ("ae-abu-dhabi", "Abu Dhabi")
+    # A region that is a place's name comes from the pack, never from the screens' own words.
     assert body["region_names"]["al-ain"] == "Al Ain"
     assert (await stack.http.get("/v1/centres?pack=xx-nowhere")).status_code == 404
 
@@ -241,32 +239,40 @@ async def test_centre_filters_narrow_the_list_and_the_order_is_never_a_ranking(
     stack: Stack,
 ) -> None:
     async def ids(query: str) -> list[str]:
-        response = await stack.http.get(f"/v1/centres?pack=in-india&{query}")
+        response = await stack.http.get(f"/v1/centres?{query}")
         assert response.status_code == 200
         return [centre["id"] for centre in response.json()["centres"]]
 
-    everything = (await stack.http.get("/v1/centres?pack=in-india")).json()
+    everything = (await stack.http.get("/v1/centres")).json()
     # The pack's own region order, then city, then name: the same for everyone, bought by no one.
-    order = ["north", "south", "east", "west", "central", "north-east"]
+    order = stack.pack.strata.regions
     regions = [centre["region"] for centre in everything["centres"]]
     assert regions == sorted(regions, key=order.index)
     assert everything["regions"] == [name for name in order if name in set(regions)]
+    assert [c["id"] for c in everything["centres"]] == [
+        "ae-abu-dhabi-darb",
+        "ae-abu-dhabi-lulua",
+        "ae-abu-dhabi-nakhla",
+        "ae-al-ain-ghaf",
+        "ae-al-ain-samar",
+        "ae-al-dhafra-sabkha",
+    ]
 
-    assert await ids("region=east") == ["in-kolkata-sutra"]
-    assert await ids("q=chennai") == ["in-chennai-tanmaya"]
-    assert await ids("q=GENETICS centre") == ["in-delhi-vamsha", "in-chennai-tanmaya"]
-    video_only = "in-bengaluru-nidana"
+    assert await ids("region=al-dhafra") == ["ae-al-dhafra-sabkha"]
+    assert await ids("q=madinat") == ["ae-al-dhafra-sabkha"]
+    assert await ids("q=GENETICS centre") == ["ae-abu-dhabi-nakhla"]
+    video_only = "ae-abu-dhabi-darb"
     assert video_only in await ids("mode=video")
     assert video_only not in await ids("mode=in_person")
     # "Not checked" is not step-free: only an explicit yes passes.
     step_free = await ids("step_free=true")
-    assert video_only not in step_free and "in-guwahati-mula" not in step_free
+    assert video_only not in step_free and "ae-al-dhafra-sabkha" not in step_free
     prenatal = await ids("service=prenatal_diagnosis")
-    assert set(prenatal) == {"in-delhi-vamsha", "in-mumbai-setu", "in-chennai-tanmaya"}
-    assert await ids("region=south&service=haemoglobin_clinic") == []
-    # The full count stays, so a screen can say "0 of 9" rather than "none exist".
-    narrowed = (await stack.http.get("/v1/centres?pack=in-india&region=east")).json()
-    assert narrowed["total"] == everything["total"] == 9
+    assert set(prenatal) == {"ae-abu-dhabi-nakhla", "ae-al-ain-samar"}
+    assert await ids("region=al-dhafra&service=haemoglobin_clinic") == []
+    # The full count stays, so a screen can say "0 of 6" rather than "none exist".
+    narrowed = (await stack.http.get("/v1/centres?region=al-dhafra")).json()
+    assert narrowed["total"] == everything["total"] == 6
 
     for bad in ("service=miracle_cure", "mode=teleport", "q=" + "x" * 61):
         assert (await stack.http.get(f"/v1/centres?{bad}")).status_code == 422
@@ -371,14 +377,14 @@ async def test_a_counsellor_from_another_country_is_never_offered_or_bookable(
     await stack.ingest(bundle_for("fatima"))
     person = await stack.sign_in("f-login", "fatima")
     case = await stack.only_case()
-    abroad = await counsellor(stack, "c-india")
-    await profile(stack, abroad, "Deepa Abroad", pack="in-india")
+    abroad = await counsellor(stack, "c-abroad")
+    await profile(stack, abroad, "Dina Abroad", pack="xx-elsewhere")
     slot = await publish(stack, abroad)
 
     offered = (await stack.http.get(f"/v1/booking/slots?case_id={case.id}", headers=person)).json()
     assert slot not in [item["id"] for item in offered]
     team = (await stack.http.get("/v1/booking/counsellors", headers=person)).json()
-    assert "Deepa Abroad" not in [item["display_name"] for item in team]
+    assert "Dina Abroad" not in [item["display_name"] for item in team]
     booked = await stack.http.post(
         f"/v1/booking/slots/{slot}/book", json={"case_id": str(case.id)}, headers=person
     )

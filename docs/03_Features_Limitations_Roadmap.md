@@ -7,7 +7,9 @@
 > [docs/submission/assumptions_and_limitations.md](submission/assumptions_and_limitations.md) and
 > [docs/submission/judge_qa.md](submission/judge_qa.md).
 
-> **Scope update (5 Nov 2026):** Samvid is global by design. UAE and Abu Dhabi details in this document describe the first reference pack, not the limit of the product. Supported languages are English, Arabic and Hindi. See [docs/07](07_Global_Design_and_Country_Packs.md).
+> **Scope update (5 Nov 2026):** Samvid is global by design. UAE and Abu Dhabi details in this document describe the first reference pack, not the limit of the product. Supported languages are English and Arabic. See [docs/07](07_Global_Design_and_Country_Packs.md).
+>
+> **Scope update (16 Nov 2026):** the prototype ships one country pack, Abu Dhabi, in English with an Arabic translation. The pack framework stays, so another country is settings rather than code, but no second pack is shipped or claimed.
 
 > Companion to [01_Problem_Understanding.md](01_Problem_Understanding.md) and [02_Solution_Architecture_and_Plan.md](02_Solution_Architecture_and_Plan.md).
 
@@ -124,7 +126,7 @@ Legend: **MVP** = built for the 20 Nov submission · **V2** = after selection / 
 - **Real integration**: M42 / Emirati Genome Programme report feed, Malaffi FHIR, booking systems, **UAE PASS** login.
 - **Co-designed content** with Emirati focus groups (men, women, elders, low-literacy groups) and DoH counsellors.
 - **Clinical validation study**: a randomised comparison of Samvid plus usual care against usual care, measuring MMIC, SURE, GCOS-24, uptake and time to referral (IRB-approved).
-- **More languages** for resident communities (Urdu, Hindi, Malayalam, Tagalog, Bengali), useful for wider pre-conception screening.
+- **More languages** for resident communities (Urdu, Malayalam, Tagalog, Bengali), each needing its own native-speaker review, useful for wider pre-conception screening.
 - **WhatsApp channel** (the dominant messaging app in the UAE) with the same guardrails.
 
 ### Mid term (6–18 months)

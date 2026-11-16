@@ -1,6 +1,8 @@
 # 01 — Problem Understanding
 
-> **Scope update (5 Nov 2026):** Samvid is global by design. UAE and Abu Dhabi details in this document describe the first reference pack, not the limit of the product. Supported languages are English, Arabic and Hindi. See [docs/07](07_Global_Design_and_Country_Packs.md).
+> **Scope update (5 Nov 2026):** Samvid is global by design. UAE and Abu Dhabi details in this document describe the first reference pack, not the limit of the product. Supported languages are English and Arabic. See [docs/07](07_Global_Design_and_Country_Packs.md).
+>
+> **Scope update (16 Nov 2026):** the prototype ships one country pack, Abu Dhabi, in English with an Arabic translation. The pack framework stays, so another country is settings rather than code, but no second pack is shipped or claimed.
 
 **Hackathon:** Future Health Digital Innovation Challenge 2026 (Hack2skill)
 **Track:** Fertility · Challenge 03: *Understanding and Reducing Inherited Disease Risk*

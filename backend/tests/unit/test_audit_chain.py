@@ -247,7 +247,7 @@ async def test_timestamps_in_another_zone_hash_the_same_instant(
 ) -> None:
     """Postgres can hand a timestamp back in the session's zone. The hash must not care."""
     moment = datetime(2026, 11, 5, 12, 0, tzinfo=UTC)
-    india = moment.astimezone(timezone(timedelta(hours=5, minutes=30)))
+    elsewhere = moment.astimezone(timezone(timedelta(hours=5, minutes=30)))
     shared = {
         "seq": 1,
         "actor": "a",
@@ -256,7 +256,7 @@ async def test_timestamps_in_another_zone_hash_the_same_instant(
         "outcome": "ok",
         "meta": {},
     }
-    assert _canonical(at=moment, **shared) == _canonical(at=india, **shared)
+    assert _canonical(at=moment, **shared) == _canonical(at=elsewhere, **shared)
 
 
 async def test_unicode_in_rows_survives_the_round_trip(

@@ -18,8 +18,8 @@ from app.risk_engine.engine import _fact
 from app.risk_engine.types import Label, Scenario
 
 ARABIC_INDIC = "".join(chr(0x0660 + digit) for digit in (9, 8, 7, 6, 5, 4, 3, 2))
-DEVANAGARI_DIGITS = "".join(chr(0x0966 + digit) for digit in (9, 8, 7, 6, 5, 4, 3, 2))
-# Letters from the Arabic block with no meaning, since project files hold no Arabic words.
+# Letters from the Arabic block that spell nothing: backend files hold no Arabic words, and a
+# real name here would be a name in a test. What matters is that an unknown word is masked.
 ARABIC_LETTERS = "".join(chr(code) for code in range(0x0628, 0x0630))
 
 
@@ -31,10 +31,6 @@ ARABIC_LETTERS = "".join(chr(code) for code in range(0x0628, 0x0630))
         ("en", "Email me at someone.real@example.com please", ["someone", "example.com"]),
         ("en", "Call +91 98765 43210 or 050-123-4567", ["98765", "43210", "123-4567"]),
         ("en", "see https://example.com/profile/42", ["example.com", "profile"]),
-        ("hi", "मेरा नाम प्रिया शर्मा है", ["प्रिया", "शर्मा"]),
-        ("hi", "मेरे पति राहुल की रिपोर्ट", ["राहुल"]),
-        ("hi", "mera naam Priya Sharma hai", ["Priya", "Sharma"]),
-        ("hi", f"मेरा नंबर {DEVANAGARI_DIGITS} है", [DEVANAGARI_DIGITS]),
         # Arabic in Roman letters and Gulf dialect, with the meaning given: "my name is Fatima, my
         # husband Khalid", and "she is pregnant, her name is Noura".
         ("ar", "ismi Fatima, zawji Khalid", ["Fatima", "Khalid", "ismi", "zawji"]),

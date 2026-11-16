@@ -81,9 +81,9 @@ def test_default_language_must_be_supported() -> None:
 
 
 def test_comma_separated_lists_are_parsed() -> None:
-    settings = settings_for_tests(allowed_hosts="a.example, b.example", supported_languages="en,hi")
+    settings = settings_for_tests(allowed_hosts="a.example, b.example", supported_languages="en,ar")
     assert settings.allowed_hosts == ["a.example", "b.example"]
-    assert settings.supported_languages == ["en", "hi"]
+    assert settings.supported_languages == ["en", "ar"]
 
 
 def test_secrets_do_not_appear_in_repr() -> None:
@@ -113,4 +113,4 @@ def test_production_needs_vault_over_https(overrides: dict[str, Any]) -> None:
 
 def test_default_pack_must_be_enabled() -> None:
     with pytest.raises(ValidationError, match="default_pack"):
-        settings_for_tests(enabled_packs=["in-india"], default_pack="ae-abu-dhabi")
+        settings_for_tests(enabled_packs=["xx-your-country"], default_pack="ae-abu-dhabi")

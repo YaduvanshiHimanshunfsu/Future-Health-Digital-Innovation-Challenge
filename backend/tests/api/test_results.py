@@ -8,7 +8,7 @@ from sqlalchemy import select
 from app.models.audit import AuditLog
 from app.models.consent import Consent
 from app.models.person import Person
-from tests.api.helpers import INDIA, Stack, bundle_for
+from tests.api.helpers import AD, Stack, bundle_for
 
 pytestmark = pytest.mark.db
 
@@ -212,27 +212,27 @@ async def test_reading_results_creates_an_audit_row(stack: Stack) -> None:
 
 
 async def test_response_says_how_far_the_country_pack_has_been_reviewed(stack: Stack) -> None:
-    await stack.ingest(bundle_for("priya", pack=INDIA), pack=INDIA)
-    headers = await stack.sign_in("priya-login", "priya", pack=INDIA)
+    await stack.ingest(bundle_for("fatima"))
+    headers = await stack.sign_in("fatima-login", "fatima")
     body = (await stack.http.get("/v1/me/results", headers=headers)).json()
     assert body["pack"] == {
-        "code": INDIA,
-        "name": "India",
-        "status": "illustrative",
+        "code": AD,
+        "name": "Abu Dhabi",
+        "status": "reference",
         "reviewed": False,
     }
 
 
 async def test_language_follows_the_persons_country(stack: Stack) -> None:
-    """V2.6.1 at the API. Hindi is offered in the India pack and not in Abu Dhabi."""
-    abu_dhabi = await stack.sign_in("ad-login")
-    india = await stack.sign_in("in-login", pack=INDIA)
-    rejected = await stack.http.patch("/v1/me", json={"preferred_lang": "hi"}, headers=abu_dhabi)
+    """V2.6.1 at the API. The pack says which languages it offers, and nothing else may be set."""
+    headers = await stack.sign_in("ad-login")
+    assert "ar" in stack.pack.manifest.languages and "fr" not in stack.pack.manifest.languages
+    rejected = await stack.http.patch("/v1/me", json={"preferred_lang": "fr"}, headers=headers)
     assert rejected.status_code == 422
     assert rejected.json()["code"] == "invalid_preferred_lang"
-    accepted = await stack.http.patch("/v1/me", json={"preferred_lang": "hi"}, headers=india)
+    accepted = await stack.http.patch("/v1/me", json={"preferred_lang": "ar"}, headers=headers)
     assert accepted.status_code == 200
-    assert accepted.json()["preferred_lang"] == "hi"
+    assert accepted.json()["preferred_lang"] == "ar"
 
 
 @pytest.mark.parametrize(
@@ -317,8 +317,8 @@ async def test_the_country_list_is_public_and_says_what_is_reviewed(stack: Stack
     response = await stack.http.get("/v1/packs")
     assert response.status_code == 200
     packs = {pack["code"]: pack for pack in response.json()}
-    assert set(packs) == {"ae-abu-dhabi", "in-india"}
-    assert packs["in-india"]["languages"] == ["hi", "en"]
+    assert set(packs) == {"ae-abu-dhabi"}
+    assert packs["ae-abu-dhabi"]["languages"] == ["ar", "en"]
     assert all(pack["reviewed"] is False for pack in packs.values())
 
 

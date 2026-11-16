@@ -8,8 +8,3 @@ Until a pack has at least one verified contact, it can't pass V1.2.4, and the di
 
 | Service | Contact | Hours | Languages | Source | Checked on | Checked by |
 |---|---|---|---|---|---|---|
-
-## India pack
-
-| Service | Contact | Hours | Languages | Source | Checked on | Checked by |
-|---|---|---|---|---|---|---|

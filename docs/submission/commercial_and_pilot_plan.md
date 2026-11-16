@@ -55,10 +55,10 @@ Storing or transferring genetic data in the UAE requires a Health Authority lice
 
 - The licence to hold genetic data, and UAE hosting.
 - Two or more genetic counsellors' time for review and the shadow phase.
-- Native Arabic and Hindi reviewers.
+- Native Arabic reviewers.
 - Access to how results are delivered today, to settle the Art. 15(2) question about couples.
 - A data processing agreement before any hosted AI model is used (the code refuses one in production until this exists).
 
 ## How new countries are added
 
-A new country is a new **country pack** (`backend/packs/<code>/`): gene panel and frequencies, options allowed there, support contacts, centres, time targets, reporting groups, legal settings. No code changes. The India pack shows this already: switching pack changes the options and contacts. A pack counts as supported only once its clinical reviewer signs it off; until then the app shows it as unreviewed.
+A new country is a new **country pack** (`backend/packs/<code>/`): gene panel and frequencies, options allowed there, support contacts, centres, time targets, reporting groups, legal settings. No code changes: `_template/` is the empty shape of one, and the loader's tests switch to a second country built from it. A pack counts as supported only once its clinical reviewer signs it off; until then the app shows it as unreviewed.

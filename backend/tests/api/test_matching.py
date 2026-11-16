@@ -24,7 +24,7 @@ from app.risk_engine.types import (
     Zygosity,
 )
 from synthetic.generate import SyntheticPerson, build_bundle
-from tests.api.helpers import INDIA, Stack, bundle_for
+from tests.api.helpers import Stack, bundle_for
 
 pytestmark = pytest.mark.db
 
@@ -361,18 +361,6 @@ async def test_choosing_not_to_know_stops_the_match(stack: Stack) -> None:
     assert (
         await stack.http.post(f"/v1/couples/{couple_id}/match", headers=first)
     ).status_code == 409
-
-
-async def test_partners_in_different_countries_get_no_result(stack: Stack) -> None:
-    """Each pack has its own gene table, and nothing says which should apply."""
-    await stack.ingest(bundle_for("fatima"))
-    await stack.ingest(bundle_for("rohan", pack=INDIA), pack=INDIA)
-    first = await stack.sign_in("fatima-login", "fatima")
-    second = await stack.sign_in("rohan-login", "rohan", pack=INDIA)
-    couple_id = await stack.link_couple(first, second)
-    await stack.agree_to_match(couple_id, first)
-    await stack.agree_to_match(couple_id, second)
-    assert (await run(stack, couple_id, first))["outcome"] == "cannot_determine"
 
 
 def test_the_more_private_level_is_chosen() -> None:

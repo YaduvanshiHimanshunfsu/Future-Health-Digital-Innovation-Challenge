@@ -70,11 +70,13 @@ uv run python ../scripts/seed_demo.py     # prints the accounts. The password is
 
 | Account | Shows |
 |---|---|
+| `demo123` | The primary demo account, with its own person: a sickle cell carrier like Fatima. One national ID links to one login, so it does not share hers |
 | `demo-fatima` and `demo-khalid` | A couple who share a finding: her sickle cell trait and his beta thalassaemia trait. Link them on the Partner page. "My care" shows the fictional counselling team and books a time |
 | `demo-x-carrier`, `demo-x-man` | X-linked results, with their own picture |
 | `demo-uncertain` | An uncertain finding, with no number |
+| `demo-dominant` | Familial hypercholesterolaemia (LDLR): a dominant change, so no carrier wording, a square of Aa x aa, and a 1 in 2 chance each pregnancy |
+| `demo-xl-dominant` | X-linked hypophosphataemia (PHEX) in a mother: half of sons and half of daughters. A father would pass it to every daughter and no son |
 | `demo-no-report` | What "no report yet" looks like: how a result arrives, never a result |
-| `demo-priya`, `demo-rohan` | The India pack, in Hindi, with India's own counselling team |
 | `demo-doctor`, `demo-auditor` | Emergency access, and reviewing it |
 
 The counselling team and its week of times come from a separate seed, which the launcher runs on

@@ -50,7 +50,7 @@
 - Add a risk-group field for cases such as HBA1/HBA2.
 - Generator for people, couples and FHIR bundles.
 - The organisers provide no data, so we generate it all and list every input source.
-- Named demo personas, for Abu Dhabi and India: at-risk couple, X-linked carrier, VUS, hemizygous male, compound finding, one-carrier cousins, unrelated with no findings.
+- Named demo personas for Abu Dhabi: at-risk couple, X-linked carrier, VUS, hemizygous male, compound finding, one-carrier cousins, unrelated with no findings.
 
 **Files:** `backend/app/risk_engine/data/carrier_frequencies.yaml`, `backend/synthetic/generate.py`, `backend/synthetic/personas.yaml`, `docs/submission/data_sources.md`
 **Issues to close:** M3, part of H3, S10
@@ -177,7 +177,7 @@
 
 **Objectives**
 - O2.6.1 Everything country-specific is read from a pack.
-- O2.6.2 The Abu Dhabi reference pack and a small India pack exist, each labelled with its review status.
+- O2.6.2 The Abu Dhabi reference pack and the empty template exist, each labelled with its review status.
 - O2.6.3 A pack can't switch off a safety rule.
 - O2.6.4 Missing or unreviewed data fails safe.
 
@@ -185,15 +185,15 @@
 - Pack schema and loader, with validation on start-up.
 - Move options, panel, services, contacts, identity formats and equity strata into the pack.
 - Replace UAE-specific names with generic ones, such as `national_id_hash`.
-- Build the template, and a small India pack with Hindi and English, labelled illustrative.
+- Build the template. A second pack (India) was built on 5 Nov 2026 and dropped on 16 Nov; the loader's tests switch to a country built from the template instead.
 
-**Files:** `backend/app/country_packs/*`, `backend/packs/_template/*`, `backend/packs/ae-abu-dhabi/*`, `backend/packs/in-india/*`, `backend/tests/unit/test_country_packs.py`
+**Files:** `backend/app/country_packs/*`, `backend/packs/_template/*`, `backend/packs/ae-abu-dhabi/*`, `backend/tests/unit/test_country_packs.py`
 **Issues to close:** S9, G1, G2, G3, G4, G5, G6, G7 (other parts in Phases 4 and 5)
 
 **Cross-verification**
 | ID | Check | Evidence |
 |---|---|---|
-| V2.6.1 | Switching pack changes options, language and contacts, with no code change | Test using the Abu Dhabi and India packs |
+| V2.6.1 | Switching pack changes options, language and contacts, with no code change | Test using the Abu Dhabi pack and a second country built from the template |
 | V2.6.2 | A gene missing from the pack gives "no number, refer" | Test |
 | V2.6.3 | A pack that tries to disable a validator or consent rule is rejected at load | Test |
 | V2.6.4 | An unreviewed pack is refused in production and labelled in demo mode | Test |

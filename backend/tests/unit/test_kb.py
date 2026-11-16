@@ -11,15 +11,10 @@ FRONT = "---\nid: x\ncondition: general\nlang: en\nlevel: simple\nversion: 1\nst
 def test_every_document_has_complete_front_matter_and_passes_the_rules() -> None:
     """V4.1.1. Loading refuses any file that doesn't, so the whole set loading is the check."""
     passages = load_all()
-    assert len(passages) >= 24
-    assert {p.lang for p in passages} == {"en", "hi"}
-
-
-def test_every_topic_exists_in_both_languages() -> None:
-    passages = load_all()
-    english = {p.id for p in passages if p.lang == "en"}
-    hindi = {p.id for p in passages if p.lang == "hi"}
-    assert english == hindi
+    assert len(passages) >= 12
+    # English only. Clinical passages in another language wait on a reviewer, and until then an
+    # Arabic question gets the English answer with a line saying so (see test_templates.py).
+    assert {p.lang for p in passages} == {"en"}
 
 
 def test_every_condition_in_the_packs_has_content() -> None:
@@ -28,11 +23,9 @@ def test_every_condition_in_the_packs_has_content() -> None:
     from app.country_packs.loader import load_pack
 
     covered = {p.condition for p in load_all()}
-    for code in ("ae-abu-dhabi", "in-india"):
-        pack = load_pack(DEFAULT_PACKS_DIR / code)
-        wanted = {c for entry in pack.panel.genes.values() for c in entry.conditions}
-        missing = wanted - covered - {"pcd", "inherited_retinal", "glaucoma"}
-        assert missing == set(), code
+    pack = load_pack(DEFAULT_PACKS_DIR / "ae-abu-dhabi")
+    wanted = {c for entry in pack.panel.genes.values() for c in entry.conditions}
+    assert wanted - covered - {"pcd", "inherited_retinal", "glaucoma"} == set()
 
 
 def test_unreviewed_content_says_so() -> None:
@@ -78,8 +71,8 @@ def test_reviewed_needs_a_reviewer(tmp_path: Path) -> None:
 
 def test_retrieval_never_crosses_language_or_level() -> None:
     """V4.1.2."""
-    for language in ("en", "hi"):
-        for passage in retrieve("carrier gene child वाहक जीन", language, "simple", limit=10):
+    for language in ("en",):
+        for passage in retrieve("carrier gene child", language, "simple", limit=10):
             assert passage.lang == language
             assert passage.level == "simple"
     assert retrieve("carrier", "en", "detailed") == []

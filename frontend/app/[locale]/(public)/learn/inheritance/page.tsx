@@ -31,6 +31,7 @@ export default async function Inheritance({ params }: { params: Promise<{ locale
             <PunnettSquare
               visual={{
                 type: "punnett",
+                pattern: "recessive",
                 gene: null,
                 parent_a: ["A", "a"],
                 parent_b: ["A", "a"],
@@ -40,6 +41,37 @@ export default async function Inheritance({ params }: { params: Promise<{ locale
             />
           </div>
         </ClayCard>
+        <RiseIn>
+          <ClayCard title={t("learn.dominant_t")} accent={4}>
+            <div className="mb-3 flex justify-end"><ListenButton targetId="dominant-text" /></div>
+            <p id="dominant-text" className="mb-5">{t("learn.dominant_b")}</p>
+            {/* The other half of the picture: one changed copy is enough, so nobody is a carrier. */}
+            <div className="grid gap-6 md:grid-cols-2">
+              <IconArray
+                visual={{
+                  type: "icon_array",
+                  total: 100,
+                  gene: null,
+                  groups: [
+                    { key: "inherits_change", count: 50 },
+                    { key: "does_not_inherit", count: 50 },
+                  ],
+                }}
+              />
+              <PunnettSquare
+                visual={{
+                  type: "punnett",
+                  pattern: "dominant",
+                  gene: null,
+                  parent_a: ["A", "a"],
+                  parent_b: ["a", "a"],
+                  cells: [["Aa", "Aa"], ["aa", "aa"]],
+                  legend: { Aa: "inherits_change", aa: "does_not_inherit" },
+                }}
+              />
+            </div>
+          </ClayCard>
+        </RiseIn>
         <RiseIn><ClayCard title={t("learn.xlinked_t")} accent={3}><p>{t("learn.xlinked_b")}</p></ClayCard></RiseIn>
         <RiseIn delay={80}><ClayCard title={t("learn.carrier_t")} accent={2}><p>{t("learn.carrier_b")}</p></ClayCard></RiseIn>
         <Notice>{t("draft.clinical")}</Notice>

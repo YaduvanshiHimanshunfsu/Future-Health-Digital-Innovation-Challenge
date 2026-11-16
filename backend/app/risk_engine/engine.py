@@ -7,6 +7,8 @@ from fractions import Fraction
 from app.risk_engine import rules
 from app.risk_engine.frequencies import GeneInfo, GeneTable
 from app.risk_engine.types import (
+    DOMINANT,
+    ON_THE_X,
     CoupleAssessment,
     CoupleFact,
     Finding,
@@ -80,7 +82,7 @@ def _copies(findings: list[Finding], inheritance: Inheritance, sex: Sex) -> _Cop
         return _Copies.UNCERTAIN
 
     zygosities = {finding.zygosity for finding in findings}
-    if inheritance is Inheritance.X_LINKED:
+    if inheritance in ON_THE_X:
         if sex is Sex.UNKNOWN:
             return _Copies.INCONSISTENT
         if sex is Sex.MALE:
@@ -120,16 +122,20 @@ def person_facts(findings: Iterable[Finding], sex: Sex, table: GeneTable) -> lis
             facts.append(_refer(gene, Flag.UNKNOWN_GENE))
             continue
         copies = _copies(gene_findings, info.inheritance, sex)
-        facts.extend(_person_gene_facts(info, copies))
+        facts.extend(_person_gene_facts(info, copies, sex))
     return facts
 
 
-def _person_gene_facts(info: GeneInfo, copies: _Copies) -> Iterator[RiskFact]:
+def _person_gene_facts(
+    info: GeneInfo, copies: _Copies, sex: Sex = Sex.UNKNOWN
+) -> Iterator[RiskFact]:
     gene = info.gene
     if copies is _Copies.INCONSISTENT:
         yield _refer(gene, Flag.INCONSISTENT_DATA)
     elif copies is _Copies.UNCERTAIN:
         yield _fact(Scenario.UNCERTAIN_VUS, gene, Label.UNCERTAIN, None, CITE_REVIEW, Flag.VUS)
+    elif info.inheritance in DOMINANT:
+        yield from _dominant_facts(info, copies, sex)
     elif copies is _Copies.HEMIZYGOUS:
         yield _possibly_affected(info, copies)
     elif copies is _Copies.TWO:
@@ -147,6 +153,36 @@ def _person_gene_facts(info: GeneInfo, copies: _Copies) -> Iterator[RiskFact]:
 def _xl_mother_facts(scenario: Scenario, gene: str, passes_on: Fraction) -> Iterator[RiskFact]:
     yield _fact(scenario, gene, Label.SON_AFFECTED, passes_on, CITE_MENDELIAN, Flag.XL_FEMALE)
     yield _fact(scenario, gene, Label.DAUGHTER_CARRIER, passes_on, CITE_MENDELIAN, Flag.XL_FEMALE)
+
+
+def _dominant_facts(info: GeneInfo, copies: _Copies, sex: Sex) -> Iterator[RiskFact]:
+    """One changed copy is enough, so these are about passing it on, not about sharing it.
+
+    The person themselves may be affected, which only a clinician can say, so the finding also
+    goes to a person. Nothing here predicts that a child who inherits the change will be ill:
+    how much a changed copy does varies, and that is the clinician's conversation too.
+    """
+    gene = info.gene
+    yield _possibly_affected(info, copies)
+    everyone = copies in (_Copies.TWO, _Copies.HEMIZYGOUS)
+    if info.inheritance is Inheritance.AUTOSOMAL_DOMINANT:
+        passes_on = rules.ONE if everyone else rules.ONE_HALF
+        yield _fact(Scenario.AD_SELF, gene, Label.INHERITS_CHANGE, passes_on, CITE_MENDELIAN)
+        if passes_on != rules.ONE:
+            yield _fact(
+                Scenario.AD_SELF, gene, Label.DOES_NOT_INHERIT, 1 - passes_on, CITE_MENDELIAN
+            )
+        return
+    # X-linked dominant. A father passes his only X to every daughter and to no son, which is the
+    # one pattern a square drawn for the mother cannot show.
+    if copies is _Copies.HEMIZYGOUS:
+        son, daughter = rules.ZERO, rules.ONE
+    else:
+        son = daughter = rules.ONE if everyone else rules.ONE_HALF
+    yield _fact(Scenario.XLD_SELF, gene, Label.SON_INHERITS, son, CITE_MENDELIAN, Flag.XL_FEMALE)
+    yield _fact(
+        Scenario.XLD_SELF, gene, Label.DAUGHTER_INHERITS, daughter, CITE_MENDELIAN, Flag.XL_FEMALE
+    )
 
 
 def _passes_on(copies: _Copies) -> Fraction:
@@ -214,7 +250,44 @@ def couple_assessment(
             facts.extend(
                 _visible_to(
                     Viewer.A if from_a else Viewer.B,
-                    _person_gene_facts(info, a_copies if from_a else b_copies),
+                    _person_gene_facts(
+                        info,
+                        a_copies if from_a else b_copies,
+                        a.sex if from_a else b.sex,
+                    ),
+                )
+            )
+            continue
+
+        if info.inheritance in DOMINANT:
+            # One changed copy is enough, so the chance comes from the parent who has it, not from
+            # the two of them together. There is nothing to combine, and a shared-finding figure
+            # would be the wrong arithmetic as well as the wrong story.
+            if from_a and from_b:
+                review_needed = True
+                facts.append(
+                    CoupleFact(
+                        _fact(
+                            Scenario.COUPLE_REVIEW,
+                            gene,
+                            Label.REVIEW,
+                            None,
+                            CITE_REVIEW,
+                            Flag.REVIEW_NEEDED,
+                        ),
+                        BOTH,
+                    )
+                )
+                continue
+            holder = Viewer.A if from_a else Viewer.B
+            facts.extend(
+                _visible_to(
+                    holder,
+                    _person_gene_facts(
+                        info,
+                        a_copies if from_a else b_copies,
+                        a.sex if from_a else b.sex,
+                    ),
                 )
             )
             continue
@@ -351,7 +424,7 @@ def _x_linked(
         return [CoupleFact(fact, BOTH) for fact in facts], True
 
     if mother_copies is not _Copies.NONE:
-        return list(_visible_to(mother, _person_gene_facts(info, mother_copies))), False
+        return list(_visible_to(mother, _person_gene_facts(info, mother_copies, Sex.FEMALE))), False
 
     return [
         CoupleFact(fact, frozenset({father}))

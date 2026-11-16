@@ -16,6 +16,15 @@ _CELL_LABEL = {
     "aA": Label.CARRIER.value,
     "aa": Label.TWO_COPIES.value,
 }
+# A dominant square uses the usual genetics convention, where the capital letter is the changed
+# copy, so the letters mean the opposite of the recessive square above. The two squares therefore
+# carry a `pattern`, and each screen explains its own letters rather than sharing one sentence.
+_DOMINANT_CELL_LABEL = {
+    "Aa": Label.INHERITS_CHANGE.value,
+    "aA": Label.INHERITS_CHANGE.value,
+    "aa": Label.DOES_NOT_INHERIT.value,
+    "AA": Label.INHERITS_CHANGE.value,
+}
 
 
 def split_counts(outcomes: dict[str, Fraction], total: int) -> dict[str, int]:
@@ -45,10 +54,35 @@ def punnett(two_copies_chance: Fraction) -> dict[str, Any] | None:
     cells = [[a + b for b in parent_b] for a in parent_a]
     return {
         "type": "punnett",
+        "pattern": "recessive",
         "parent_a": parent_a,
         "parent_b": parent_b,
         "cells": cells,
         "legend": {cell: _CELL_LABEL[cell] for row in cells for cell in row},
+    }
+
+
+def dominant_punnett(passes_on: Fraction) -> dict[str, Any] | None:
+    """One parent with the change, one without: Aa x aa, or AA x aa when both copies are changed.
+
+    The other parent's genotype is not a guess about a real person. A dominant change needs only
+    the one parent, so the square shows what this person alone can pass on.
+    """
+    if passes_on == Fraction(1, 2):
+        parent_a = ["A", "a"]
+    elif passes_on == Fraction(1):
+        parent_a = ["A", "A"]
+    else:
+        return None
+    parent_b = ["a", "a"]
+    cells = [[a + b for b in parent_b] for a in parent_a]
+    return {
+        "type": "punnett",
+        "pattern": "dominant",
+        "parent_a": parent_a,
+        "parent_b": parent_b,
+        "cells": cells,
+        "legend": {cell: _DOMINANT_CELL_LABEL[cell] for row in cells for cell in row},
     }
 
 
@@ -81,7 +115,10 @@ def visuals_for(facts: list[RiskFact]) -> list[dict[str, Any]]:
         gene = group[0].gene
         if scenario is Scenario.COUPLE_SHARED_AR:
             visuals.extend(_shared_visuals(gene, group))
+        elif scenario is Scenario.AD_SELF:
+            visuals.extend(_dominant_visuals(gene, group))
         elif scenario in (
+            Scenario.XLD_SELF,
             Scenario.XL_CARRIER_FEMALE,
             Scenario.XL_TWO_COPIES_FEMALE,
             Scenario.XL_FATHER,
@@ -93,6 +130,18 @@ def visuals_for(facts: list[RiskFact]) -> list[dict[str, Any]]:
             Scenario.COUPLE_ONE_CARRIER_UNTESTED,
         ):
             visuals.extend(_residual_visual(gene, group[0]))
+    return visuals
+
+
+def _dominant_visuals(gene: str | None, group: list[RiskFact]) -> list[dict[str, Any]]:
+    outcomes = {fact.label.value: fact.value for fact in group if fact.value is not None}
+    passes_on = outcomes.get(Label.INHERITS_CHANGE.value)
+    if passes_on is None:
+        return []
+    visuals: list[dict[str, Any]] = [{**icon_array(outcomes, 100), "gene": gene}]
+    square = dominant_punnett(passes_on)
+    if square:
+        visuals.append({**square, "gene": gene})
     return visuals
 
 

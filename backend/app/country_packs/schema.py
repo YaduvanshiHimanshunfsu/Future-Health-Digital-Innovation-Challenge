@@ -63,7 +63,11 @@ class Legal(_Strict):
 
 
 class GeneEntry(_Strict):
-    inheritance: Literal["AR", "XL"]
+    # AR and XL (X-linked recessive) are carrier patterns. AD and XLD are dominant: one changed
+    # copy is enough, so nobody is a carrier and the person themselves may be affected.
+    inheritance: Literal["AR", "XL", "AD", "XLD"]
+    # How often the changed copy is seen. For a dominant gene there are no carriers, so this is
+    # the frequency of the change itself, and the engine never uses it to work out a couple's risk.
     carrier_frequency: float = Field(gt=0, lt=1)
     detection_rate: float = Field(ge=0, le=1)
     conditions: list[str] = []

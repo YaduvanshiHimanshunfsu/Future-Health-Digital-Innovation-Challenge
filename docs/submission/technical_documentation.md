@@ -1,6 +1,6 @@
 # Technical documentation
 
-**Samvid** explains genetic carrier screening results privately, in plain words, in English and Hindi (Arabic layout ready, text pending), and hands anything clinical or upsetting to a person. It is a working prototype on synthetic data. Every claim below points to code or a test; anything not built says so.
+**Samvid** explains genetic carrier screening results privately, in plain words, in English and Arabic (right to left; the Arabic is drafted and unreviewed) (pending), and hands anything clinical or upsetting to a person. It is a working prototype on synthetic data. Every claim below points to code or a test; anything not built says so.
 
 ## Overview
 
@@ -26,7 +26,7 @@ All of it runs from one command (`python Run_Samvid.py`) as containers on one ma
 | `openfga` | OpenFGA 1.8 | Relationship-based access: who may see what, and until when |
 | Models (optional) | Gemini API, or Ollama on the same machine | Drafts explanations and double-checks routing. Off by default: reviewed templates answer instead |
 
-Country rules live in **country packs** (`backend/packs/`): the gene panel, carrier frequencies, options, support contacts, centres, time targets and reporting groups. Abu Dhabi is the reference pack and India an illustrative second. Neither is clinically reviewed, and the app says so on screen.
+Country rules live in **country packs** (`backend/packs/`): the gene panel, carrier frequencies, options, support contacts, centres, time targets and reporting groups. Abu Dhabi is the one pack the prototype ships, and `_template/` is what a second country starts from. Abu Dhabi is not clinically reviewed, and the app says so on screen.
 
 ## Data flows
 
@@ -43,7 +43,7 @@ Country rules live in **country packs** (`backend/packs/`): the gene panel, carr
 - **Numbers come from code.** The engine is pure and deterministic, and 100% branch-covered. A model never sees a figure: it gets `{fact:ID}` placeholders, and validators block any number it writes.
 - **Uncertain means no number**, and a person follows up.
 - **"No data" is not "no risk."** No report, or nothing found, is never shown as a negative.
-- **Never direct a decision.** Validators catch directive wording in English and Hindi; options are shown with equal weight and no ranking.
+- **Never direct a decision.** Validators catch directive wording in English and Arabic; options are shown with equal weight and no ranking.
 - **Clinical questions and distress go to people.** Rules route first, a model can only escalate, and anything the rules can't place goes to a person with the support line shown.
 - **Fail closed.** Any authorisation, redaction or validation failure means deny or the reviewed template.
 

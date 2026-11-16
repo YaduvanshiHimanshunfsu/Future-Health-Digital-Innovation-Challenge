@@ -4,7 +4,7 @@ import pytest
 
 from app.core.i18n import negotiate_language, translate
 
-SUPPORTED = ["en", "ar", "hi"]
+SUPPORTED = ["en", "ar"]
 MESSAGES = Path(__file__).resolve().parents[2] / "app" / "core" / "messages"
 
 
@@ -15,8 +15,8 @@ MESSAGES = Path(__file__).resolve().parents[2] / "app" / "core" / "messages"
         ("", "en"),
         ("ar-AE,ar;q=0.9,en;q=0.8", "ar"),
         ("fr,de", "en"),
-        ("hi;q=0,en", "en"),
-        ("hi;q=not-a-number,en", "en"),
+        ("ar;q=0,en", "en"),
+        ("ar;q=not-a-number,en", "en"),
         ("x" * 300, "en"),
     ],
 )

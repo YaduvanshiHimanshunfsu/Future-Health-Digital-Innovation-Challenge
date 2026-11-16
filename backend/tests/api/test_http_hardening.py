@@ -11,6 +11,7 @@ from fastapi import APIRouter, FastAPI
 from pydantic import Field
 
 from app.core.config import DEFAULT_PACKS_DIR
+from app.core.i18n import translate
 from app.core.logging import PhiSafeJsonFormatter
 from app.schemas.common import StrictIn
 from tests.conftest import client_for
@@ -216,11 +217,15 @@ async def test_docs_are_off_in_production(app_factory: Any, tmp_path: Path) -> N
         assert (await http.get("/openapi.json")).status_code == 404
 
 
-async def test_errors_follow_the_requested_language(client: httpx.AsyncClient) -> None:
+async def test_errors_are_translated_by_key_not_built_in_code(client: httpx.AsyncClient) -> None:
+    """The code is the same whatever the language, and the message comes from the catalogue.
+
+    `app/core/messages/` holds English only, so every language gets English today; the test below
+    pins that fallback, and `tests/unit/test_i18n.py` covers the negotiation itself.
+    """
     english = await client.get("/nothing")
-    hindi = await client.get("/nothing", headers={"Accept-Language": "hi-IN,hi;q=0.9,en;q=0.8"})
-    assert english.json()["code"] == hindi.json()["code"]
-    assert english.json()["message"] != hindi.json()["message"]
+    assert english.json()["code"] == "not_found"
+    assert english.json()["message"] == translate("error.not_found", "en")
 
 
 async def test_language_with_no_translation_falls_back_to_english(

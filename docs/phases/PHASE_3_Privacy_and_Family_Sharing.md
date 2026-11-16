@@ -142,12 +142,12 @@
 **Objectives**
 - O3.5.1 The access log includes counsellor and partner actions, in plain language.
 - O3.5.2 Break-glass needs a reason and raises a flag.
-- O3.5.3 Redaction fails closed and covers Arabic and Hindi.
+- O3.5.3 Redaction fails closed and covers Arabic.
 
 **Work** (step 16)
 - Access log that joins case and couple resources to the person.
 - Break-glass endpoint and review list.
-- Redaction with Arabic and Hindi handling, and the LLM allowlist.
+- Redaction with Arabic handling, and the LLM allowlist.
 
 **Files:** `backend/app/api/v1/access_log.py`, `backend/app/privacy/break_glass.py`, `backend/app/privacy/redaction.py`, `frontend/app/[locale]/(app)/app/privacy/`
 **Issues to close:** **H6**, part of H11, part of H14, G2
@@ -158,7 +158,7 @@
 | V3.5.1 | A counsellor viewing a case appears in the subject's log | API test |
 | V3.5.2 | Break-glass without a reason is refused; with one, it's flagged | Test |
 | V3.5.3 | If the redaction engine fails, no LLM call happens | Fault-injection test |
-| V3.5.4 | Arabic, Hindi and English PII samples are redacted, including Arabic and Hindi names | Parametrised test; a native speaker writes the samples |
+| V3.5.4 | English and Arabic PII samples are redacted, including Arabic names | Parametrised test; a native speaker writes the samples |
 | V3.5.5 | The LLM context has only allowlisted fields | Unit test with a recording stub |
 
 ---

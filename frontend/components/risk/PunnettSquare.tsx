@@ -5,10 +5,15 @@ import type { PunnettVisual } from "@/lib/api/types";
 
 export function PunnettSquare({ visual }: { visual: PunnettVisual }) {
   const { t } = useI18n();
+  // The two squares use the letters oppositely: on a recessive square the capital is the working
+  // copy, on a dominant one it is the changed copy. Each says which, rather than sharing a line.
+  const dominant = visual.pattern === "dominant";
   return (
     <figure className="animate-rise">
-      <figcaption className="mb-1 font-display text-base font-medium">{t("visual.punnett_title")}</figcaption>
-      <p className="muted mb-3">{t("visual.punnett_help")}</p>
+      <figcaption className="mb-1 font-display text-base font-medium">
+        {t(dominant ? "visual.punnett_title_dominant" : "visual.punnett_title")}
+      </figcaption>
+      <p className="muted mb-3">{t(dominant ? "visual.punnett_help_dominant" : "visual.punnett_help")}</p>
       <table className="w-full max-w-sm border-separate border-spacing-1 text-center text-sm">
         <thead>
           <tr>

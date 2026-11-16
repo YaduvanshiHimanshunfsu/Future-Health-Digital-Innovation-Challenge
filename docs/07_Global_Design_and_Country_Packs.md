@@ -92,27 +92,25 @@ These are starting points, not advice. Local counsel must confirm them before a 
 | UAE | Federal Decree-Law 49/2023 (human genome), Federal Law 2/2019 (health data), assisted-reproduction law |
 | EU and UK | GDPR, which treats genetic data as a special category, plus national genetic-testing laws |
 | USA | HIPAA, GINA, and state genetic privacy laws |
-| India | Digital Personal Data Protection Act 2023, ART Regulation Act 2021, PCPNDT Act (prenatal sex determination) |
 | Others | National data, health and reproductive law, and professional licensing |
 
 ## 7. What this means for the 20 Nov prototype
 
 | Scope | Item |
 |---|---|
-| **Must have** | Pack framework, the Abu Dhabi reference pack, and a small India pack, each labelled with its review status |
-| **Strong demo moment** | Switching from Abu Dhabi to India changes the options, language and contacts with no code change |
-| **Roadmap** | Tamil, Kannada and Telugu for India, more reviewed packs, partner onboarding, per-country deployments |
+| **Must have** | Pack framework, the Abu Dhabi reference pack, and the empty template, each labelled with its review status |
+| **Strong demo moment** | Every country-specific setting on screen comes from the pack: a second country is a folder of settings, not a code change |
+| **Roadmap** | More reviewed packs, partner onboarding, per-country deployments |
 
-**Decided on 5 Nov 2026: India is the second pack.** It's a very different setting, with different law and many languages, and it shows the design isn't tied to the Gulf. Local review must confirm the details, including how screening is offered.
+**Decided on 5 Nov 2026: India is the second pack. Reversed on 16 Nov 2026.** The prototype now ships Abu Dhabi only. A second pack was costing review attention that one unreviewed pack already needed, and a half-reviewed second country argues against the point it was meant to prove. `_template/` carries the structure instead, and the loader tests switch to a second country built from it.
 
 ### Languages
 
 | Pack | Languages | Status |
 |---|---|---|
-| Abu Dhabi | Arabic, English | Reference, pending clinical and legal review |
-| India | Hindi, English | Illustrative, not reviewed |
+| Abu Dhabi | English, with an Arabic translation | Reference, pending clinical and legal review. The Arabic is drafted, with no native-speaker review |
 
-**Known limit (G10):** Hindi doesn't reach the Indian communities where consanguinity is most common. In national survey data, [Tamil Nadu (28%), Karnataka (27%) and Andhra Pradesh (26%)](https://insights.dataful.in/maps/prevalence-of-consanguineous-marriages-in-india-nfhs-5-2019-21) have the highest shares, against about 11% nationally. So Tamil, Kannada and Telugu are the next languages on the roadmap, and the pitch should say so instead of implying that Hindi covers India.
+**Known limit:** Abu Dhabi's residents speak far more than English and Arabic, so these two don't reach everyone who would want screening. Any further language needs its own native-speaker review before it ships, and the pitch should say which languages are covered rather than implying the product speaks to everyone.
 
 ## 8. Effect on existing documents
 

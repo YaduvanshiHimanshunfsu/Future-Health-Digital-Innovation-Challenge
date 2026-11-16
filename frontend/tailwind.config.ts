@@ -4,7 +4,7 @@ import type { Config } from "tailwindcss";
 const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   // Built at runtime from API values, such as `outcome-${key}`, so the scanner can't see them.
-  safelist: [{ pattern: /^outcome-(two_copies|carrier|neither|other)$/ }, { pattern: /^glaze-[1-4]$/ }],
+  safelist: [{ pattern: /^outcome-(two_copies|carrier|neither|other|inherits_change|does_not_inherit)$/ }, { pattern: /^glaze-[1-4]$/ }],
   theme: {
     extend: {
       colors: {

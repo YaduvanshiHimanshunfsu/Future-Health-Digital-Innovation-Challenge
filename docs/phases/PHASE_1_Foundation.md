@@ -57,7 +57,7 @@
 - O1.2.3 Risk rules are reviewed against the issues list.
 - O1.2.4 Duties under the human genome law are mapped to features.
 - O1.2.5 Threat model version 1 exists.
-- O1.2.6 India legal and options starting points are recorded, and labelled unreviewed.
+- O1.2.6 ~~India legal and options starting points~~ **Dropped on 16 Nov 2026 with the India pack.**
 - O1.2.7 How premarital couple results are actually delivered is understood.
 - O1.2.8 Support contacts, the retention table and lexicon seeds are started.
 
@@ -67,7 +67,7 @@
 - Ask how premarital couple results are actually delivered, to resolve S6.
 - Get verified support contacts for the distress path.
 - Seed the lexicon, including `hamil` handling and Gulf-dialect directive terms, with an Arabic speaker.
-- Seed the Hindi lexicon with a Hindi speaker, looking for words with two meanings, as with `hamil`.
+- Seed the Arabic lexicon with an Arabic speaker, looking for words with two meanings, as with `hamil`.
 - Write STRIDE threat model v1.
 
 **Files:** `docs/clinical/lexicon_seeds.md`, `docs/clinical/options_by_jurisdiction.md`, `docs/clinical/risk_rules_review.md`, `docs/clinical/support_contacts.md`, `docs/compliance/legal_baseline.md`, `docs/security/threat_model.md`
@@ -81,11 +81,11 @@
 | V1.2.3 | Each genome-law article in review S4 maps to a feature or a stated limitation | Legal baseline table |
 | V1.2.4 | Support contacts come from an official source | Link and date in file |
 | V1.2.5 | Threat model covers shared-device, partner-pressure and elder-pressure cases | Reviewer sign-off |
-| V1.2.6 | India starting points are recorded and labelled unreviewed | Legal baseline and options files |
+| V1.2.6 | ~~India starting points~~ **Moot:** the India pack was dropped on 16 Nov 2026 | — |
 | V1.2.7 | Each rule in the risk table is checked against the review's issues | `docs/clinical/risk_rules_review.md` |
 | V1.2.8 | The answer on couple result delivery is recorded, and couple mode wording follows it | `brain.md` decision |
 | V1.2.9 | A draft retention table exists per pack | Legal baseline |
-| V1.2.10 | Lexicon seeds are reviewed by Arabic and Hindi speakers | Reviewers' names |
+| V1.2.10 | Lexicon seeds are reviewed by Arabic speakers | Reviewers' names |
 
 ---
 
@@ -197,9 +197,9 @@
 |---|---|---|
 | V1.6.1 | All text and background pairs reach 4.5:1 | Contrast table in the frontend README |
 | V1.6.2 | "You are healthy", DoH and M42 logos, and confetti are absent | Reviewer checks screens |
-| V1.6.3 | Arabic and Hindi screens reviewed by native speakers | Reviewers' names |
+| V1.6.3 | Arabic screens reviewed by native speakers | Reviewers' names |
 | V1.6.4 | The style-lock component sheet exists | Design export |
-| V1.6.5 | T1 screens exist in the agreed variants, including Hindi | List checked against scope tiers |
+| V1.6.5 | T1 screens exist in the agreed variants, including Arabic | List checked against scope tiers |
 
 ---
 

@@ -40,15 +40,15 @@ Text read from the [Dubai Health Authority copy](https://dha.gov.ae/uploads/0620
 
 A first draft, per pack. Nothing below is final.
 
-| Data | Abu Dhabi pack (draft) | India pack (illustrative) | Reason |
-|---|---|---|---|
-| Findings and results | 25 years from the last health procedure | To be decided by local review | Federal Law 2/2019, Art. 20 |
-| Care cases, pathway steps, case notes | 25 years | To be decided | Same |
-| Audit log | Same as the records it covers | To be decided | Must outlive what it proves |
-| Consent records | Same as the records they cover | To be decided | Proof of permission |
-| Chat messages | **Open question:** are they health records? Default: treat as records until counsel says otherwise | To be decided | The spec's 90 days may conflict (H19) |
-| Analytics events | As long as useful, since de-identified | Same | No identity held |
-| Invitations | Delete 90 days after expiry | Same | Data minimisation |
+| Data | Abu Dhabi pack (draft) | Reason |
+|---|---|---|
+| Findings and results | 25 years from the last health procedure | Federal Law 2/2019, Art. 20 |
+| Care cases, pathway steps, case notes | 25 years | Same |
+| Audit log | Same as the records it covers | Must outlive what it proves |
+| Consent records | Same as the records they cover | Proof of permission |
+| Chat messages | **Open question:** are they health records? Default: treat as records until counsel says otherwise | The spec's 90 days may conflict (H19) |
+| Analytics events | As long as useful, since de-identified | No identity held |
+| Invitations | Delete 90 days after expiry | Data minimisation |
 
 **Erasure:** the API's database role can't delete findings or consents, by design. A person's erasure request goes through an administrative process that respects the retention rule.
 
@@ -60,17 +60,6 @@ A first draft, per pack. Nothing below is final.
 4. Does the AI explanation layer count as a medical device under DoH rules?
 5. Is any cross-border processing permitted for LLM calls, or must all of it stay in-country?
 6. Which UAE assisted-reproduction options may be described, and with what wording?
-
-## India
-
-**Unreviewed starting points only**, labelled illustrative in the pack.
-
-| Law | Why it may matter |
-|---|---|
-| Digital Personal Data Protection Act 2023 | Consent and handling of personal data |
-| ART Regulation Act 2021 | Which assisted-reproduction services and donor arrangements are permitted |
-| PCPNDT Act | Restricts prenatal sex determination, which affects how X-linked counselling is worded |
-
 ## Other countries
 
 Each country pack adds its own table. Starting points are in [docs/07](../07_Global_Design_and_Country_Packs.md), section 6.

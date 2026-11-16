@@ -55,6 +55,8 @@ TABLE = GeneTable(
             gene("HBA2", risk_group="alpha_thalassaemia"),
             gene("DMD", Inheritance.X_LINKED),
             gene("G6PD", Inheritance.X_LINKED, routine=True),
+            gene("LDLR", Inheritance.AUTOSOMAL_DOMINANT),
+            gene("PHEX", Inheritance.X_LINKED_DOMINANT),
         )
     }
 )
@@ -646,3 +648,86 @@ def test_yes_no_never_names_any_gene(
         for fact in partner_view(assessment, viewer, Reveal.YES_NO):
             assert fact.gene is None
             assert not any(name in fact.id for name in GENES)
+
+
+# --- Dominant inheritance ------------------------------------------------------------------
+# One changed copy is enough, so nobody is a carrier and the person may be affected themselves.
+
+
+def test_a_dominant_change_is_never_called_carrier_and_goes_to_a_person() -> None:
+    """The word "carrier" would be wrong here, and the finding matters for their own health."""
+    facts = person_facts([finding("LDLR")], Sex.FEMALE, TABLE)
+    labels = {fact.label for fact in facts}
+    assert Label.CARRIER not in labels
+    assert Label.POSSIBLE_AFFECTED in labels
+    assert any(Flag.POSSIBLE_AFFECTED in fact.flags for fact in facts)
+
+
+def test_one_dominant_copy_passes_to_half_of_pregnancies() -> None:
+    """Aa x aa: half inherit the changed copy, half inherit neither."""
+    facts = person_facts([finding("LDLR")], Sex.FEMALE, TABLE)
+    assert values(facts, "LDLR") == {
+        Label.POSSIBLE_AFFECTED: None,
+        Label.INHERITS_CHANGE: rules.ONE_HALF,
+        Label.DOES_NOT_INHERIT: rules.ONE_HALF,
+    }
+
+
+def test_two_dominant_copies_pass_to_every_pregnancy_and_leave_no_second_group() -> None:
+    facts = person_facts([finding("LDLR", zyg=HOM)], Sex.FEMALE, TABLE)
+    assert values(facts, "LDLR") == {
+        Label.POSSIBLE_AFFECTED: None,
+        Label.INHERITS_CHANGE: rules.ONE,
+    }
+
+
+def test_an_x_linked_dominant_mother_splits_sons_and_daughters_alike() -> None:
+    facts = person_facts([finding("PHEX")], Sex.FEMALE, TABLE)
+    assert values(facts, "PHEX") == {
+        Label.POSSIBLE_AFFECTED: None,
+        Label.SON_INHERITS: rules.ONE_HALF,
+        Label.DAUGHTER_INHERITS: rules.ONE_HALF,
+    }
+
+
+def test_an_x_linked_dominant_father_passes_to_every_daughter_and_no_son() -> None:
+    """He has one X and gives it to each daughter; his sons get his Y. The pattern's whole point."""
+    facts = person_facts([finding("PHEX", zyg=HEMI)], Sex.MALE, TABLE)
+    assert values(facts, "PHEX") == {
+        Label.POSSIBLE_AFFECTED: None,
+        Label.SON_INHERITS: rules.ZERO,
+        Label.DAUGHTER_INHERITS: rules.ONE,
+    }
+
+
+def test_a_dominant_finding_is_never_a_shared_recessive_result() -> None:
+    """The chance comes from the parent who has it, so there is nothing to combine."""
+    assessment = couple_assessment(
+        record(finding("LDLR")), record(sex=Sex.MALE), Relationship.UNRELATED, TABLE
+    )
+    assert assessment.shared_genes == frozenset()
+    assert not assessment.review_needed
+    labels = {fact.fact.label for fact in assessment.facts}
+    assert Label.TWO_COPIES not in labels
+    assert Label.INHERITS_CHANGE in labels
+    # It is the holder's own fact, so the partner is never shown it.
+    for item in assessment.facts:
+        if item.fact.gene == "LDLR":
+            assert item.visible_to == frozenset({Viewer.A})
+
+
+def test_both_partners_with_the_same_dominant_change_go_to_a_counsellor() -> None:
+    assessment = couple_assessment(
+        record(finding("LDLR")),
+        record(finding("LDLR"), sex=Sex.MALE),
+        Relationship.UNRELATED,
+        TABLE,
+    )
+    assert assessment.review_needed
+    assert assessment.shared_genes == frozenset()
+    assert Label.REVIEW in {fact.fact.label for fact in assessment.facts}
+
+
+def test_a_dominant_vus_still_gives_no_number() -> None:
+    facts = person_facts([finding("LDLR", cls=VUS)], Sex.FEMALE, TABLE)
+    assert values(facts, "LDLR") == {Label.UNCERTAIN: None}

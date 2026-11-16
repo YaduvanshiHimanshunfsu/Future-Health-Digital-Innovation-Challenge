@@ -11,12 +11,10 @@ These caused or could cause routing errors. Anything like them needs matching by
 | Language | Word | Meanings | Handling |
 |---|---|---|---|
 | Arabic | *hamil* | Pregnant, and carrier | Pregnancy only in context, such as *ana hamil*. Not before *li-* or *lil-* (C6) |
-| Hindi | वाहक (*vaahak*) | Carrier, also "bearer" or "vehicle" | Safe for routing, but check it reads naturally to lay readers |
-| Hindi | गर्भवती, गर्भ से | Pregnant | Route to a human. Native speaker to add everyday phrasing |
 
 ## Terms to avoid
 
-| Meaning | Arabic (Roman letters) | Hindi | Say instead |
+| Meaning | Arabic (Roman letters) | Say instead |
 |---|---|---|---|
 | Defective | *ma'ib* | दोषपूर्ण, खराब | Has a change in |
 | Bad blood | *dam fasid* | खराब खून, गंदा खून | Remove |
@@ -32,7 +30,6 @@ These caused or could cause routing errors. Anything like them needs matching by
 | English | "you should", "you must", "it would be best", "consider cancelling" | Soft forms slip past simple rules (H12) |
 | Arabic, standard | *yajib alayk*, *nansahuk*, *min al-afdal* | |
 | Arabic, Gulf | *lazim tsawwun*, *al-mafrud* | Dialect forms |
-| Hindi | आपको करना चाहिए, ज़रूरी है, शादी मत करो, बेहतर होगा कि | Includes polite forms that still direct |
 
 ## Check for each new language
 

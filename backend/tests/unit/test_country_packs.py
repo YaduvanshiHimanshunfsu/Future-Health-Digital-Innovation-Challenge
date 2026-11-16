@@ -13,7 +13,7 @@ from app.risk_engine.types import Classification, Finding, Scenario, Sex, Zygosi
 
 APP_DIR = Path(__file__).resolve().parents[2] / "app"
 ABU_DHABI = DEFAULT_PACKS_DIR / "ae-abu-dhabi"
-INDIA = DEFAULT_PACKS_DIR / "in-india"
+TEMPLATE = DEFAULT_PACKS_DIR / "_template"
 
 
 def copy_pack(tmp_path: Path, source: Path = ABU_DHABI, name: str = "ae-abu-dhabi") -> Path:
@@ -28,19 +28,36 @@ def replace_in(path: Path, old: str, new: str) -> None:
     path.write_text(text.replace(old, new), "utf-8")
 
 
-def test_both_shipped_packs_load() -> None:
+def other_country(tmp_path: Path) -> Path:
+    """A second, deliberately different country, built from the template.
+
+    Abu Dhabi is the only country the prototype ships, so the checks that a setting is read from
+    the pack rather than fixed in code need somewhere else to switch to. The template is it: every
+    setting below differs from Abu Dhabi's, and keeping it loadable is worth testing anyway,
+    because it is what anyone adding a country starts from.
+    """
+    pack = copy_pack(tmp_path, TEMPLATE, "xx-your-country")
+    (pack / "strata.yaml").write_text(
+        "regions: [north, south]\nage_bands: [18-24, 25+]\ngenders: [woman, man]\n"
+        "sla_hours: {P1: 12, P2: 36, P3: 96, P4: 200}\n",
+        "utf-8",
+    )
+    return pack
+
+
+def test_the_shipped_pack_and_the_template_load(tmp_path: Path) -> None:
     assert load_pack(ABU_DHABI).code == "ae-abu-dhabi"
-    assert load_pack(INDIA).code == "in-india"
+    assert load_pack(other_country(tmp_path)).code == "xx-your-country"
 
 
-def test_switching_pack_changes_settings_with_no_code_change() -> None:
+def test_switching_pack_changes_settings_with_no_code_change(tmp_path: Path) -> None:
     """V2.6.1."""
-    abu_dhabi, india = load_pack(ABU_DHABI), load_pack(INDIA)
-    assert abu_dhabi.manifest.languages != india.manifest.languages
-    assert {o.key for o in abu_dhabi.options.options} != {o.key for o in india.options.options}
-    assert abu_dhabi.identity.national_id_label != india.identity.national_id_label
-    assert abu_dhabi.services.qualified_human != india.services.qualified_human
-    assert abu_dhabi.gene_table.genes != india.gene_table.genes
+    abu_dhabi, other = load_pack(ABU_DHABI), load_pack(other_country(tmp_path))
+    assert abu_dhabi.manifest.languages != other.manifest.languages
+    assert {o.key for o in abu_dhabi.options.options} != {o.key for o in other.options.options}
+    assert abu_dhabi.identity.national_id_label != other.identity.national_id_label
+    assert abu_dhabi.services.qualified_human != other.services.qualified_human
+    assert abu_dhabi.gene_table.genes != other.gene_table.genes
 
 
 def test_abu_dhabi_pack_lists_no_donor_or_adoption_option() -> None:
@@ -50,11 +67,11 @@ def test_abu_dhabi_pack_lists_no_donor_or_adoption_option() -> None:
     assert not keys & {"donor", "adoption"}
 
 
-def test_same_finding_differs_only_through_the_pack() -> None:
+def test_same_finding_differs_only_through_the_pack(tmp_path: Path) -> None:
     """V2.6.2. A gene missing from a pack gives no number, and goes to a person."""
     finding = Finding("ABCA4", Classification.PATHOGENIC, Zygosity.HETEROZYGOUS)
     carried = person_facts([finding], Sex.FEMALE, load_pack(ABU_DHABI).gene_table)
-    referred = person_facts([finding], Sex.FEMALE, load_pack(INDIA).gene_table)
+    referred = person_facts([finding], Sex.FEMALE, load_pack(other_country(tmp_path)).gene_table)
     assert carried[0].scenario is Scenario.CARRIER_SELF
     assert referred[0].scenario is Scenario.REFER
     assert referred[0].value is None
@@ -79,16 +96,15 @@ def test_a_pack_cannot_switch_off_a_safety_rule(tmp_path: Path, file: str, line:
         load_pack(pack)
 
 
-@pytest.mark.parametrize("code", ["ae-abu-dhabi", "in-india"])
-def test_unreviewed_pack_is_refused_in_production(code: str) -> None:
+def test_unreviewed_pack_is_refused_in_production() -> None:
     """V2.6.4."""
     with pytest.raises(PackError, match="production"):
-        load_registry(DEFAULT_PACKS_DIR, [code], code, production=True)
+        load_registry(DEFAULT_PACKS_DIR, ["ae-abu-dhabi"], "ae-abu-dhabi", production=True)
 
 
 def test_unreviewed_pack_loads_for_a_demo_and_is_labelled() -> None:
-    registry = load_registry(DEFAULT_PACKS_DIR, ["in-india"], "in-india", production=False)
-    assert registry.default.manifest.status.value == "illustrative"
+    registry = load_registry(DEFAULT_PACKS_DIR, ["ae-abu-dhabi"], "ae-abu-dhabi", production=False)
+    assert registry.default.manifest.status.value == "reference"
     assert not registry.default.is_reviewed
 
 
@@ -127,21 +143,17 @@ def test_no_country_specific_values_in_application_code() -> None:
     assert offenders == []
 
 
-def test_no_qualified_service_is_stated_and_not_assumed() -> None:
-    """V2.6.6. The screens use this to say nothing is listed, instead of implying a service.
-
-    India lists demo centres, but every one is fictional, so none implies a real service.
-    """
-    india = load_pack(INDIA)
-    assert india.services.qualified_human == "none"
-    assert india.services.centres
-    assert all(centre.fictional for centre in india.services.centres)
+def test_no_qualified_service_is_stated_and_not_assumed(tmp_path: Path) -> None:
+    """V2.6.6. The screens use this to say nothing is listed, instead of implying a service."""
+    other = load_pack(other_country(tmp_path))
+    assert other.services.qualified_human == "none"
+    assert other.services.centres == []
 
 
-@pytest.mark.parametrize("pack", [ABU_DHABI, INDIA])
-def test_a_demo_centre_can_never_send_anyone_anywhere(pack: Path) -> None:
+def test_a_demo_centre_can_never_send_anyone_anywhere() -> None:
     """An invented centre has no phone, website or check date, so it can't pass for a real one."""
-    for centre in load_pack(pack).services.centres:
+    assert load_pack(ABU_DHABI).services.centres
+    for centre in load_pack(ABU_DHABI).services.centres:
         assert centre.fictional
         assert (centre.contact, centre.source_url, centre.checked_on) == (None, None, None)
 
@@ -231,19 +243,18 @@ def test_missing_legal_file_gives_restrictive_rules(tmp_path: Path) -> None:
     assert load_pack(pack).legal == Legal()
 
 
-def test_strata_and_time_targets_come_from_the_pack() -> None:
+def test_strata_and_time_targets_come_from_the_pack(tmp_path: Path) -> None:
     """V2.6.8."""
-    abu_dhabi, india = load_pack(ABU_DHABI), load_pack(INDIA)
-    assert abu_dhabi.strata.regions != india.strata.regions
-    assert abu_dhabi.strata.sla_hours.P2 != india.strata.sla_hours.P2
+    abu_dhabi, other = load_pack(ABU_DHABI), load_pack(other_country(tmp_path))
+    assert abu_dhabi.strata.regions != other.strata.regions
+    assert abu_dhabi.strata.sla_hours.P2 != other.strata.sla_hours.P2
 
 
 def test_pack_identity_formats_are_scrubbed_from_logs() -> None:
     """Finishes V1.4.3: formats come from the pack, including ones the generic rules miss."""
     assert "ABCDE" in scrub("ref ABCDE-12")
-    load_registry(DEFAULT_PACKS_DIR, ["ae-abu-dhabi", "in-india"], "ae-abu-dhabi", production=False)
+    load_registry(DEFAULT_PACKS_DIR, ["ae-abu-dhabi"], "ae-abu-dhabi", production=False)
     assert "1234567" not in scrub("id 784-1990-1234567-1 in request")
-    assert "0000" not in scrub("abha 00-0000-0000-0001")
 
 
 @pytest.mark.parametrize("missing", ["pack.yaml", "panel.yaml", "identity.yaml"])
@@ -302,12 +313,12 @@ def test_enabled_pack_must_exist() -> None:
 
 def test_default_pack_must_be_enabled() -> None:
     with pytest.raises(PackError, match="default pack"):
-        load_registry(DEFAULT_PACKS_DIR, ["in-india"], "ae-abu-dhabi", production=False)
+        load_registry(DEFAULT_PACKS_DIR, ["ae-abu-dhabi"], "zz-nowhere", production=False)
 
 
 def test_registry_lookups() -> None:
-    registry = load_registry(DEFAULT_PACKS_DIR, ["in-india"], "in-india", production=False)
-    assert registry.codes == {"in-india"}
+    registry = load_registry(DEFAULT_PACKS_DIR, ["ae-abu-dhabi"], "ae-abu-dhabi", production=False)
+    assert registry.codes == {"ae-abu-dhabi"}
     assert registry.get("zz") is None
     with pytest.raises(PackError):
         registry.require("zz")

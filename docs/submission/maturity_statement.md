@@ -15,7 +15,7 @@ Everything that runs was written in this period, phase by phase, each with its o
 | 1 Foundation | Secure API, sign-in, audit chain, local stack, CI configuration | API and unit tests |
 | 2 Data and risk engine | Envelope encryption, FHIR lab ingestion, deterministic risk engine, country packs, synthetic population | 100% branch coverage on the engine; database dump scan |
 | 3 Privacy and sharing | Consent ledger with OpenFGA, couple check, family invitations, access log, emergency access, right not to know | 81 deliberate rule breaks all caught by tests; real OpenFGA outage test |
-| Frontend | Web app from the team's Stitch design, in English and Hindi, wired to the backend; motion, charts, reading levels, read-aloud | 55 browser tests with accessibility checks |
+| Frontend | Web app from the team's Stitch design, in English and Arabic, wired to the backend; motion, charts, reading levels, read-aloud | 55 browser tests with accessibility checks |
 | 4 AI and escalation | Validated answers, router, knowledge base, options, values, counsellor queue; Gemini and Ollama providers with template fallback | Router and answer evaluations, per language |
 | 5 Care and measurement | Care pathway, booking, FHIR referrals, centre finder, understanding checks, metrics and equity dashboards | API and browser tests per check |
 | 6 Evaluation and hardening (in progress) | Evaluation harnesses, scanner runs, log and load checks, submission documents | `docs/evaluation/`, `docs/security/` |
@@ -27,9 +27,9 @@ Everything that runs was written in this period, phase by phase, each with its o
 | Not yet | Why it matters |
 |---|---|
 | Clinical review of gene tables, rules and content | Every clinical statement is still a draft |
-| Native-speaker review; Arabic text | Hindi is unreviewed; Arabic shows English |
+| Native-speaker review of the Arabic | The Arabic interface is drafted and unreviewed; the backend's own text is still English |
 | User testing | No evidence yet that people understand better |
 | Routing recall target (95% per language) | Some unfamiliar phrasing still gets an automatic answer |
 | A licensed partner, UAE hosting, retention rules | Required before any real data |
 
-Country packs: **Abu Dhabi** is the reference pack and **India** an illustrative second. Neither is reviewed, so neither country is "supported" yet, and the app says so on screen.
+Country packs: **Abu Dhabi** is the one pack, and `_template/` is what a second country starts from. Abu Dhabi is not reviewed, so no country is "supported" yet, and the app says so on screen.

@@ -31,7 +31,10 @@
   /* Outcomes are never red or green. Each has a pattern too, so colour is never the only signal. */
   .outcome-two_copies { background-color: #7a4fd6; background-image: repeating-linear-gradient(45deg, rgba(255,255,255,.4) 0 2px, transparent 2px 5px); }
   .outcome-carrier { background-color: #14a89b; background-image: radial-gradient(rgba(255,255,255,.65) 1px, transparent 1.5px); background-size: 5px 5px; }
-  .outcome-neither, .outcome-other { background-color: #e9dfcf; box-shadow: inset 0 0 0 1px #c9bda9; }
+  .outcome-neither, .outcome-other, .outcome-does_not_inherit { background-color: #e9dfcf; box-shadow: inset 0 0 0 1px #c9bda9; }
+  /* Dominant: inheriting the change is its own outcome, with its own pattern as well as its
+     own colour, so colour is never the only thing telling the cells apart. */
+  .outcome-inherits_change { background-color: #7a4fd6; background-image: repeating-linear-gradient(-45deg, rgba(255,255,255,.45) 0 2px, transparent 2px 5px); }
 }
 
 /* Motion. Colour and movement make the pages feel alive, within the rules: outcomes are never red or

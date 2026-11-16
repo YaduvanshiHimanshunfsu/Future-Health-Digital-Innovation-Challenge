@@ -14,6 +14,10 @@ ae-abu-dhabi:
     two_copies:    {id: 784-0000-0000008-1, sex: M, findings: [[SMN1, P, hom, c.840C>T]]}
     no_findings:   {id: 784-0000-0000009-1, sex: M, findings: [], benign: [[HBB, c.9C>T]]}
     no_findings_f: {id: 784-0000-0000014-1, sex: F, findings: []}
+    demo_primary:  {id: 784-0000-0000018-1, sex: F, findings: [[HBB, P, het, c.20A>T]]}
+    fh_dominant:   {id: 784-0000-0000015-1, sex: F, findings: [[LDLR, P, het, c.1A>G]]}
+    xlh_mother:    {id: 784-0000-0000016-1, sex: F, findings: [[PHEX, P, het, c.2T>C]]}
+    xlh_father:    {id: 784-0000-0000017-1, sex: M, findings: [[PHEX, P, hemi, c.2T>C]]}
     alpha_one:     {id: 784-0000-0000010-1, sex: F, findings: [[HBA1, P, het, c.95A>G]]}
     alpha_two:     {id: 784-0000-0000011-1, sex: M, findings: [[HBA2, P, het, c.427T>C]]}
     gene_not_in_pack: {id: 784-0000-0000012-1, sex: F, findings: [[USH2A, P, het, c.2299del]]}

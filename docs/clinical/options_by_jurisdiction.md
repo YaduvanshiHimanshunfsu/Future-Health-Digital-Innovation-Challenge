@@ -26,17 +26,3 @@ Open. A clinician decides what the app says. Until then, it says what the test i
 ## Faith content policy
 
 Only on request, per pack, written or reviewed by a qualified reviewer. With no reviewer, it's left out instead of being generated (V4.1.8).
-
-## India
-
-**Illustrative and unreviewed.** A local reviewer confirms each option, with its source. Start from the ART Regulation Act 2021 and the PCPNDT Act.
-
-| Option | Status | Note |
-|---|---|---|
-| Natural conception, informed | Include | |
-| Prenatal testing | Include, with wording set by a clinician | The PCPNDT Act restricts sex determination, which affects X-linked wording |
-| IVF with embryo testing | Include | Availability and cost vary widely |
-| Donor eggs or sperm | To be confirmed | The ART Act regulates donation |
-| Adoption | To be confirmed | Check national process and wording |
-| Further testing | Include | |
-| Taking more time | Include | |

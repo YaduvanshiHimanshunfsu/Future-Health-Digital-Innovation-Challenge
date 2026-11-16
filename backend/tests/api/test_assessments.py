@@ -3,7 +3,7 @@
 import pytest
 from sqlalchemy import select
 
-from app.assessments.instruments import OFFERED, SURE, TEACH_BACK
+from app.assessments.instruments import OFFERED, SURE, TEACH_BACK, WRITTEN_IN
 from app.assessments.scoring import BadAnswers, paired_change, score
 from app.models.analytics import Event
 from app.models.case import CareCase
@@ -17,7 +17,7 @@ WRONG = [(answer + 1) % 3 for answer in RIGHT]  # type: ignore[operator]
 def test_scoring_is_right_on_known_answers() -> None:
     """V5.3.1."""
     assert score(TEACH_BACK, RIGHT, "en").score == 1.0  # type: ignore[arg-type]
-    assert score(TEACH_BACK, WRONG, "hi").score == 0.0
+    assert score(TEACH_BACK, WRONG, "en").score == 0.0
     four = [*RIGHT[:4], WRONG[4]]
     assert score(TEACH_BACK, four, "en").passed  # type: ignore[arg-type]
     three = [*RIGHT[:3], *WRONG[3:]]
@@ -39,21 +39,23 @@ def test_the_right_answer_isnt_always_in_the_same_place() -> None:
     assert len(set(RIGHT)) > 1
 
 
-def test_both_languages_have_the_same_items_and_options() -> None:
+def test_every_item_is_written_in_every_language_the_questions_claim() -> None:
+    """English only today. Each question has to exist in every language `WRITTEN_IN` names."""
     for instrument in OFFERED.values():
         for item in instrument.items:
-            assert set(item.text) == {"en", "hi"}
-            assert len(item.options["en"]) == len(item.options["hi"])
+            assert set(item.text) == set(WRITTEN_IN)
+            assert all(item.options[language] for language in WRITTEN_IN)
 
 
 @pytest.mark.db
 async def test_questions_come_without_answers_and_say_what_they_are(stack: Stack) -> None:
     """V5.3.5. The adapted instrument says so wherever it's shown."""
     person = await stack.sign_in("someone")
-    body = (await stack.http.get("/v1/assessments/sure?lang=hi", headers=person)).json()
-    assert body["status"] == "adapted, not validated in Hindi or Arabic"
+    body = (await stack.http.get("/v1/assessments/sure?lang=ar", headers=person)).json()
+    assert body["status"] == "adapted, not validated in Arabic"
     assert "correct" not in str(body)
-    assert body["language_used"] == "hi"
+    # Asked for in Arabic, answered in English, and the screen says so from this field.
+    assert body["language_used"] == "en"
     arabic = (await stack.http.get("/v1/assessments/teach_back?lang=ar", headers=person)).json()
     assert arabic["language_used"] == "en"
     missing = await stack.http.get("/v1/assessments/mmic_adapted", headers=person)

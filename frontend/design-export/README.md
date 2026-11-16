@@ -17,7 +17,7 @@ So the layouts follow Stitch, and every word comes from `messages/`, where `test
 
 | Stitch screen | Built as | Notes |
 |---|---|---|
-| P1 Home (desktop, mobile, Hindi) | `/[locale]` | Wording rewritten. A "what we can and can't promise" panel replaces the on-device claims |
+| P1 Home (desktop, mobile, translated) | `/[locale]` | Wording rewritten. A "what we can and can't promise" panel replaces the on-device claims |
 | P2, P3 Learn | `/[locale]/learn/...` | Textbook visuals use the same components as real results |
 | P4 Privacy promise | `/[locale]/privacy` | Only promises the code enforces, plus its limits |
 | P5 Sign-in and consent | `/[locale]/start` | Country choice, real sign-in, service consent, detail level |

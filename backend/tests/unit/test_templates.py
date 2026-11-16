@@ -1,5 +1,4 @@
 from fractions import Fraction
-from typing import Any
 
 import pytest
 
@@ -8,7 +7,7 @@ from app.explain.validators.pipeline import validate_draft
 from app.risk_engine.engine import _fact
 from app.risk_engine.types import Label, RiskFact, Scenario
 
-LANGUAGES = ["en", "hi"]
+LANGUAGES = ["en"]
 
 
 def every_fact() -> list[RiskFact]:
@@ -57,20 +56,6 @@ def test_every_fact_template_passes_every_validator(language: str) -> None:
 def test_every_fixed_message_passes_every_validator(language: str, key: str) -> None:
     catalogue, _ = texts(language)
     assert validate_draft(catalogue[key], language, "standard", {}).ok, key
-
-
-@pytest.mark.parametrize("language", LANGUAGES)
-def test_both_languages_have_the_same_templates(language: str) -> None:
-    english, _ = texts("en")
-    own, used = texts(language)
-    assert used == language
-
-    def keys(value: Any, prefix: str = "") -> set[str]:
-        if isinstance(value, dict):
-            return {k for key, item in value.items() for k in keys(item, f"{prefix}{key}.")}
-        return {prefix.rstrip(".")}
-
-    assert keys(own) == keys(english)
 
 
 def test_a_language_without_templates_falls_back_to_english_and_says_so() -> None:

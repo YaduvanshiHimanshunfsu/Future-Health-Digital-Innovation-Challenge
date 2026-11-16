@@ -7,7 +7,9 @@
 > [docs/submission/assumptions_and_limitations.md](submission/assumptions_and_limitations.md) and
 > [docs/submission/judge_qa.md](submission/judge_qa.md).
 
-> **Scope update (5 Nov 2026):** Samvid is global by design. UAE and Abu Dhabi details in this document describe the first reference pack, not the limit of the product. Supported languages are English, Arabic and Hindi. See [docs/07](07_Global_Design_and_Country_Packs.md).
+> **Scope update (5 Nov 2026):** Samvid is global by design. UAE and Abu Dhabi details in this document describe the first reference pack, not the limit of the product. Supported languages are English and Arabic. See [docs/07](07_Global_Design_and_Country_Packs.md).
+>
+> **Scope update (16 Nov 2026):** the prototype ships one country pack, Abu Dhabi, in English with an Arabic translation. The pack framework stays, so another country is settings rather than code, but no second pack is shipped or claimed.
 
 > **Stitch prompts have moved:** use [STITCH_PROMPTS.md](STITCH_PROMPTS.md). It replaces §3 and §5 here. The rest of this guide still applies to the code stage.
 
@@ -144,7 +146,7 @@ Rules: animation **explains** things (inheritance, flow, progress) rather than d
 ## 3. Master prompt (paste first in Stitch)
 
 ```text
-Design system for "Samvid" — a multilingual web app (English, Hindi, and Arabic right-to-left) that
+Design system for "Samvid" — a multilingual web app (English, and Arabic right-to-left) that
 helps individuals and couples around the world understand genetic carrier screening results privately
 and kindly.
 
@@ -618,9 +620,10 @@ and no suggestion that anyone is ill.
 
 ### P23 — Country and language settings (component)
 ```text
-Add a component sheet showing the country switch and language switch used across the app: "Abu Dhabi" (English,
-Arabic) and "India — demo" (English, Hindi), with an "Illustrative, not reviewed" chip for any unreviewed
-country. Show the options list and the support contacts card changing when the country changes.
+Add a component sheet showing the language switch used across the app, English and Arabic, and the country
+switch beside it with "Abu Dhabi" selected and a "Reference pack, not reviewed" chip. The country switch is
+hidden while only one country is set up. Show the options list and the support contacts card, which both come
+from the country pack rather than from the screens.
 ```
 
 ---
@@ -847,7 +850,7 @@ config).
 4. **Refine in small steps**: "Make the icon array larger and move the legend under it", "Increase spacing between cards to 32px", "Make the hero illustration more colourful with terracotta and saffron".
 5. **Ask for variants**: "Give me 3 variations of the hero" and pick the best.
 6. **Generate mobile separately**: "Now create the 390px mobile version of this screen with a bottom navigation bar."
-7. **Hindi**: "Create the Hindi version with all text in Hindi, left-to-right, using Noto Sans Devanagari for body text." Have a Hindi speaker check it.
+7. **Arabic**: "Create the Arabic version with all text in Arabic, right-to-left, using Noto Sans Arabic for body text." Have an Arabic speaker check it.
 8. **Arabic**: "Create the Arabic RTL version with all text in Arabic, mirrored layout, IBM Plex Sans Arabic body font."
 8. **Upload references**: a screenshot of the previous screen (for consistency) or a ceramic tile photo (for texture).
 9. **Export**: use HTML/Tailwind export for code and Figma export for fine-tuning, then hand off to Antigravity using the §9 prompt.

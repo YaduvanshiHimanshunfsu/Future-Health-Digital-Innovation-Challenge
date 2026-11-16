@@ -12,7 +12,7 @@
 ![Prototype due 20 Nov 2026](https://img.shields.io/badge/prototype%20due-20%20Nov%202026-2F5BEA?style=for-the-badge)
 ![Synthetic data only](https://img.shields.io/badge/data-synthetic%20only-14A89B?style=for-the-badge)
 ![Global by design](https://img.shields.io/badge/scope-global%20by%20design-0E7C72?style=for-the-badge)
-![Multilingual](https://img.shields.io/badge/languages-English%20%C2%B7%20Arabic%20%C2%B7%20Hindi-7A4FD6?style=for-the-badge)
+![Multilingual](https://img.shields.io/badge/languages-English%20%C2%B7%20Arabic-7A4FD6?style=for-the-badge)
 ![Team Vigyan_Viveka_Vijaya](https://img.shields.io/badge/team-Vigyan__Viveka__Vijaya-E2725B?style=for-the-badge)
 
 **Future Health Digital Innovation Challenge 2026 · Fertility · Challenge 03**
@@ -30,7 +30,7 @@
 > `python Run_Samvid.py`.
 >
 > **Not yet done, and said plainly throughout:** no clinician has reviewed the content or the
-> rules, no native speaker has reviewed the Hindi or the newly drafted Arabic, nobody has
+> rules, no native speaker has reviewed the Arabic, nobody has
 > user-tested it, and no country's settings are reviewed. Details in
 > [assumptions and limitations](docs/submission/assumptions_and_limitations.md).
 
@@ -40,7 +40,7 @@
 |---|---|
 | **Team** | Vigyan_Viveka_Vijaya |
 | **The name** | *Samvid* (संविद्) is Sanskrit for knowledge and understanding, and also agreement and consent |
-| **Languages** | English, Arabic and Hindi first, with more added per country |
+| **Languages** | English, with an Arabic translation. More per country, through its pack |
 | **What** | A companion that explains genetic carrier results, supports informed choices, and links people to qualified counsellors |
 | **Who for** | Individuals and couples, families, genetic counsellors, physicians, and health programme managers |
 | **Where** | Global by design, with per-country settings. Abu Dhabi is the first reference, and no country is supported until its settings are reviewed locally |
@@ -138,7 +138,7 @@ flowchart TB
 
 | | Requirement | Planned approach | Main modules |
 |---|---|---|---|
-| **R1** | Risk explanation | Exact risk figures, icon arrays, three reading levels, plain English, Arabic and Hindi | `risk_engine` `explain` `kb` |
+| **R1** | Risk explanation | Exact risk figures, icon arrays, three reading levels, plain English and Arabic | `risk_engine` `explain` `kb` |
 | **R2** | Values-sensitive choices | Options shown with equal weight, plus private values reflection that's never scored | `decision` `centres` |
 | **R3** | Qualified human counselling | Every question labelled, with clinical or complex cases escalated to people | `explain/router` `triage` `booking` |
 | **R4** | Privacy-preserving family workflows | Granular, revocable consent, couple-only match, anonymous family invitations, access log | `privacy` |
@@ -162,7 +162,7 @@ flowchart TB
 
     subgraph PACKS["COUNTRY PACKS · settings, not code"]
         direction LR
-        P1["<b>Abu Dhabi</b><br/>First reference pack<br/>Arabic, English"]:::first ~~~ P2["<b>India</b><br/>Illustrative demo pack<br/>Hindi, English"]:::next ~~~ P3["<b>Template</b><br/>For any new country"]:::next
+        P1["<b>Abu Dhabi</b><br/>The pack we ship<br/>English, Arabic"]:::first ~~~ P3["<b>Template</b><br/>For any new country"]:::next
     end
 
     subgraph HAS["EACH PACK HOLDS"]
@@ -183,7 +183,7 @@ flowchart TB
     style HAS fill:#F7F3FE,stroke:#7A4FD6,color:#1F2433
 ```
 
-- **First two packs:** Abu Dhabi (Arabic and English) and India (Hindi and English). India is labelled illustrative until it's reviewed.
+- **One pack ships:** Abu Dhabi, in English with an Arabic translation, labelled a reference pack until it's reviewed.
 - **Adding a country needs no code change**, only a reviewed pack.
 - **No country counts as supported until local clinicians and legal advisers have reviewed its pack.** "Global" describes the design, not today's coverage.
 - **Where accredited counsellors are scarce,** the pack names the qualified human. If nobody qualified is available, the product says so honestly, and AI never fills the gap.
@@ -530,7 +530,7 @@ gantt
 | **1** | Foundation, decisions, compliance baseline | Registered, scope locked, stack runs from a clean clone, audit tamper test passes | [Phase 1](docs/phases/PHASE_1_Foundation.md) |
 | **2** | Genomic data and deterministic risk engine | Hand-worked risk answers match, and correct risk appears on screen | [Phase 2](docs/phases/PHASE_2_Genomic_Data_and_Risk_Engine.md) |
 | **3** | Privacy fabric and family sharing | Privacy tests pass, and no partner-only data appears in any output | [Phase 3](docs/phases/PHASE_3_Privacy_and_Family_Sharing.md) |
-| **4** | AI explanation and human escalation | Safe answers in English, Arabic and Hindi, even with the LLM off, and cases reach a counsellor | [Phase 4](docs/phases/PHASE_4_AI_Explanation_and_Escalation.md) |
+| **4** | AI explanation and human escalation | Safe answers in English and Arabic, even with the LLM off, and cases reach a counsellor | [Phase 4](docs/phases/PHASE_4_AI_Explanation_and_Escalation.md) |
 | **5** | Care pathway, measurement, integration | Full demo journey works in both languages, with traceable metrics | [Phase 5](docs/phases/PHASE_5_Care_Pathway_Measurement_Integration.md) |
 | **6** | Evaluation, hardening, submission | Honest safety report and limitations, and submitted with confirmation saved | [Phase 6](docs/phases/PHASE_6_Evaluation_and_Submission.md) |
 
@@ -572,13 +572,13 @@ removed.
 | Backend foundation: API security, database, audit trail, local stack | **Built and tested** |
 | Risk engine, encryption, lab report ingestion, synthetic data, country packs | **Built and tested**, on placeholder gene values with no clinical review |
 | Consent ledger, couple match, family invitations, access log, break-glass, redaction | **Built and tested** |
-| Screens for people, counsellors and programme staff, in English and Hindi | **Built and tested** in a real browser against the real stack |
+| Screens for people, counsellors and programme staff, in English and Arabic | **Built and tested** in a real browser against the real stack |
 | AI explanation with safety checks, options, values, counsellor queue | **Built and tested**. Gemini or local Ollama, with reviewed text as the fallback |
 | Care pathway, booking, FHIR referrals, centre finder, understanding checks, dashboards | **Built and tested** |
 | Safety evaluation, security scans, submission documents | **Built**, with results and gaps in [docs/evaluation](docs/evaluation/) and [docs/security](docs/security/) |
 | Routing recall target (95% per language) | **Not met**: measured at 5 of 59 hold-out questions still answered automatically. Reported, not hidden |
 | Clinical review | **Not started**: no reviewer yet |
-| Native-speaker review; Arabic text | **Not started**: the Hindi and the Arabic interface are both drafted and unreviewed |
+| Native-speaker review of the Arabic | **Not started**: the Arabic interface is drafted and unreviewed |
 | User testing | **Not run**: the protocol is ready, and no figures are invented in its place |
 
 ---
@@ -619,7 +619,7 @@ Future Health/
 │   │   ├── triage/           Priorities, assignment, case summaries
 │   │   ├── pathway/          Care state machine, FHIR mapping
 │   │   ├── decision/         Options and values reflection
-│   │   ├── kb/               Curated content (English, Arabic, Hindi; 3 levels)
+│   │   ├── kb/               Curated content (English; 3 levels)
 │   │   ├── assessments/      Teach-back and adapted instruments
 │   │   ├── analytics/        Metrics and fairness
 │   │   ├── ingestion/        Lab results to minimal encrypted findings
@@ -634,7 +634,7 @@ Future Health/
 │   ├── app/                  Public site, user app, counsellor console, dashboards
 │   ├── components/           ui, layout, motion, risk, charts
 │   ├── lib/                  API client, auth, i18n
-│   ├── messages/             English, Arabic and Hindi text
+│   ├── messages/             English and Arabic text
 │   └── tests/e2e/            End-to-end and accessibility tests
 │
 ├── infra/                    Docker Compose, OpenFGA model, Keycloak, Postgres

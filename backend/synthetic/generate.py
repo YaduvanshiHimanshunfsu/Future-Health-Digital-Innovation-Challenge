@@ -172,7 +172,11 @@ def _draw_findings(
         entry = pack.panel.genes[gene]
         if gene in held or rng.random() >= entry.carrier_frequency:
             continue
-        xl_man = entry.inheritance == Inheritance.X_LINKED.value and sex is Sex.MALE
+        on_the_x = entry.inheritance in (
+            Inheritance.X_LINKED.value,
+            Inheritance.X_LINKED_DOMINANT.value,
+        )
+        xl_man = on_the_x and sex is Sex.MALE
         classification = (
             Classification.UNCERTAIN
             if rng.random() < VUS_SHARE

@@ -352,7 +352,7 @@ The challenge asks for global solutions, but the Challenge 03 text is framed aro
 | **G7** | Escalation assumes accredited counsellors exist, and the flows assume a mandatory programme and a lab feed | The pack defines the qualified human. Add a "no qualified service available" state, a flow with no result on file, and clinician entry |
 | **G8** | Screens and copy are Emirati-specific (illustrations, personas, "Arabic default", right-to-left treated as Arabic only) | Content comes from the pack, with general right-to-left and left-to-right support |
 | **G9** | Cultural content assumes one setting: an Islamic faith library, cousin marriage as the framing, and a Gulf-only lexicon. Clan and caste aren't considered | Faith and culture content per pack, written with local reviewers |
-| **G10** | Hindi doesn't reach the Indian states with the highest consanguinity, which are in the south | State this as a limitation, and put Tamil, Kannada and Telugu on the roadmap |
+| **G10** | ~~Hindi doesn't reach the Indian states with the highest consanguinity~~ **Moot since 16 Nov 2026:** the India pack was dropped. The same shape of problem remains for Abu Dhabi, where English and Arabic don't reach every resident community | State which languages are covered, and never imply the product speaks to everyone |
 
 ---
 

@@ -29,15 +29,19 @@ ADMIN_API = f"{KEYCLOAK}/admin/realms/samvid"
 ABU_DHABI = "ae-abu-dhabi"
 
 # Username, the persona whose report they own, its country pack, and their role.
-# demo123 is the primary demo account (username: demo123, password from DEMO_PASSWORD in infra/.env)
+# demo123 is the primary demo account (username: demo123, password from DEMO_PASSWORD in infra/.env).
+# It has its own person: one national ID links to one login, so two accounts cannot share a
+# persona. Sharing fatima would leave whichever signed in second refused as already linked.
 PEOPLE = [
-    ("demo123", "fatima", ABU_DHABI, "individual"),
+    ("demo123", "demo_primary", ABU_DHABI, "individual"),
     ("demo-fatima", "fatima", ABU_DHABI, "individual"),
     ("demo-khalid", "khalid", ABU_DHABI, "individual"),
     ("demo-x-carrier", "x_carrier", ABU_DHABI, "individual"),
     ("demo-x-man", "x_man", ABU_DHABI, "individual"),
     ("demo-uncertain", "uncertain", ABU_DHABI, "individual"),
     ("demo-no-findings", "no_findings", ABU_DHABI, "individual"),
+    ("demo-dominant", "fh_dominant", ABU_DHABI, "individual"),
+    ("demo-xl-dominant", "xlh_mother", ABU_DHABI, "individual"),
     ("demo-no-report", None, ABU_DHABI, "individual"),
     ("demo-counsellor", None, ABU_DHABI, "counsellor"),
     ("demo-doctor", None, ABU_DHABI, "physician"),

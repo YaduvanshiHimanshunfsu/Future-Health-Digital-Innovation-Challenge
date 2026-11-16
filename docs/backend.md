@@ -5,7 +5,9 @@
 > doesn't, see [docs/phases/CROSS_VERIFICATION.md](phases/CROSS_VERIFICATION.md) and
 > [docs/submission/assumptions_and_limitations.md](submission/assumptions_and_limitations.md).
 
-> **Scope update (5 Nov 2026):** Samvid is global by design. UAE and Abu Dhabi details in this document describe the first reference pack, not the limit of the product. Supported languages are English, Arabic and Hindi. See [docs/07](07_Global_Design_and_Country_Packs.md).
+> **Scope update (5 Nov 2026):** Samvid is global by design. UAE and Abu Dhabi details in this document describe the first reference pack, not the limit of the product. Supported languages are English and Arabic. See [docs/07](07_Global_Design_and_Country_Packs.md).
+>
+> **Scope update (16 Nov 2026):** the prototype ships one country pack, Abu Dhabi, in English with an Arabic translation. The pack framework stays, so another country is settings rather than code, but no second pack is shipped or claimed.
 
 > **Scope:** everything the backend does (what), how it is built (how) and the reasons behind each choice (why).
 > **Companion docs:** [01_Problem_Understanding.md](01_Problem_Understanding.md) · [02_Solution_Architecture_and_Plan.md](02_Solution_Architecture_and_Plan.md) · [03_Features_Limitations_Roadmap.md](03_Features_Limitations_Roadmap.md)

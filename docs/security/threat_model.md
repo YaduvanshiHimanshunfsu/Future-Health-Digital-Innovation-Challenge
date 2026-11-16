@@ -84,7 +84,7 @@ Known and accepted for the prototype. These go in the limitations statement.
 
 - **The server is trusted.** It holds the keys and can decrypt. Couple matching runs on the server, so it isn't a blind protocol.
 - **A match can still be inferred from behaviour.** A partner who sees "not ready" knows the other hasn't agreed, though not whether they declined, haven't got to it, or withdrew.
-- **Redaction has a known gap.** A name that's also an everyday word on a word list would survive. Arabic has no word list yet, so every Arabic word is masked. The Hindi list needs a native speaker's review.
+- **Redaction has a known gap.** A name that's also an everyday word on a word list would survive. Arabic has no word list yet, so every Arabic word is masked, and a question in Arabic script goes to a person rather than to the model.
 - **Couples can't be dissolved yet.** Withdrawing consent stops the match, but the link between two people stays on record.
 - **Public invitation pages are limited by client address.** Behind a proxy, that address needs configuring, or everyone shares one limit.
 - **Relationships are visible to database administrators.** See [data classification](data_classification.md).

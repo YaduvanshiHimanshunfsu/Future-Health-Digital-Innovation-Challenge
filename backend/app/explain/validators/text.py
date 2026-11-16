@@ -19,7 +19,7 @@ def normalise(text: str) -> str:
 
 
 def _keep(character: str) -> bool:
-    # Devanagari vowel signs and virama are marks too, and removing them would change the word.
+    # Some scripts write vowel signs as combining marks, and removing them would change the word.
     return "\u0900" <= character <= "\u097f"
 
 

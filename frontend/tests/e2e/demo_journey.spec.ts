@@ -35,7 +35,9 @@ test("a carrier reads their result, with no number and no 25% square", async ({ 
   await page.goto("/en/app/result");
   const text = await page.locator("main").innerText();
   expect(text).toContain("HBB");
-  expect(text).toContain("Beta thalassaemia");
+  // HBB c.20A>T is the sickle cell change, so only that condition is named (brain.md #026).
+  expect(text).toContain("Sickle cell disease");
+  expect(text).not.toContain("Beta thalassaemia");
   expect(text).toContain("usually doesn't cause illness");
   expect(text).not.toContain("%");
   expect(text).not.toContain("c.20A");

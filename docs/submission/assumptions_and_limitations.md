@@ -5,7 +5,7 @@ A required deliverable. Written to be candid: where something isn't done, it say
 ## Assumptions
 
 1. **People already have a carrier screening result**, from a programme such as the UAE premarital screening. Samvid explains results; it doesn't test anyone.
-2. **A qualified person is reachable.** Every hard question is handed to a counsellor, so a real deployment needs counsellor time. Where a country pack says no service has been checked (India today), the app says so instead of implying one.
+2. **A qualified person is reachable.** Every hard question is handed to a counsellor, so a real deployment needs counsellor time. Where a country pack says no service has been checked, the app says so instead of implying one.
 3. **Results arrive as FHIR genetics reports** from an authenticated laboratory system.
 4. **Partners and relatives choose to take part.** Nothing is shared with anyone without the person's consent, and a couple check needs both partners.
 5. **The rules in the country packs are right for their country.** They are placeholders until clinically reviewed (see below).
@@ -18,7 +18,7 @@ A required deliverable. Written to be candid: where something isn't done, it say
 | An AI model: Gemini (key) or Ollama (local) | Drafted explanations and the routing double-check | Reviewed templates answer instead. Every safety rule still holds |
 | Genetic counsellors | Every case the app hands to a person | The core promise fails. A pilot needs them |
 | Clinical reviewers | Signing off gene tables, risk wording, options and knowledge-base content | Content stays labelled as draft |
-| Native speakers (Hindi, Arabic) | Reviewing text, word lists and evaluation sets | Hindi stays labelled as unreviewed; Arabic text isn't added |
+| Native speakers (Arabic) | Reviewing text, word lists and evaluation sets | The Arabic stays labelled as unreviewed; Arabic text isn't added |
 | A licensed local partner | Storing or transferring genetic data in a pilot (Decree-Law 49/2023, Art. 28) | No real data can be used |
 | Each country's screening services | The centre finder, referrals | Lists stay empty, and the screen says so |
 
@@ -28,7 +28,7 @@ A required deliverable. Written to be candid: where something isn't done, it say
 - **Synthetic data only.** No real person, result or family is in it. Demo numbers are labelled synthetic on screen.
 - **Placeholder carrier frequencies.** Every gene entry is marked `source: placeholder`. They aren't measurements of any population.
 - **No clinical review.** No clinician has signed off the gene tables, the risk rules (including G6PD), the "must inform" rule, or the knowledge base. All of it is labelled draft.
-- **No native-speaker review.** The Hindi interface, Hindi word lists and all non-English evaluation items were written by the team.
+- **No native-speaker review.** The Arabic interface and all non-English evaluation items were written by the team.
 - **Arabic:** the interface is in Arabic (Modern Standard Arabic, right to left), approved by the user on 15 Nov 2026. **It was drafted without a native speaker's review**, and every Arabic page says so in a banner. Backend text is still English in Arabic mode: explanations from reviewed templates, error messages, and names that come from the country packs (country, region, city and centre names). Arabic questions typed in Roman letters are understood; Arabic script goes to a person.
 
 ### Safety

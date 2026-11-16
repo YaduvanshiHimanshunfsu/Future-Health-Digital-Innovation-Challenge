@@ -26,7 +26,7 @@ Every prompt you need to design the Samvid frontend in [Google Stitch](https://s
 | Sample text and numbers | Live data from the backend |
 | Screen-to-screen click-through | Real sign-in, routing and permissions |
 | How each state looks (loading, empty, error) | Switching between states automatically |
-| English, Hindi and right-to-left designs | Real language switching |
+| English and right-to-left Arabic designs | Real language switching |
 
 So when a prompt says "motion", you're only leaving room for it. Don't spend generations trying to make Stitch animate things.
 
@@ -72,18 +72,18 @@ Reject or fix any screen that breaks one of these. They come from the project re
 | Order | Prompt | Screen | Priority | Variants to make |
 |---|---|---|---|---|
 | 1 | Prompt 0 | Design system | Must | |
-| 2 | P20 | Style sheet of all components | Must | English, Hindi |
+| 2 | P20 | Style sheet of all components | Must | English, Arabic |
 | 3 | P23 | Country and language switch | Must | Desktop |
-| 4 | P1 | Home | Must | Desktop, mobile, Hindi |
-| 5 | P5 | Sign-in, consent, preferences | Must | Desktop, mobile, Hindi |
-| 6 | P6 | My journey dashboard | Must | Desktop, mobile, Hindi |
-| 7 | P7, P7b, P7c | My result, and its other states | Must | Desktop, mobile, Hindi |
-| 8 | P8, P8b | Couple view, and its other states | Must | Desktop, mobile, Hindi |
-| 9 | P9 | Ask Samvid | Must | Desktop, mobile, Hindi |
+| 4 | P1 | Home | Must | Desktop, mobile, Arabic |
+| 5 | P5 | Sign-in, consent, preferences | Must | Desktop, mobile, Arabic |
+| 6 | P6 | My journey dashboard | Must | Desktop, mobile, Arabic |
+| 7 | P7, P7b, P7c | My result, and its other states | Must | Desktop, mobile, Arabic |
+| 8 | P8, P8b | Couple view, and its other states | Must | Desktop, mobile, Arabic |
+| 9 | P9 | Ask Samvid | Must | Desktop, mobile, Arabic |
 | 10 | P11 | Partner sharing and couple match | Must | Desktop, mobile |
 | 11 | P13 | Consent centre and access log | Must | Desktop, mobile |
 | 12 | P14 | Care journey and booking | Must | Desktop, mobile |
-| 13 | P15 | Understanding check | Must | Desktop, mobile, Hindi |
+| 13 | P15 | Understanding check | Must | Desktop, mobile, Arabic |
 | 14 | P16 | Counsellor queue | Must | Desktop |
 | 15 | P17 | Case detail | Must | Desktop |
 | 16 | P18 | Outcomes dashboard | Must | Desktop |
@@ -94,7 +94,7 @@ Reject or fix any screen that breaks one of these. They come from the project re
 | 21 | P2, P3, P4 | Learn pages and privacy promise | Should | Desktop |
 | 22 | S1 | Story Mode pitch slides | Should | Desktop |
 
-**If time runs short,** do "Must" screens on desktop first, then Hindi for the main path (P5 to P9). The Arabic version comes last, and only once you've approved it and found a native speaker (section 6).
+**If time runs short,** do "Must" screens on desktop first, then the Arabic versions of the main path (P5 to P9), and only once you've approved it and found a native speaker (section 6).
 
 ---
 
@@ -120,7 +120,7 @@ Accent fills (always with ink #1F2433 text on them): turquoise #14A89B, terracot
 Coloured text on light backgrounds uses only these darker versions: turquoise #0E776E, terracotta #A55342, saffron #866523, rose #905A6A, olive #517333, lapis #2F5BEA, plum #7A4FD6.
 Risk visuals: "inherits two copies" = plum with diagonal hatching. "Carrier" = turquoise with dots. "Neither" = sand #E9DFCF with an outline. Always a pattern and a text label. Never red or green.
 
-TYPE: Readex Pro for headings, Inter for body, Noto Sans Devanagari for Hindi, IBM Plex Sans Arabic for Arabic. Large and readable, line height 1.6, at most 68 characters per line.
+TYPE: Readex Pro for headings, Inter for body, IBM Plex Sans Arabic for Arabic. Large and readable, line height 1.6, at most 68 characters per line.
 
 SHAPE: cards 24px radius, inputs 16px with a visible slate border, chips 12px, buttons fully rounded pills. Minimum touch target 44px. Focus ring 3px lapis.
 
@@ -165,7 +165,7 @@ Using the Samvid design system and the component sheet, create a component page 
 
 Show a compact switch for the top bar, opened as a floating clay menu with two countries:
 "Abu Dhabi" with the languages English and Arabic, and a chip "Reference: review pending".
-"India" with the languages Hindi and English, and a chip "Illustrative: not reviewed".
+one country, "Abu Dhabi", with the languages English and Arabic and a chip "Reference pack: not reviewed". Hide the country switch while only one country is set up.
 Below it, show the two countries side by side as "before and after" panels, so it's clear what changes: the options list, the support contacts card, the funding note and the language. Each panel has a small note "Settings change by country. The safety rules never do."
 ```
 
@@ -203,7 +203,7 @@ Step 2 "Before we start, here's what you're agreeing to": four short clay rows w
 "You can stop at any time."
 A checkbox "I understand and agree", a primary "Continue", and a quiet link "I'd rather not see my result for now".
 
-Step 3 "Choose your language": selectable clay tiles for the languages of the chosen country, showing English and Hindi here.
+Step 3 "Choose your language": selectable clay tiles for the languages of the chosen country, showing English and Arabic here.
 
 Step 4 "How would you like explanations?": three selectable cards with a sample sentence: Simple (big text and pictures), Standard, Detailed (more science). A toggle "Read explanations aloud". Primary "Continue".
 ```
@@ -446,7 +446,7 @@ NOTE CARD: "Cancelled marriages are not a success measure. Informed choice is." 
 ```text
 Using the Samvid design system, create the "Equity and privacy" dashboard, with the full-width banner "Synthetic demo data, not real patients."
 
-SECTION EQUITY: grouped bars "Understanding gain by language" (English, Arabic, Hindi) and "by reading level" (Simple, Standard, Detailed). Gap badges: olive "Gap 3 points, within target", saffron "Gap 12 points, needs attention". Also bars by gender and age band. Heatmap "Counselling uptake by region and age band" in a turquoise scale, with hidden cells showing "<10" over a hatch pattern.
+SECTION EQUITY: grouped bars "Understanding gain by language" (English, Arabic) and "by reading level" (Simple, Standard, Detailed). Gap badges: olive "Gap 3 points, within target", saffron "Gap 12 points, needs attention". Also bars by gender and age band. Heatmap "Counselling uptake by region and age band" in a turquoise scale, with hidden cells showing "<10" over a hatch pattern.
 
 SECTION PRIVACY: tiles "Access attempts blocked: 128", "Time to stop sharing: 0.4 s", "Exceptional access: 2, reviewed", "Personal details sent to AI: 0". Line chart "Shares created and stopped". Table "Exceptional access reviews": reviewer, reason, date.
 
@@ -559,7 +559,7 @@ Using the Samvid design system, design a 10-slide, full-screen presentation at 1
 5 "Five pillars" as tall ceramic columns: Explain, Choose freely, Human counsellors, Private sharing, Measured outcomes.
 6 "Numbers from code, words from AI, decisions from people": three tile layers inside a privacy shield.
 7 "Couple-only match": tiles entering a glass box, and only the shared one emerging.
-8 "Global by design": one core, with Abu Dhabi and India packs. "Settings change. Safety rules don't."
+8 "Global by design": one core, with the Abu Dhabi pack and an empty template for the next country. "Settings change. Safety rules don't."
 9 "Measured honestly": metric tiles, labelled "Synthetic demo data", and the line "We don't count cancelled marriages."
 10 "Next": Pilot, Partner review, More countries. "Built for the world, proven first in Abu Dhabi."
 ```
@@ -568,7 +568,7 @@ Using the Samvid design system, design a 10-slide, full-screen presentation at 1
 
 ## 6. Language and mobile variants
 
-Run these while the finished desktop screen is selected. Do mobile and Hindi on the "Must" screens first.
+Run these while the finished desktop screen is selected. Do mobile and Arabic on the "Must" screens first.
 
 ### Mobile
 
@@ -576,13 +576,13 @@ Run these while the finished desktop screen is selected. Do mobile and Hindi on 
 Create the 390px mobile version of this screen. Use a single column, a bottom navigation bar, and bottom sheets instead of side panels. Keep the same content, colours and components. Keep touch targets at 44px or more.
 ```
 
-### Hindi
+### Arabic
 
 ```text
-Create the Hindi version of this screen, left to right. Translate all visible text into simple, respectful everyday Hindi in Devanagari, using Noto Sans Devanagari for body text. Keep English gene names such as HBB. Use these terms: carrier = वाहक, genetic counsellor = आनुवंशिक परामर्शदाता, consent = सहमति, privacy = निजता, risk = जोखिम. "Risk is not a diagnosis" = "जोखिम का मतलब बीमारी नहीं है". Keep the same layout and colours. Avoid words that suggest blame or that something is wrong with a person.
+Create the Arabic version of this screen, right to left, mirroring the layout. Translate all visible text into simple, respectful Modern Standard Arabic, using Noto Sans Arabic for body text. Keep English gene names such as HBB. Use these terms: carrier = वाहक, genetic counsellor = आनुवंशिक परामर्शदाता, consent = सहमति, privacy = निजता, risk = जोखिम. "Risk is not a diagnosis" = "जोखिम का मतलब बीमारी नहीं है". Keep the same layout and colours. Avoid words that suggest blame or that something is wrong with a person.
 ```
 
-**Check:** a Hindi speaker must review every Hindi screen. This glossary is my starting point, and nobody has reviewed it.
+**Check:** an Arabic speaker must review every Arabic screen. This glossary is my starting point, and nobody has reviewed it.
 
 ### Arabic, right to left
 
@@ -646,7 +646,7 @@ You don't need to do anything for this. It's here so you can see what's planned,
 frontend/design-export/
   p01-home/desktop.html
   p01-home/mobile.html
-  p01-home/hindi.html
+  p01-home/arabic.html
   p08-couple/desktop.html
   ...
 ```
@@ -662,7 +662,7 @@ You can send screens in batches. Don't wait for all of them.
 - [ ] Matches the component sheet
 - [ ] All text is real, not lorem ipsum
 - [ ] Empty, loading or error state exists if the prompt asked for one
-- [ ] Hindi checked by a Hindi speaker, where a Hindi version exists
+- [ ] Arabic checked by an Arabic speaker, where an Arabic version exists
 - [ ] A person outside the team understands it in under a minute
 
 ---

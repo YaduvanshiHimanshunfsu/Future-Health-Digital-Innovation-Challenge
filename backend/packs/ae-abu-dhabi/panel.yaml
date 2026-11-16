@@ -2,7 +2,7 @@
 # Replace them with reviewed figures before any real use. See docs/submission/data_sources.md.
 values_status: placeholder
 panels:
-  demo-panel-v1: [HBB, HBA1, HBA2, CYP21A2, SMN1, CFTR, DNAH5, ABCA4, CYP1B1, G6PD, DMD]
+  demo-panel-v1: [HBB, HBA1, HBA2, CYP21A2, SMN1, CFTR, DNAH5, ABCA4, CYP1B1, G6PD, DMD, LDLR, PHEX]
 genes:
   # HBB variants by HGVS: c.20A>T is the sickle cell change (HbS, p.Glu7Val); the others are common beta
   # thalassaemia changes (c.92+5G>C is IVS-I-5, c.118C>T is codon 39). Placeholder like the rest of this
@@ -17,4 +17,8 @@ genes:
   ABCA4:   {inheritance: AR, carrier_frequency: 0.02, detection_rate: 0.9, conditions: [inherited_retinal], source: placeholder}
   CYP1B1:  {inheritance: AR, carrier_frequency: 0.01, detection_rate: 0.9, conditions: [glaucoma], source: placeholder}
   G6PD:    {inheritance: XL, carrier_frequency: 0.08, detection_rate: 0.98, conditions: [g6pd_def], routine_when_hemizygous: true, source: placeholder}
+  # Dominant patterns. One changed copy is enough, so there are no carriers: the person may be
+  # affected themselves, which only a clinician can say. Frequencies are placeholders like the rest.
+  LDLR:    {inheritance: AD, carrier_frequency: 0.004, detection_rate: 0.9, conditions: [familial_hypercholesterolaemia], source: placeholder}
+  PHEX:    {inheritance: XLD, carrier_frequency: 0.00005, detection_rate: 0.9, conditions: [x_linked_hypophosphataemia], source: placeholder}
   DMD:     {inheritance: XL, carrier_frequency: 0.0005, detection_rate: 0.9, conditions: [dmd], source: placeholder}

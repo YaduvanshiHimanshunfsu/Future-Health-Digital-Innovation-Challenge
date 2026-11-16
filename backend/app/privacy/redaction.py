@@ -27,7 +27,7 @@ _LANGUAGE = re.compile(r"[a-z]{2,3}")
 _APOSTROPHES = "'\u2019"
 _EMAIL = re.compile(r"[^\s@]+@[^\s@]+\.[^\s@]+")
 _LINK = re.compile(r"(?:https?://|www\.)\S+", re.IGNORECASE)
-# \d matches every script's digits, so Arabic-Indic and Devanagari numbers are caught too.
+# \d matches every script's digits, so Arabic-Indic numbers are caught too.
 _LONG_NUMBER = re.compile(r"\+?\d(?:[\s().\-/]*\d){4,}")
 
 

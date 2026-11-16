@@ -22,7 +22,7 @@ Final check before submitting on **19 Nov 2026** (deadline 20 Nov). A second per
 
 ## Needs people (can't be done by the build)
 
-- [ ] Native-speaker check of the Hindi text, and an Arabic text decision
+- [ ] Native-speaker check of the Arabic text
 - [ ] Two independent scorers fill in [human_scoring_sheet.md](../evaluation/human_scoring_sheet.md)
 - [ ] Ethics answer, then the volunteer comprehension test, or a note that it didn't run
 - [ ] A new Gemini API key, if the demo should use Gemini (Ollama works without one)

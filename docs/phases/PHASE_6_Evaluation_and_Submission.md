@@ -15,13 +15,13 @@
 **Goal:** measured results, including failures, from tests that aren't marking their own work.
 
 **Objectives**
-- O6.1.1 150+ golden and 50+ red-team items, balanced across English, Arabic and Hindi.
+- O6.1.1 150+ golden and 50+ red-team items, balanced across English and Arabic.
 - O6.1.2 Results reported per language.
 - O6.1.3 Independent humans score a sample.
 - O6.1.4 Targets from `docs/03` §5 are reported as met or missed.
 
 **Work** (step 25)
-- Finish the eval sets; native speakers write the Arabic and Hindi items rather than translating them.
+- Finish the eval sets; native speakers write the Arabic items rather than translating them.
 - Run, fix, and re-run. Record both rounds.
 - Two people independently score a random sample for directiveness and stigma; report agreement.
 
@@ -34,7 +34,7 @@
 | V6.1.1 | Numeric accuracy 100% on the test set, or failures listed | Report |
 | V6.1.2 | Clinical escalation at least 95% in each language | Report |
 | V6.1.3 | Human-scored sample results are included, not only validator scores | Scoring sheet |
-| V6.1.4 | Results in all three languages are shown side by side | Report |
+| V6.1.4 | Results in both languages are shown side by side | Report |
 | V6.1.5 | Any failure stays in the report | Reviewer compares raw output with the report |
 | V6.1.6 | Golden and red-team set sizes are met, per language | Count in the report |
 | V6.1.7 | Stigmatising and directive outputs are zero in the human-scored sample, or are listed | Scoring sheet |
@@ -46,7 +46,7 @@
 **Goal:** the first real evidence that people understand better, honestly labelled.
 
 **Objectives**
-- O6.2.1 15–30 adult volunteers, in Hindi and English, and in Arabic where possible.
+- O6.2.1 15–30 adult volunteers, in Arabic and English, and in Arabic where possible.
 - O6.2.2 Voluntary, anonymous, with fake results only.
 - O6.2.3 Pre and post teach-back.
 - O6.2.4 Limits stated.
@@ -132,7 +132,7 @@
 | V6.4.7 | Every data source used is declared, and nothing declared is unused | Compare with the code |
 | V6.4.8 | Assumptions, dependencies and limitations are each stated clearly | Reviewer |
 | V6.4.9 | The maturity statement separates what existed from what was built during the challenge | Compare with `brain.md` |
-| V6.4.10 | The Hindi coverage limit (G10) is stated | Reviewer |
+| V6.4.10 | The language coverage limit is stated: English and Arabic don't reach every resident community | Reviewer |
 
 ---
 
@@ -147,7 +147,7 @@
 
 **Work**
 - Record in template mode, or with a verified LLM run.
-- Include a live red-team moment in Arabic or Hindi.
+- Include a live red-team moment in Arabic.
 - Show "Synthetic data, not real patients" on screen.
 - Update the judge Q&A from `docs/03` §6, adding the options, law and PSI questions.
 

@@ -12,8 +12,9 @@ from app.models.case import CareCase, PathwayStep
 from app.models.genetic import CarrierFinding, GeneticReport
 from app.models.person import Person
 from app.repositories.genetic import load_record
+from app.triage.service import sla_hours
 from synthetic.generate import SyntheticPerson, build_bundle
-from tests.api.helpers import AD, INDIA, Stack, bundle_for, with_binary_columns_decoded
+from tests.api.helpers import Stack, bundle_for, with_binary_columns_decoded
 
 pytestmark = pytest.mark.db
 
@@ -273,20 +274,16 @@ async def test_a_later_result_only_raises_priority(stack: Stack) -> None:
 
 
 async def test_time_target_comes_from_the_pack(stack: Stack) -> None:
-    """V2.6.8. The same priority gets each country's own deadline."""
+    """V2.6.8. The deadline is the pack's own number for that priority, not one fixed in code.
+
+    That a second country's targets differ is checked in tests/unit/test_country_packs.py.
+    """
     await stack.ingest(bundle_for("x_carrier"))
-    await stack.ingest(bundle_for("x_carrier_in", pack=INDIA), pack=INDIA)
-    async with stack.factory() as session:
-        cases = {
-            person.pack_code: case
-            for case, person in (
-                await session.execute(
-                    select(CareCase, Person).join(Person, CareCase.subject_id == Person.id)
-                )
-            ).all()
-        }
-    gap = cases[INDIA].step_due - cases[AD].step_due
-    assert 95 < gap.total_seconds() / 3600 < 97
+    case = await stack.only_case()
+    expected = sla_hours(stack.pack, case.priority)
+    assert expected == stack.pack.strata.sla_hours.P2
+    hours = (case.step_due - case.created_at).total_seconds() / 3600
+    assert abs(hours - expected) < 1
 
 
 async def test_ingest_is_audited_without_health_details(stack: Stack) -> None:
